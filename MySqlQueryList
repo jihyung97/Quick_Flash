@@ -46,6 +46,7 @@ create table `user`(
 
  
 	`id` int not null auto_increment primary key
+    ,`loginId` varchar(32) not null
 	,`password` varchar(256) not null
 	,`name` varchar(32) not null
 	,`defaultLocation` varchar(256) not null
@@ -54,6 +55,5 @@ create table `user`(
 	
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 
