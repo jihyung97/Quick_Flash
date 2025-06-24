@@ -57,5 +57,8 @@ create table `user`(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ALTER TABLE `user`
 ADD UNIQUE KEY `uk_user_loginId` (`loginId`);
+ALTER TABLE `user`
+ADD COLUMN `defaultLocationPoint` varchar(256);
+
 
 
