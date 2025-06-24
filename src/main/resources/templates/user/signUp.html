@@ -20,7 +20,7 @@
                 </div>
                 <div class="w-100 bg-default d-flex justify-content-center align-items-center h-85">
                     <div class="w-75 h-75" >
-                        <form id="signUpForm" method="post" action="/user/sign-up" class="h-100">
+                        <form id="signUpForm" method="post" action="/user/create" class="h-100">
                             <div class="">
                                 <div><span>아이디</span></div>
                                 <div class="h-50">
@@ -60,9 +60,9 @@
                             </div>
                             <div class="my-1 h-17">
 
-                                <div><span>이메일 주소</span></div>
+                                <div><span>활동 지역</span></div>
                                 <div class="h-75">
-                                    <input type="text" name="email" id="email" class="col-7 form-control h-60">
+                                    <input type="text" name="defaultLocation" id="defaultLocation" class="col-7 form-control h-60">
                                 </div>
 
                             </div>
@@ -80,4 +80,94 @@
         </div>
     </div>
 </body>
+<script>
+    $(function(){
+     $("#idDuplBtn").on("click",function(){
+         $("#idDuplText").addClass("d-none");
+         $("#idTooShortText").addClass("d-none");
+         $("#idAvailableText").addClass("d-none");
+
+         let loginId = $("#loginId").val().trim();
+         if(loginId.length < 4){
+             $("#idTooShortText").removeClass("d-none");
+             return;
+         }
+         $.ajax({
+             url:"/user/is-id-duplicated"
+             ,data:{"loginId":loginId}
+             ,success:function(data){
+                 if(data.code == 200){
+                     if(data.is_id_duplicated){
+                         $("#idDuplText").removeClass("d-none");
+
+                     }else{
+                         $("#idAvailableText").removeClass("d-none");
+                     }
+                 }else{
+                     alert(data.error_message);
+                 }
+
+             }
+             ,error:function(e){
+                 alert("중복확인에 실패했습니다");
+             }
+
+         });
+
+     });
+     // localhost:8080/user/sign-up 로 이동
+
+     $("#signUpForm").on("submit",function(e){
+         e.preventDefault();
+         let loginId = $("#loginId").val().trim();
+         let password = $("#password").val().trim();
+         let confirmPassword = $("#confirmPassword").val().trim();
+         let name = $("#name").val().trim();
+         let defaultLocation = $("#defaultLocation").val().trim();
+
+         if(!loginId){
+             alert("아이디를 입력하세요");
+             return false;
+         }
+         if( $("#idAvailableText").hasClass("d-none")){
+             alert("id를 다시 확인해주세요");
+             return false;
+         }
+         if(password != confirmPassword || !password){
+             alert("비밀번호를 다시 확인하세요");
+             return false;
+         }
+         if(!name){
+             alert("이름을 입력하세요");
+             return false;
+
+         }
+         if(!defaultLocation){
+             alert("활동 지역을 입력하세요");
+             return false;
+
+         }
+
+         let url = $(this).attr("action");
+         console.log(url);
+
+         let params = $(this).serialize();
+         console.log(params);
+
+         $.post(url,params)
+         .done(function(data){
+             if(data.code == 200){
+                 alert("가입을 환영합니다. 로그인을 해주세요");
+                 location.href = "/user/sign-in-view"
+             }
+
+         })
+     })
+
+
+ });
+
+
+
+</script>
 </html>
