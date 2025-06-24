@@ -1,30 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 
     <div class="container bg-color">
-        <div>
-            <div class="d-flex">
-                <div><h4>남은시간:</h4></div>
-                <div> <h4> 00시간 00분</h4></div>
+        <div class="d-flex justify-content-end">
+            <div >
+                <div class="d-flex">
+                    <div><h4>남은시간:</h4></div>
+                    <div> <h4> 00시간 00분</h4></div>
+                </div>
+                <div class="d-flex">
+                    <div><span>4명</span></div>
+                    <div><h1>/</h1></div>
+                    <div><span>5명</span></div>
+                </div>
             </div>
-            <div class="d-flex">
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
+
         </div>
-        <div>
+
+        <div class="d-flex justify-content-between">
             <!--모임참가 관련 정보들 -->
-            <div></div>
+            <div>
+                <div class="d-flex">
+                    <div><h2>모이는 위치</h2></div>
+                    <div>
+                        <div>지도</div>
+                        <div><div class="bg-warning"></div></div>
+                    </div>
+                </div>
+
+                <div class="d-flex">
+                    <div class="d-flex">
+                        <div><span>예상 페이스:</span></div>
+                        <div ><span>0:00</span></div>
+                        <div class="ml-3"><span>min/km</span></div>
+                    </div>
+                    <div class="d-flex ml-3">
+                        <div><span>예상 파워:</span></div>
+                        <div><span>300</span></div>
+                        <div><span>W</span></div>
+                    </div>
+                    <div class="d-flex ml-4">
+                        <div><span>총</span></div>
+                        <div><span>100</span></div>
+                        <div><span>km</span></div>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div><span>중간 보급</span></div>
+                    <div>
+                        <div><span>설명</span></div>
+                        <div><input type="text"></div>
+                    </div>
+
+                </div>
+                <div class="d-flex justify-content-start">
+                    <span class="text-danger">주의: 흐르면 버리는 번개입니다</span>
+                </div>
+
+
+
+
+            </div>
             <!-- 잡다한 정보들, 남은시간, leader,참가자 list, ability, 참석율 -->
-            <div></div>
+            <div>
+                <div class="d-flex">
+                    <div><span>leader: </span></div>
+                    <div><span>나 사나이다</span></div>
+
+                </div>
+                <div>
+                    <div>
+                        <div><h2>참가자 list</h2></div>
+                        <div>
+                            <!--join dto 리스트 -->
+                            <div class="d-flex join-dto">
+                                <div ><span>jihyung97</span></div>
+                                <div class="ml-2"><span>5.0W/kg</span></div>
+                                <div class="ml-1"><span>[연동완]</span></div>
+                                <div class="ml-2"> 참석률: 70%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div></div>
+        <div class="d-flex justify-content-between">
+            <!--댓글 리스트 -->
+            <div>
+                <div><h2>댓글 리스트</h2></div>
+                <div>
+                    <div>
+                        <div class="d-flex comment-dto">
+                            <div><span>나는 쉬지롱</span></div>
+                            <div><span>어우 고생들 많으십니다^^</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <input type=" text">
+                    <button> 댓글 달기</button>
+                </div>
+
+            </div>
+            <!--ftp, strava연동, 사고시 개인책임동의, 참가버튼 -->
+            <div>
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div><span>ftp:300W</span></div>
+                        <div><span>pace: 3:30min/km</span></div>
+
+                    </div>
+                    <div>
+                        <div class="d-flex">
+                            <div><span>내 ftp 보이기</span></div>
+                            <div>체크박스</div>
+                        </div>
+                        <div>
+                            <button>strava연동</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="d-flex">
+                        <div><span>모든 사고 책임은 개인에게 있음을 동의합니다</span></div>
+                        <div>체크박스</div>
+                    </div>
+                    <div>
+                        <button>참가</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+        <div class="d-flex justify-content-end">
+            <button>닫기</button>
+            <button>수정하기</button>
+            <button>모임취소</button>
+
+        </div>
 
     </div>
 </body>

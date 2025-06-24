@@ -1,3 +1,43 @@
 .bg-color{
     background-color:aqua
 }
+
+.large-page{
+    width:1500px;
+    height:1000px;
+}
+#main-left{
+    width:250px;
+}
+#main-middle{
+    width:1000px;
+
+}
+#main-right{
+    width: 250px;
+}
+ .small-page{
+            height:1000px;
+        }
+
+
+  .join-list{
+          height:400px;
+        }
+        #meeting-post-section{
+            height:700px;
+
+        }
+        #my-schedule-section{
+            width:400px;
+            height:150px;
+        }
+
+        #image-thumbnail-section{
+            width:200px;
+            height: 78px;
+        }
+        #my-image-section{
+            width:100px;
+            height:100px;
+        }
