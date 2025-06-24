@@ -98,3 +98,43 @@ ADD INDEX idx_userId (`userId`);
 
 
 
+CREATE TABLE `meetingPost` (
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
+  `userId` INT NOT NULL,
+
+  `title` VARCHAR(100) NOT NULL,
+  `location` VARCHAR(255),
+  `locationpoint` POINT NOT NULL SRID 4326,
+  `restLocation` VARCHAR(255),
+
+  `expiredAt` DATETIME NOT NULL,
+  `contentText` TEXT,
+  `afterMeetingContent` TEXT,
+
+  `exerciseType` VARCHAR(32),
+  `distance` DOUBLE,
+  `Speed` DOUBLE,
+  `Power` DOUBLE,
+
+  `minHeadCount` INT,
+  `isRestExist` BOOLEAN,
+  `isAbandonOkay` BOOLEAN,
+  `isAfterPartyExist` BOOLEAN,
+  `isLocationConnectedToKakao` BOOLEAN,
+  `isUserAbilityConnectedToStrava` BOOLEAN,
+  `isMyPaceShown` BOOLEAN,
+  `isMyFtpShown` BOOLEAN,
+
+  `currentStatus` VARCHAR(32),
+
+  `createdAt` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  SPATIAL INDEX `idx_locationpoint` (`locationpoint`),
+  INDEX `idx_expiredAt` (`expiredAt`),
+  INDEX `idx_userId` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
