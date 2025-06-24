@@ -75,6 +75,10 @@ create table `join`(
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+ALTER TABLE `join`
+ADD INDEX idx_postId_userId (`postId`, `userId`),
+ADD INDEX idx_userId (`userId`);
+
 create table `comment`(
 
  
@@ -87,6 +91,10 @@ create table `comment`(
 	,`updatedAt` timestamp DEFAULT CURRENT_TIMESTAMP
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `comment`
+ADD INDEX idx_postId_userId (`postId`, `userId`),
+ADD INDEX idx_userId (`userId`);
 
 
 
