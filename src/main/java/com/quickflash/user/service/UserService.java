@@ -6,12 +6,11 @@ import com.quickflash.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class UserBO {
+public class UserService {
     private final UserRepository userRepository;
 
     public boolean addUser(
@@ -22,17 +21,17 @@ public class UserBO {
     ) {
         log.info("!!!!" + loginId);
 
-            String hashedPassword = HashUtils.md5(password);
-            UserEntity userEntity = UserEntity.builder()
-                    .loginId(loginId)
-                    .password(hashedPassword)
-                    .name(name)
-                    .defaultLocation(defaultLocation)
-                    .build();
-            log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + userEntity.getName());
+        String hashedPassword = HashUtils.md5(password);
+        UserEntity userEntity = UserEntity.builder()
+                .loginId(loginId)
+                .password(hashedPassword)
+                .name(name)
+                .defaultLocation(defaultLocation)
+                .build();
+        log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + userEntity.getName());
 
-            userRepository.save(userEntity);
-            return true;
+        userRepository.save(userEntity);
+        return true;
 
 
 
@@ -49,13 +48,4 @@ public class UserBO {
 
         return userRepository.findByLoginIdAndPassword(loginId,hashedPassword).orElse(null);
     }
-
-    public boolean isUserLeader(int sessionId){
-        if(sessionId == userRepository.findIdById(sessionId)){
-            return false;
-        }else{
-            return
-        }
-    }
 }
-

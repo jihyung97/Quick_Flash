@@ -1,15 +1,14 @@
 package com.quickflash.user;
 
+import com.quickflash.user.entity.UserEntity;
 import com.quickflash.user.service.UserBO;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -37,9 +36,10 @@ public class UserRestController {
         Integer userId = (Integer) session.getAttribute("userId");
 
         Map<String,Object> result = new HashMap<>();
-        if(userId == null){
+        if(userId != null){
             result.put("code",  500);
             return result;
+
         }
         boolean isAdded = userBO.addUser(
                 loginId
@@ -72,6 +72,33 @@ public class UserRestController {
         return result;
 
     }
+
+    @PostMapping("/sign-in")
+    public Map<String,Object>  signIn(
+            @RequestParam("loginId") String loginId
+            , @RequestParam("password") String password
+            , HttpSession session
+    ){
+        Map<String,Object> result = new HashMap<>();
+
+        UserEntity user = userBO.getUserEntityByLoginIdAndPassword(loginId,password);
+        log.info("User의 아이디" + user.getLoginId());
+        log.info("User의 이름" + user.getName());
+        if(user == null){
+            result.put("code", 300);
+            result.put("error_message", "존재하지 않는 사용자 입니다");
+            return result;
+        }
+        //userId,userName,userLoginId
+        session.setAttribute("userId", user.getId());
+
+
+        session.setAttribute("userName", user.getName());
+        session.setAttribute("userLoginId", user.getLoginId());
+        result.put("code",200);
+        return result;
+    }
+
 
 
 

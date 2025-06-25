@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+>
+<th:block th:fragment="afterLoginFragment">
+  <!--header 의 Fragment -->
+  <div>
+    <div class=" bg-warning" id="my-image-section">
+
+    </div>
+    <span th:text="|${userInfo.userName}님, 운동할 준비 되셨나요?|"></span>
+    <div class="d-flex">
+      <div>
+        <button class="button form-control">카카오로 본인인증</button>
+      </div>
+      <div>
+        <div><button>my page</button></div>
+        <div><button>setting</button></div>
+        <form action="/user/sign-out" method="post">
+          <button id="btn-logout" type="submit">logout</button>
+        </form>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+</th:block>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+  <div class=" bg-warning" id="my-image-section">
+
+  </div>
+  <div class="d-flex">
+    <div>
+      <button class="button form-control">카카오로 본인인증</button>
+    </div>
+    <div>
+      <div><span>my page</span></div>
+      <div><span>setting</span></div>
+      <div><span>logout</span></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity,Integer> {
     public Optional<UserEntity> findByLoginId(String loginId);
-//    public Optional<UserEntity> findByLoginIdAndPassword(String loginId, String password);
+   public Optional<UserEntity> findByLoginIdAndPassword(String loginId, String password);
 //    //userName 중복 불가능 설정 해야됨 (회원가입), table name unique 키로
 //    public Optional<UserEntity> findFirstByName(String userName);
 //    public Optional<UserEntity> findById(int Id);

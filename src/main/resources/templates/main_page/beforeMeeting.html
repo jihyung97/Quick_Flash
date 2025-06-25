@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
 <head>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
@@ -64,8 +67,8 @@
         <button class="button form-control">모임글 작성</button>
       </div>
     </div>
-    <div id="meeting-post-section">
-      <div class="m-3 meeting-post d-flex justify-content-between">
+    <div id="meeting-post-section ">
+      <div class="m-3 meeting-post d-flex justify-content-between bg-color">
         <div id="image-thumbnail-section" class="bg-warning">
           <img src="">
         </div>
@@ -87,26 +90,72 @@
 
   </div>
   <div id="main-right">
-    <div class=" bg-warning" id="my-image-section">
+    <th:block th:if="${userInfo == null}">
+      <th:block th:replace="fragments/login :: loginFragment"></th:block>
+    </th:block>
 
-    </div>
-    <div class="d-flex">
-      <div>
-        <button class="button form-control">카카오로 본인인증</button>
-      </div>
-      <div>
-        <div><span>my page</span></div>
-        <div><span>setting</span></div>
-        <div><span>logout</span></div>
+    <th:block th:unless="${userInfo == null}">
+      <th:block th:replace="fragments/afterLogin :: afterLoginFragment"></th:block>
+    </th:block>
 
-      </div>
-
-    </div>
     <div id="one-click-planner-section"></div>
 
 
   </div>
 
 </div>
+ <script>
+   $(function(){
+    $("#btn-login").on("click",function(){
+
+
+        let loginId = $("#loginId").val().trim();
+        let password = $("#password").val().trim();
+
+         if(!loginId){
+            alert("아이디를 입력하세요");
+            return false;
+        }
+         if(!password){
+            alert("비밀번호를 입력하세요");
+            return false;
+        }
+       $.ajax({
+            url: "/user/sign-in",
+            type: "POST",
+            data: {
+                loginId: loginId,
+                password: password
+            },
+            success: function (data) {
+                if (data.code === 200) {
+                    location.reload();
+                } else {
+                    alert(data.error_message);
+                }
+            },
+            error: function (e) {
+                alert("로그인에 실패하였습니다");
+            }
+       });
+    });
+
+     $("#btn-logout").on("click",function(){
+       $.ajax({
+            url: "/user/sign-out",
+            type: "POST",
+            error: function (e) {
+                alert("로그인에 실패하였습니다");
+            }
+       });
+    });
+
+
+
+
+});
+
+ </script>
+
 </body>
 </html>

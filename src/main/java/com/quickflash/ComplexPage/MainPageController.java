@@ -1,8 +1,13 @@
 package com.quickflash.ComplexPage;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -11,7 +16,21 @@ public class MainPageController {
 
     //localhost:8080/main-page/before-meeting
     @RequestMapping("/before-meeting")
-    public String MainPageBeforeMeeting(){
+    public String MainPageBeforeMeeting(
+            HttpSession session
+          ,   Model model
+    ){
+        Integer userId = (Integer) session.getAttribute("userId");
+        String userName = (String)session.getAttribute("userName");
+        String userLoginId = (String)session.getAttribute("userLoginId");
+        //userId,userName,userLoginId
+        if(userId != null && userName != null && userLoginId != null){
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("userId",userId);
+            userInfo.put("userName",userName);
+            userInfo.put("userLoginId",userLoginId);
+            model.addAttribute("userInfo", userInfo);
+        }
         return "main_page/beforeMeeting";
     }
 
