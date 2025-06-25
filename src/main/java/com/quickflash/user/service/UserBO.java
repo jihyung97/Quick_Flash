@@ -50,12 +50,6 @@ public class UserBO {
         return userRepository.findByLoginIdAndPassword(loginId,hashedPassword).orElse(null);
     }
 
-    public boolean isUserLeader(int sessionId){
-        if(sessionId == userRepository.findIdById(sessionId)){
-            return false;
-        }else{
-            return
-        }
-    }
+
 }
 

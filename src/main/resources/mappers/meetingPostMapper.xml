@@ -7,13 +7,13 @@
 <mapper namespace="com.quickflash.meetingPost.mapper.MeetingPostMapper">
     <select id="getUserIdById" parameterType="int" resultType="int">
         SELECT
-            userId
+            `userId`
         FROM
-            meetingPost
-        WHERE id = #{postId}
+            `meetingPost`
+        WHERE `id` = #{id}
     </select>
 
-    <insert id="insertMeetingPost" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertMeetingPost" parameterType = "com.quickflash.meetingPost.domain.MeetingPost" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `meetingPost` (
         `userId`,
         `title`,

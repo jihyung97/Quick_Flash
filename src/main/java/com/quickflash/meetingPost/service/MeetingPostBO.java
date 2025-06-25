@@ -36,8 +36,13 @@ public class MeetingPostBO {
         return meetingPostMapper.selectExpiredAtAndStatusById(id);
     }
 
+    public MeetingPost getMeetingPostById(int id){
+        return meetingPostMapper.selectMeetingPostById(id);
+    }
 
-   public Map<String,Object> checkAndUpdateMeeting(LocalDateTime currentTime, int id){
+
+
+    public Map<String,Object> checkAndUpdateMeeting(LocalDateTime currentTime, int id){
         Map<String, Object> expiredAtAndStatus = getExpiredAtAndStatusOfMeetingById(id);
         LocalDateTime expiredAt = (LocalDateTime) expiredAtAndStatus.get("expiredAt");
         String statusOfMeeting = (String) expiredAtAndStatus.get("currentStatus");

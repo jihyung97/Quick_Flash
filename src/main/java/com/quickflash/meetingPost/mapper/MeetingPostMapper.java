@@ -9,10 +9,11 @@ import java.util.Map;
 
 @Mapper
 public interface MeetingPostMapper {
-    int getUserIdById(int postId);
+    int getUserIdById(int id);
     int insertMeetingPost(MeetingPost meetingPost);
-    int updateStatusById(@Param("currentStatus") String currentStatus, @Param("postId") int id);
+    int updateStatusById(@Param("currentStatus") String currentStatus, @Param("id") int id);
     Map<String, Object> selectExpiredAtAndStatusById(int id);
+    MeetingPost selectMeetingPostById(int id);
 
 
 }

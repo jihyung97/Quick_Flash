@@ -26,7 +26,15 @@
                         </div>
                     </div>
                     <div>
-                        <button>카카오맵 연동하기</button>
+                        <th:block th:if="${!meetingPost.isLocationConnectedToKakao}">
+                            <button>카카오맵 연동하기</button>
+                        </th:block>
+                        <th:block th:else>
+                            <button>연동 완료</button>
+                        </th:block>
+                        
+                        
+                        
                     </div>
 
                 </div>
