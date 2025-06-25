@@ -135,6 +135,7 @@ CREATE TABLE `meetingPost` (
   INDEX `idx_expiredAt` (`expiredAt`),
   INDEX `idx_userId` (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
+ALTER TABLE `meetingPost`
+ADD COLUMN `maxHeadCount` INT NOT NULL ;
 
 
