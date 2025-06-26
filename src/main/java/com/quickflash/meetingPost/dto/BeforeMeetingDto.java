@@ -1,15 +1,12 @@
-package com.quickflash.meetingPost.domain;
+package com.quickflash.meetingPost.dto;
 
-
-import lombok.Builder;
-import lombok.Data;
+import org.hibernate.mapping.Join;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Data
-@Builder
-public class MeetingPost {
-    private Integer id;
+public class BeforeMeetingDto {
+    private Integer postId;
     private Integer userId;
 
     private String title;
@@ -23,7 +20,7 @@ public class MeetingPost {
 
     private LocalDateTime expiredAt;
     private String contentText;
-    private String afterMeetingContent;
+
 
     private String exerciseType;
     private Double distance;
@@ -44,4 +41,6 @@ public class MeetingPost {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    List<Join> joinList;
+
 }

@@ -25,7 +25,7 @@ public class MeetingPostController {
     //localhost:8080/meeting-post/make-meeting
     @RequestMapping("/make-meeting")
     public String makeMeeting(
-            @RequestParam("postId")Integer postId
+            @RequestParam(value="postId", required = false)Integer postId
             , HttpSession session
             , Model model
 
@@ -43,9 +43,11 @@ public class MeetingPostController {
 
         if (option == ViewOption.UPDATE_MakeMeeting && postId != null) {
             model.addAttribute("meetingPost", meetingPostBO.getMeetingPostById(postId));
-            return "meeting_post/make-meeting";
+            model.addAttribute("isPostExist", true);
+            return "meeting_post/makeMeeting";
         }else if(option == ViewOption.CREATE_MakeMeeting){
-            return "meeting_post/make-meeting";
+            model.addAttribute("isPostExist",  false);
+            return "meeting_post/makeMeeting";
         }else if(option == ViewOption.MAIN_PAGE){
             return "redirect:/main-page/before-meeting";
         }else{

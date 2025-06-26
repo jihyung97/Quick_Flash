@@ -31,7 +31,7 @@ public class MeetingPostRestController {
             @RequestParam (required = false)  Double latitude,
             @RequestParam (required = false)  Double longitude,
             @RequestParam(required = false) String restLocation,
-            @RequestParam String expiredAt, // String -> LocalDateTime 변환 필요
+            @RequestParam LocalDateTime expiredAt, // String -> LocalDateTime 변환 필요
             @RequestParam(required = false) String contentText,
             @RequestParam(required = false) String afterMeetingContent,
             @RequestParam String exerciseType,
@@ -39,11 +39,12 @@ public class MeetingPostRestController {
             @RequestParam(required = false) Double speed,
             @RequestParam(required = false) Double power,
             @RequestParam Integer minHeadCount,
-            @RequestParam Boolean isRestExist,
+            @RequestParam Integer maxHeadCount,
+            @RequestParam (required = false) Boolean isRestExist,
             @RequestParam Boolean isAbandonOkay,
-            @RequestParam Boolean isAfterPartyExist,
-            @RequestParam Boolean isLocationConnectedToKakao,
-            @RequestParam Boolean isUserAbilityConnectedToStrava,
+            @RequestParam (required = false) Boolean isAfterPartyExist,
+            @RequestParam (required = false) Boolean isLocationConnectedToKakao,
+            @RequestParam (required = false) Boolean isUserAbilityConnectedToStrava,
             @RequestParam Boolean isMyPaceShown,
             @RequestParam Boolean isMyFtpShown
 
@@ -76,7 +77,7 @@ public class MeetingPostRestController {
                     .latitude(latitude != null ? latitude : 0.0)  // null이면 안되기 때문에 설정이 안되어 있으면 기본값 0,0 을 넣는다
                     .longitude(longitude != null ? longitude : 0.0)
                     .restLocation(restLocation)
-                    .expiredAt(LocalDateTime.parse(expiredAt)) // 형식 처리 필요할듯
+                    .expiredAt(expiredAt) // 형식 처리 필요할듯
                     .contentText(contentText)
                     .afterMeetingContent(afterMeetingContent)
                     .exerciseType(exerciseType)
@@ -84,13 +85,15 @@ public class MeetingPostRestController {
                     .speed(speed)
                     .power(power)
                     .minHeadCount(minHeadCount)
-                    .isRestExist(isRestExist)
-                    .isAbandonOkay(isAbandonOkay)
-                    .isAfterPartyExist(isAfterPartyExist)
-                    .isLocationConnectedToKakao(isLocationConnectedToKakao)
-                    .isUserAbilityConnectedToStrava(isUserAbilityConnectedToStrava)
-                    .isMyPaceShown(isMyPaceShown)
-                    .isMyFtpShown(isMyFtpShown)
+                    .maxHeadCount(maxHeadCount)
+                    .isRestExist(isRestExist != null ? isRestExist : false)
+                    .isAbandonOkay(isAbandonOkay != null ? isAbandonOkay : false)
+                    .isAfterPartyExist(isAfterPartyExist != null ? isAfterPartyExist : false)
+                    .isLocationConnectedToKakao(isLocationConnectedToKakao != null ? isLocationConnectedToKakao : false)
+                    .isUserAbilityConnectedToStrava(isUserAbilityConnectedToStrava != null ? isUserAbilityConnectedToStrava : false)
+
+                    .isMyPaceShown(isMyPaceShown != null ? isMyPaceShown : false)
+                    .isMyFtpShown(isMyFtpShown != null ? isMyFtpShown : false)
                     .currentStatus("모임 전")
                     .build();
 

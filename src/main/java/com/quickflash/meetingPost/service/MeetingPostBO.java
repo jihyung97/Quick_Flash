@@ -2,6 +2,7 @@ package com.quickflash.meetingPost.service;
 
 
 import com.quickflash.meetingPost.domain.MeetingPost;
+import com.quickflash.meetingPost.dto.ThumbnailDto;
 import com.quickflash.meetingPost.mapper.MeetingPostMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -59,4 +61,10 @@ public class MeetingPostBO {
         return expiredAtAndStatus;
 
    }
+
+    public List<Map<String,Object>> getMeetingPostForThumbnailListForTest(){
+       return meetingPostMapper.selectMeetingPostListForThumbnailTest();
+    }
+
+
 }

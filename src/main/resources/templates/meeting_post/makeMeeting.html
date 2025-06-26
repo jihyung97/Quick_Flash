@@ -1,6 +1,9 @@
 
 <!DOCTYPE html>
-<html  xmlns:th="http://www.thymeleaf.org">
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
 
     <head>
 
@@ -15,9 +18,11 @@
 
     <body>
         <div class="container bg-color">
+            <div><input type="text" id="title"></div>
             <!--지도-->
             <div class="d-flex h-25 justify-content-start">
                 <div><h2>모이는 위치</h2></div>
+                 <div><input type="text" id="location"></div>
                 <div class="d-flex">
                     <div>
                         <div><h3>지도</h3></div>
@@ -26,12 +31,12 @@
                         </div>
                     </div>
                     <div>
-                        <th:block th:if="${!meetingPost.isLocationConnectedToKakao}">
+
                             <button>카카오맵 연동하기</button>
-                        </th:block>
-                        <th:block th:else>
-                            <button>연동 완료</button>
-                        </th:block>
+
+
+                            <button class="d-none">연동 완료</button>
+
                         
                         
                         
@@ -41,21 +46,28 @@
             </div>
             <!--예상 페이스-->
             <div class="d-flex">
-                <div class="d-flex">
-                    <div class="d-flex">예상페이스:</div>
-                    <div class="d-flex">0:00</div>
-                    <div class="d-flex">min/km</div>
+                <div id="running-fields">
+                    <div class="d-flex" >
+                        <div class="d-flex">예상페이스:</div>
+                        <div><input type="text" class="form-control" id="speed-run"></div>
+                        <div class="d-flex">min/km</div>
+                    </div>
                 </div>
-                <div class="d-flex">
-                    <div class="d-flex">예상파워:</div>
-                    <div class="d-flex">000</div>
-                    <div class="d-flex">W</div>
+
+                <div class="d-none" id="cycle-fields">
+                    <div class="d-flex">
+                        <div class="d-flex ">예상파워:</div>
+                        <div><input type="text" class="form-control" id="power"></div>
+                        <div class="d-flex">W</div>
+                    </div>
+                    <div class="d-flex">
+                        <div class="d-flex ">예상속도:</div>
+                        <div><input type="text" class="form-control" id="speed-cycle"></div>
+                        <div class="d-flex">km/h</div>
+                    </div>
+
                 </div>
-                <div class="d-flex">
-                    <div class="d-flex">예상속도:</div>
-                    <div class="d-flex">00</div>
-                    <div class="d-flex">km/h</div>
-                </div>
+
 
 
             </div>
@@ -63,18 +75,32 @@
             <div class="d-flex justify-content-between">
                 <div class="d-flex">
                     <div><h3>중간보급</h3></div>
-                    <div><h4>어딜까</h4></div>
+                    <div><input type="text" class="form-control" id="restLocation"></div>
 
                 </div>
                 <div class="d-flex">
+                    <div class="d-flex">
+                        <button id="btn-run">러닝</button>
+                        <button id="btn-cycle">자전거</button>
+                    </div>
+                    <div>
+                        <h4>모임 시간 설정하기</h4>
+                    </div>
+                    <div>
+                        <input type="datetime-local" name="expiredAt"  id= "expiredAt" class="form-control">
+                    </div>
+                    <div class="d-flex">
+                        <div><h4>거리</h4></div>
+                        <div><input type="text" id="distance"></div>
+                    </div>
                     <div>
                         <div class="d-flex">
                             <div><h3>내 페이스 보이기</h3></div>
-                            <div>체크박스</div>
+                            <input type="checkbox" id="isMyPaceShown">
                         </div>
                         <div class="d-flex">
                             <div><h3>내 ftp 보이기</h3></div>
-                            <div>체크박스</div>
+                            <input type="checkbox" id="isMyFtpShown">
                         </div>
                     </div>
                     <div>
@@ -88,28 +114,241 @@
             <div class="d-flex justify-content-start">
                 <div class="d-flex">
                     <div>흐르면 버리는지 여부 체크</div>
-                    <div>체크박스</div>
+                    <input type="checkbox" id="isAbandonOkay">
+                </div>
+                <div class="d-flex">
+                    <div><h4>최소인원수</h4></div>
+                    <div><input type="text" id="minHeadCount">  </div>
+                </div>
+                 <div class="d-flex">
+                    <div><h4>최대인원수</h4></div>
+                    <div><input type="text" id="maxHeadCount">  </div>
                 </div>
 
             </div>
             <div>
                 <div>설명</div>
                 <div>
-                    <input type="text">
+                    <input type="text" id="content">
                 </div>
             </div>
             <div class="d-flex justify-content-between">
                 <div><button><span class="text-danger">삭제</span></button></div>
                 <div class="d-flex">
                     <div><button>닫기</button></div>
-                    <div><button>수정완료</button></div>
-                    <div><button>작성</button></div>
+                    <div th:if="${isPostExist}">
+                          <button id="btn-update">수정완료</button>
+                    </div>
 
+    <!-- 새 글 작성모드일 때만 보이는 버튼 -->
+                    <div th:if="${!isPostExist}">
+                        <button id="btn-create">작성</button>
+                    </div>
                 </div>
             </div>
 
+           <!-- 운동 유형 저장용 hidden input -->
+        <input type="hidden" id="exerciseType" name="exerciseType" value="RUNNING">
 
         </div>
+
+        <!--maxHeadCount title location speed-run power speed-cycle restLocation expiredAt isMyPaceShown isMyFtpShown isAbandonOkay exerciseType minHeadCount distance content-->
+    <script>
+         $(function(){
+              $("#btn-run").on("click", function () {
+                    // 러닝 전용 보이기
+                    $("#running-fields").removeClass("d-none");
+
+                    // 자전거 전용 숨기기
+                    $("#cycle-fields").addClass("d-none");
+                       $("#exerciseType").val("RUNNING");
+
+                });
+
+                $("#btn-cycle").on("click", function () {
+        // 자전거 전용 보이기
+                    $("#cycle-fields").removeClass("d-none");
+
+
+                    // 러닝 전용 숨기기
+                    $("#running-fields").addClass("d-none");
+
+                       $("#exerciseType").val("CYCLE");
+                });
+           
+
+                 $(function(){
+                    $("#btn-login").on("click",function(){
+
+
+                        let loginId = $("#loginId").val().trim();
+                        let password = $("#password").val().trim();
+
+                        if(!loginId){
+                            alert("아이디를 입력하세요");
+                            return false;
+                        }
+                        if(!password){
+                            alert("비밀번호를 입력하세요");
+                            return false;
+                        }
+                         $.ajax({
+                            url: "/user/sign-in",
+                            type: "POST",
+                            data: {
+                                loginId: loginId,
+                                password: password
+                            },
+                            success: function (data) {
+                                if (data.code === 200) {
+                                    location.reload();
+                                } else {
+                                    alert(data.error_message);
+                                }
+                            },
+                            error: function (e) {
+                                alert("로그인에 실패하였습니다");
+                            }
+                         });
+                    });
+
+                       $("#btn-create").on("click",function(){
+                        let location = $("#location").val().trim();
+                            let expiredAt = $("#expiredAt").val().trim();
+                            let exerciseType = $("#exerciseType").val().trim();
+                            let minHeadCount =($("#minHeadCount").val().trim()) ;
+                            let maxHeadCount =  ($("#maxHeadCount").val().trim());
+                             let distance =  ($("#distance").val());
+                             let power =  ($("#power").val());
+
+                        if (location === "") {
+                            alert("모이는 위치를 입력해주세요.");
+                            return false;
+                        }
+
+                        if (expiredAt === "") {
+                            alert("모임 시간을 설정해주세요.");
+                            return false;
+                        }
+
+                        if (exerciseType === "") {
+                            alert("운동 유형을 선택해주세요.");
+                            return false;
+                        }
+
+                        if (minHeadCount === "") {
+                            alert("최소 인원을 입력해주세요.");
+                            return false;
+                        }
+
+                        if (maxHeadCount === "") {
+                            alert("최대 인원을 입력해주세요.");
+                            return false;
+                        }
+
+                        let speed = "";
+
+                        if (exerciseType === "RUNNING") {
+                            speed = $("#speed-run").val();
+                        } else if (exerciseType === "CYCLE") {
+                            speed = $("#speed-cycle").val();
+                        }
+
+
+                        // 숫자 검증
+                        if (speed === "" || isNaN(speed)) {
+                        alert("예상속도를 올바른 숫자로 입력해주세요.");
+                        return false;
+                        }
+                        // 숫자 유효성 검사
+                        if (isNaN(distance) || distance === "") {
+                            alert("거리(distance)는 숫자로 입력해주세요.");
+                            return false;
+                        }
+
+            
+                     
+                        
+                        if (exerciseType === "CYCLE") {
+                    
+                                if (power !== "" && isNaN(power)) {
+                                    alert("파워(power)는 숫자로 입력해주세요.");
+                                    return false;
+                                }
+                        }
+
+                        if (isNaN(minHeadCount) || minHeadCount === "") {
+                            alert("최소 인원(minHeadCount)은 숫자로 입력해주세요.");
+                            return false;
+                        }
+                         if (isNaN(maxHeadCount) || maxHeadCount === "") {
+                            alert("최소 인원(minHeadCount)은 숫자로 입력해주세요.");
+                            return false;
+                        }
+
+                        if (Number(maxHeadCount) > 20) {
+                            alert("사람 수는 최대 20명까지만 설정할 수 있습니다.");
+                            return false;
+                                }
+                        if (Number(minHeadCount) > Number(maxHeadCount)) {
+                            alert("최소 인원은 최대 인원보다 많을 수 없습니다.");
+                            return false;
+                        }
+                        
+                           minHeadCount = Number($("#minHeadCount").val().trim()) ;
+                             maxHeadCount =  Number($("#maxHeadCount").val().trim());
+                              distance =  Number($("#distance").val());
+                             power =  Number($("#power").val());
+                       
+                         $.ajax({
+                                url: "/meeting-post/create",
+                                type: "POST",
+                                data: {
+                                    title: $("#title").val(),
+                                    location: $("#location").val(),
+                                    latitude: $("#latitude").val(), // optional
+                                    longitude: $("#longitude").val(), // optional
+                                    restLocation: $("#restLocation").val(),
+                                    expiredAt: $("#expiredAt").val(), // → "2025-06-26T23:30" 이런 형태여야 함
+                                    contentText: $("#content").val(),
+                                    exerciseType: exerciseType,
+                                    distance: distance,
+                                    speed: speed, // 조건 분기 가능
+                                    power: power,
+                                    minHeadCount: minHeadCount,
+                                    maxHeadCount: maxHeadCount,
+                                   
+                                    isAbandonOkay: $("#isAbandonOkay").prop("checked"),
+                                   
+                                  
+                                    isMyPaceShown: $("#isMyPaceShown").prop("checked"),
+                                    isMyFtpShown: $("#isMyFtpShown").prop("checked")
+                                },
+                                success: function (data) {
+                                    if (data.result === "성공") {
+                                        alert("모임 생성 완료");
+                                        window.location.href = "/main-page/before-meeting";
+                                    } else {
+                                        alert(data.error_message || "에러 발생");
+                                    }
+                                },
+                                error: function () {
+                                    alert("서버 통신 실패");
+                                }
+                            });
+
+                       
+                         });
+                    });
+
+    
+
+
+
+
+        });
+
+    </script>
 
     </body>
 

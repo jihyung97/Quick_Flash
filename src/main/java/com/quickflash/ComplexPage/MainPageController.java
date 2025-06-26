@@ -1,7 +1,10 @@
 package com.quickflash.ComplexPage;
 
+import com.quickflash.meetingPost.service.MeetingPostBO;
+import com.quickflash.meetingPost.service.MeetingPostService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +15,11 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/main-page")
+@Slf4j
 public class MainPageController {
 
+    private final MeetingPostBO meetingPostBO;
+    private final MeetingPostService meetingPostService;
     //localhost:8080/main-page/before-meeting
     @RequestMapping("/before-meeting")
     public String MainPageBeforeMeeting(
@@ -30,6 +36,8 @@ public class MainPageController {
             userInfo.put("userName",userName);
             userInfo.put("userLoginId",userLoginId);
             model.addAttribute("userInfo", userInfo);
+            model.addAttribute("meetingPostList", meetingPostService.getMeetingPostThumbnailDtoForTest() );
+            log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + meetingPostService.getMeetingPostThumbnailDtoForTest().get(0).getTitle());
         }
         return "main_page/beforeMeeting";
     }

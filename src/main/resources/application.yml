@@ -23,5 +23,5 @@ spring:
         format_sql: true
 
 mybatis:
-  mapper-locations: classpath:/mappers/*Mapper.xml
-  type-aliases-package: com.quickflash.meetingPost.domain
+  mapper-locations: mappers/*Mapper.xml
+

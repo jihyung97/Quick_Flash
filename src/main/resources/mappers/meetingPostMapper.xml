@@ -1,5 +1,3 @@
-
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -11,6 +9,65 @@
         FROM
             `meetingPost`
         WHERE `id` = #{id}
+    </select>
+
+    <select id="selectMeetingPostListForTest" resultType = "com.quickflash.meetingPost.domain.MeetingPost">
+        SELECT
+        `id`,
+        `userId`,
+        `title`,
+        `location`,
+
+        ST_Y(locationpoint) AS `latitude`,
+        ST_X(locationpoint) AS `longitude`,
+        `restLocation`,
+        `expiredAt`,
+        `contentText`,
+        `afterMeetingContent`,
+        `exerciseType`,
+        `distance`,
+        `speed`,
+        `power`,
+        `minHeadCount`,
+        `maxHeadCount`,
+        `isRestExist`,
+        `isAbandonOkay`,
+        `isAfterPartyExist`,
+        `isLocationConnectedToKakao`,
+        `isUserAbilityConnectedToStrava`,
+        `isMyPaceShown`,
+        `isMyFtpShown`,
+        `currentStatus`,
+        `createdAt`,
+        `updatedAt`
+        FROM
+        `meetingPost`
+        ORDER BY `createdAt` DESC
+        LIMIT 10
+    </select>
+    <select id="selectMeetingPostListForThumbnailTest" resultType = "map">
+
+
+
+        SELECT
+        `id`,
+
+        `title`,
+        `location`,
+        `expiredAt`,
+        `exerciseType`,
+        `distance`,
+        `speed`,
+        `power`,
+        `minHeadCount`,
+        `maxHeadCount`,
+        `isRestExist`,
+        `isAbandonOkay`,
+        `createdAt`
+        FROM
+        `meetingPost`
+        ORDER BY `createdAt` DESC
+        LIMIT 10
     </select>
 
     <insert id="insertMeetingPost" parameterType = "com.quickflash.meetingPost.domain.MeetingPost" useGeneratedKeys="true" keyProperty="id">
@@ -28,6 +85,7 @@
         `speed`,
         `power`,
         `minHeadCount`,
+        `maxHeadCount`,
         `isRestExist`,
         `isAbandonOkay`,
         `isAfterPartyExist`,
@@ -56,6 +114,7 @@
         #{speed},
         #{power},
         #{minHeadCount},
+        #{maxHeadCount},
         #{isRestExist},
         #{isAbandonOkay},
         #{isAfterPartyExist},
@@ -66,6 +125,7 @@
         #{currentStatus},
         NOW(),
         NOW()
+
         )
     </insert>
 

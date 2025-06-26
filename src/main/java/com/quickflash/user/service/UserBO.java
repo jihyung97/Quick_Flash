@@ -50,6 +50,10 @@ public class UserBO {
         return userRepository.findByLoginIdAndPassword(loginId,hashedPassword).orElse(null);
     }
 
+    public String getUserNameById(int id){
+        return userRepository.findNameById(id);
+    }
+
 
 }
 
