@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Builder
 public class CommentDto {
 
+    private String userName;
     private int userId;
     private int postId;
     private String content;
