@@ -1,5 +1,6 @@
 package com.quickflash.meetingPost.dto;
 
+import com.quickflash.comment.dto.CommentDto;
 import com.quickflash.comment.entity.CommentEntity;
 import com.quickflash.join.dto.JoinBeforeMeetingDto;
 import lombok.Builder;

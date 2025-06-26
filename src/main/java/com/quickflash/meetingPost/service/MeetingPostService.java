@@ -3,6 +3,8 @@ package com.quickflash.meetingPost.service;
 
 import com.quickflash.comment.service.CommentBO;
 import com.quickflash.comment.service.CommentService;
+import com.quickflash.join.service.JoinBO;
+import com.quickflash.join.service.JoinService;
 import com.quickflash.meetingPost.domain.MeetingPost;
 import com.quickflash.meetingPost.dto.BeforeMeetingDto;
 import com.quickflash.meetingPost.dto.ThumbnailDto;
@@ -26,16 +28,18 @@ public class MeetingPostService {
     private final CommentBO commentBO;
     private final CommentService commentService;
     private final UserBO userBO;
+    private final JoinService joinService;
+    private final JoinBO joinBO;
 
-    public ViewOption decideViewMakeWhenMeetingClicked(int sessionId, Integer postId, LocalDateTime currentTime){
+    public ViewOption decideViewWhenGoToMakeMeeting(int sessionId, Integer postId, LocalDateTime currentTime){
         Map<String,Object> result = new HashMap<>();
        //미팅의 상태를 체크해서 상태가 모임전이고 지금 시간이 모임시작 시간보다 후이면 상태를 모임 페이지로 바꿈. 그 후 상태를 반환
         if(postId != null){
             result =   meetingPostBO.checkAndUpdateMeeting(currentTime,postId);
         }
 
-            if(!result.isEmpty() && !result.get("currentStatus").equals("모임 전") ){
-                return ViewOption.MAIN_PAGE;
+            if(!result.isEmpty() && !(result.get("currentStatus").toString().equals("모임 전")  ) ){
+                return ViewOption.MAIN_PAGE_VIEW;
             }
 
 
@@ -44,16 +48,46 @@ public class MeetingPostService {
             //수정할 화면 보여준다
 
 
-            return ViewOption.UPDATE_MakeMeeting;
+            return ViewOption.UPDATE_MakeMeeting_VIEW;
         }else{
             if(postId != null){
-                return ViewOption.MAIN_PAGE; // 잘못된 접근
+                return ViewOption.MAIN_PAGE_VIEW; // 잘못된 접근
             }else{
                 //새로운 화면 보여줌
 
-                return ViewOption.CREATE_MakeMeeting;
+                return ViewOption.CREATE_MakeMeeting_VIEW;
             }
         }
+    }
+    public ViewOption decideViewWhenMeetingPostClicked(int sessionId, int postId, LocalDateTime currentTime){
+        Map<String,Object> result = new HashMap<>();
+        //미팅의 상태를 체크해서 상태가 모임전이고 지금 시간이 모임시작 시간보다 후이면 상태를 모임 페이지로 바꿈. 그 후 상태를 반환
+
+            result =   meetingPostBO.checkAndUpdateMeeting(currentTime,postId);
+            boolean isLeader = meetingPostBO.isUserLeader(sessionId,postId);
+            boolean isJoin =  joinBO.isIMember(postId,sessionId);
+            String currentStatus = (String)result.get("currentStatus");
+
+            if (Status.BEFORE_MEETING.name().equals(currentStatus)) {
+                if (isLeader) {
+                    return ViewOption.BEFORE_MAKING_LEADER_VIEW;
+                } else if (isJoin) {
+                    return ViewOption.BEFORE_MAKING_MEMBER_VIEW;
+                } else {
+                    return ViewOption.BEFORE_MAKING_NONE_VIEW;
+                }
+            } else if (Status.REPORT_MAKING.name().equals(currentStatus)) {
+                if (isLeader) {
+                    return ViewOption.REPORT_MAKING_VIEW;
+                } else {
+                    return ViewOption.MAIN_PAGE_VIEW;
+                }
+            } else if (Status.FINAL_REPORT.name().equals(currentStatus)) {
+                return ViewOption.FINAL_REPORT_VIEW;
+            } else {
+                return ViewOption.MAIN_PAGE_VIEW;
+            }
+
     }
 
 
@@ -117,10 +151,14 @@ public class MeetingPostService {
                 .currentStatus(meetingPost.getCurrentStatus())
                 .createdAt(meetingPost.getCreatedAt())
                 .updatedAt(meetingPost.getUpdatedAt())
-                .joinList(joinDtoList)
+                .joinList(joinService.generateJoinBeforeMeetingDtoListByPostId(postId))
                 .commentList(commentService.generateCommentDtoListByPostId(postId))
                 .userName(userBO.getUserNameById(meetingPost.getUserId()))  // 필요 시
                 .build();
+
+
+            return beforeMeetingDto;
+
     }
 
 }

@@ -37,18 +37,18 @@ public class MeetingPostController {
             return "redirect:/main-page/before-meeting";
         }
         //어디로 갈지 option 정함
-       ViewOption option = meetingPostService.decideViewMakeWhenMeetingClicked(sessionId,postId, LocalDateTime.now());
+       ViewOption option = meetingPostService.decideViewWhenGoToMakeMeeting(sessionId,postId, LocalDateTime.now());
 
 
 
-        if (option == ViewOption.UPDATE_MakeMeeting && postId != null) {
+        if (option == ViewOption.UPDATE_MakeMeeting_VIEW && postId != null) {
             model.addAttribute("meetingPost", meetingPostBO.getMeetingPostById(postId));
             model.addAttribute("isPostExist", true);
             return "meeting_post/makeMeeting";
-        }else if(option == ViewOption.CREATE_MakeMeeting){
+        }else if(option == ViewOption.CREATE_MakeMeeting_VIEW){
             model.addAttribute("isPostExist",  false);
             return "meeting_post/makeMeeting";
-        }else if(option == ViewOption.MAIN_PAGE){
+        }else if(option == ViewOption.MAIN_PAGE_VIEW){
             return "redirect:/main-page/before-meeting";
         }else{
             return "redirect:/main-page/before-meeting";
@@ -61,7 +61,29 @@ public class MeetingPostController {
     }
     //localhost:8080/meeting-post/before-meeting
     @RequestMapping("/before-meeting")
-    public String beforeMeeting(){
+    public String beforeMeeting(Model model, HttpSession session,
+                                @RequestParam(value="postId") int postId)
+    {
+        Integer sessionId = (Integer) session.getAttribute("userId");
+
+        if(sessionId == null) {
+            return "redirect:/main-page/before-meeting";
+        }
+        ViewOption option =  meetingPostService.decideViewWhenMeetingPostClicked(sessionId,postId, LocalDateTime.now());
+        if(!(option == ViewOption.BEFORE_MAKING_LEADER_VIEW || option == ViewOption.BEFORE_MAKING_MEMBER_VIEW || option == ViewOption.BEFORE_MAKING_NONE_VIEW)){
+            return "redirect:/main-page/before-meeting";
+        }
+
+            model.addAttribute("meetingPost", meetingPostService.generateBeforeMeetingDto(postId));
+        if(option == ViewOption.BEFORE_MAKING_LEADER_VIEW) {
+            model.addAttribute("userType", "leader");
+        }else if(option == ViewOption.BEFORE_MAKING_MEMBER_VIEW) {
+            model.addAttribute("userType", "member");
+         } else {
+            model.addAttribute("userType", "none");
+    }
+
+
         return "meeting_post/beforeMeeting";
     }
 

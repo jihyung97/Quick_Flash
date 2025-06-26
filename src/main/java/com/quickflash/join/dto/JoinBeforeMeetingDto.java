@@ -10,4 +10,6 @@ public class JoinBeforeMeetingDto {
     private int userId;
     private int postId;
     private String userName;
+    private double speed; // 러닝일때
+    private double power; // 사이클
 }
