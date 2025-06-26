@@ -1,0 +1,20 @@
+package com.quickflash.comment.dto;
+
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Builder;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+@Data
+@Builder
+public class CommentDto {
+
+    private int userId;
+    private int postId;
+    private String content;
+    private boolean isBeforeMeeting;
+
+}

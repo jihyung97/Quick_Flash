@@ -36,8 +36,8 @@ public class MainPageController {
             userInfo.put("userName",userName);
             userInfo.put("userLoginId",userLoginId);
             model.addAttribute("userInfo", userInfo);
-            model.addAttribute("meetingPostList", meetingPostService.getMeetingPostThumbnailDtoForTest() );
-            log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + meetingPostService.getMeetingPostThumbnailDtoForTest().get(0).getTitle());
+            model.addAttribute("meetingPostList", meetingPostService.generateMeetingPostThumbnailDtoListForTest() );
+            log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + meetingPostService.generateMeetingPostThumbnailDtoListForTest().get(0).getTitle());
         }
         return "main_page/beforeMeeting";
     }

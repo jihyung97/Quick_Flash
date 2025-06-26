@@ -1,0 +1,13 @@
+<mapper namespace="com.example.mapper.CommentMapper">
+
+    <select id="selectCommentDtoListByPostId" resultType="com.quickflash.comment.dto.CommentDto">
+        SELECT
+          `postId`,
+          `userId`,
+          `content`,
+          `isBeforeMeeting`
+        FROM `comment`
+        WHERE postId = #{postId}
+    </select>
+
+</mapper>

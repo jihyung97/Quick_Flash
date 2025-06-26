@@ -1,10 +1,17 @@
 package com.quickflash.meetingPost.dto;
 
+import com.quickflash.comment.entity.CommentEntity;
+import com.quickflash.join.dto.JoinBeforeMeetingDto;
+import lombok.Builder;
+import lombok.Data;
 import org.hibernate.mapping.Join;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+
+@Data
+@Builder
 public class BeforeMeetingDto {
     private Integer postId;
     private Integer userId;
@@ -41,6 +48,8 @@ public class BeforeMeetingDto {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    List<Join> joinList;
+    List<JoinBeforeMeetingDto> joinList;
+    List<CommentDto> commentList;
+    private String userName;
 
 }

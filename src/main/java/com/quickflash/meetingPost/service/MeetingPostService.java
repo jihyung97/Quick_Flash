@@ -1,7 +1,9 @@
 package com.quickflash.meetingPost.service;
 
 
+import com.quickflash.comment.service.CommentBO;
 import com.quickflash.meetingPost.domain.MeetingPost;
+import com.quickflash.meetingPost.dto.BeforeMeetingDto;
 import com.quickflash.meetingPost.dto.ThumbnailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class MeetingPostService {
 
     private final MeetingPostBO meetingPostBO;
+    private final CommentBO commentBO;
 
     public ViewOption decideViewMakeWhenMeetingClicked(int sessionId, Integer postId, LocalDateTime currentTime){
         Map<String,Object> result = new HashMap<>();
@@ -49,7 +52,9 @@ public class MeetingPostService {
         }
     }
 
-    public List<ThumbnailDto> getMeetingPostThumbnailDtoForTest(){
+
+
+    public List<ThumbnailDto> generateMeetingPostThumbnailDtoListForTest(){
         List<ThumbnailDto> thumbnailDtoList = new ArrayList<>();
         List<Map<String,Object>> parametersOfMeetingPostList = meetingPostBO.getMeetingPostForThumbnailListForTest();
        for(Map<String,Object> parametersOfMeetingPost : parametersOfMeetingPostList){
@@ -76,6 +81,42 @@ public class MeetingPostService {
 
        return thumbnailDtoList;
 
+    }
+
+
+    public BeforeMeetingDto generateBeforeMeetingDto(int postId){
+         MeetingPost meetingPost = meetingPostBO.getMeetingPostById(postId);
+
+        BeforeMeetingDto beforeMeetingDto = BeforeMeetingDto.builder()
+                .postId(meetingPost.getId())
+                .userId(meetingPost.getUserId())
+                .title(meetingPost.getTitle())
+                .location(meetingPost.getLocation())
+                .latitude(meetingPost.getLatitude())
+                .longitude(meetingPost.getLongitude())
+                .restLocation(meetingPost.getRestLocation())
+                .expiredAt(meetingPost.getExpiredAt())
+                .contentText(meetingPost.getContentText())
+                .exerciseType(meetingPost.getExerciseType())
+                .distance(meetingPost.getDistance())
+                .speed(meetingPost.getSpeed())
+                .power(meetingPost.getPower())
+                .minHeadCount(meetingPost.getMinHeadCount())
+                .maxHeadCount(meetingPost.getMaxHeadCount())
+                .isRestExist(meetingPost.getIsRestExist())
+                .isAbandonOkay(meetingPost.getIsAbandonOkay())
+                .isAfterPartyExist(meetingPost.getIsAfterPartyExist())
+                .isLocationConnectedToKakao(meetingPost.getIsLocationConnectedToKakao())
+                .isUserAbilityConnectedToStrava(meetingPost.getIsUserAbilityConnectedToStrava())
+                .isMyPaceShown(meetingPost.getIsMyPaceShown())
+                .isMyFtpShown(meetingPost.getIsMyFtpShown())
+                .currentStatus(meetingPost.getCurrentStatus())
+                .createdAt(meetingPost.getCreatedAt())
+                .updatedAt(meetingPost.getUpdatedAt())
+                .joinList(joinDtoList)
+                .commentList(commentBO.getCommentDtoListByPostId(postId))
+                .userName(meetingPost.getUserName())  // 필요 시
+                .build();
     }
 
 }
