@@ -2,17 +2,22 @@ package com.quickflash.user.service;
 
 import com.quickflash.common.HashUtils;
 import com.quickflash.user.entity.UserEntity;
+import com.quickflash.user.mapper.UserMapper;
 import com.quickflash.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
+import java.util.Set;
+
 @RequiredArgsConstructor
 @Service
 @Slf4j
 public class UserBO {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public boolean addUser(
             String loginId
@@ -53,6 +58,11 @@ public class UserBO {
     public String getUserNameById(int id){
         return userRepository.findNameById(id);
     }
+    public Map<Integer,String> getIdToUserNameMapByIdSet(Set<Integer> idSet){
+       return userMapper.selectIdToUserNameMapByIdSet(idSet);
+
+    }
+
 
 
 }

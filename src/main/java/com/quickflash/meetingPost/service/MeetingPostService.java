@@ -2,9 +2,11 @@ package com.quickflash.meetingPost.service;
 
 
 import com.quickflash.comment.service.CommentBO;
+import com.quickflash.comment.service.CommentService;
 import com.quickflash.meetingPost.domain.MeetingPost;
 import com.quickflash.meetingPost.dto.BeforeMeetingDto;
 import com.quickflash.meetingPost.dto.ThumbnailDto;
+import com.quickflash.user.service.UserBO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class MeetingPostService {
 
     private final MeetingPostBO meetingPostBO;
     private final CommentBO commentBO;
+    private final CommentService commentService;
+    private final UserBO userBO;
 
     public ViewOption decideViewMakeWhenMeetingClicked(int sessionId, Integer postId, LocalDateTime currentTime){
         Map<String,Object> result = new HashMap<>();
@@ -114,8 +118,8 @@ public class MeetingPostService {
                 .createdAt(meetingPost.getCreatedAt())
                 .updatedAt(meetingPost.getUpdatedAt())
                 .joinList(joinDtoList)
-                .commentList(commentBO.getCommentDtoListByPostId(postId))
-                .userName(meetingPost.getUserName())  // 필요 시
+                .commentList(commentService.generateCommentDtoListByPostId(postId))
+                .userName(userBO.getUserNameById(meetingPost.getUserId()))  // 필요 시
                 .build();
     }
 
