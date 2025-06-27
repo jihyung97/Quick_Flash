@@ -28,23 +28,23 @@
 
 </head>
 <body>
-    <div class="small-page container">
+    <div class="small-page container" id="report-making"  th:data-exercise-type="${meetingPost.exerciseType}">
         <div class="w-75 join-list" >
             <div><h1>참여자list</h1></div>
             <div  class="w-75">
-                <div class="d-flex justify-content-between meeting-join" th:each="join : ${meetingPost.joinList}">
+                <div class="d-flex justify-content-between meeting-join" th:each="meetingJoin : ${meetingPost.meetingJoinList}">
                     <div>
-                        <span th:text="${join.userName}">참가자</span>
-                    </div>
+                        <span th:text="${meetingJoin.userName}"  >참가자</span>
+                      </div>
                     <div class="d-flex justify-content-between">
                         <div class="ml-2">
-                            <input type="checkbox" /> 참여
+                            <input type="radio"  th:value="'참여'" th:data-userId="${join.userId}" class="status-radio" /> 참여
                         </div>
                         <div class="ml-2">
-                            <input type="checkbox" /> 중간낙오
+                            <input type="radio"  th:value="'중간낙오'" th:data-userId="${join.userId}" class="status-radio" /> 중간낙오
                         </div>
                         <div class="ml-2">
-                            <input type="checkbox" /> 불참
+                            <input type="radio"  th:value="'불참'" th:data-userId="${join.userId}" class="status-radio" /> 불참
                         </div>
                     </div>
                 </div>
@@ -56,10 +56,10 @@
         <div class="mt-5">
             <div class="d-flex">
                 <div>
-                    <div><span>페이스 0:00 min/km</span></div>
-                    <div><span>속도 00km/h</span></div>
-                    <div><span>power W</span></div>
-                    <span>총 거리: 50km</span>
+                    <div><span id="speed-running">페이스 0:00 min/km</span></div>
+                    <div><span id="speed-cycle">속도 00km/h</span></div>
+                    <div><span id="power">power W</span></div>
+                    <span id="distance">총 거리: 50km</span>
                 </div>
                 <div class="ml-5 d-flex align-items-center" >
                    <button>strava 연동</button>
@@ -73,16 +73,72 @@
             <div>
                 <div class="mt-5"><h2>운동 briefing</h2></div>
                 <div>
-                    <input type="text" width="200">
+                    <input type="text" width="200" id="content">
                 </div>
             </div>
             <div class="d-flex justify-content-end">
-                <button>최종report보기</button>
+                <button id="btn-submit">최종report보기</button>
                 <button> 닫기</button>
             </div>
         </div>
 
+
     </div>
+    <script>
+
+        $(function(){
+           $("#btn-submit").on("click", function () {
+                let exerciseType = $("#report-making").data("exercise-type");
+
+                let speed, power;
+
+                if (exerciseType === "running") {
+                    speed = $("#speed-running").val();
+                    power = null;
+                } else {
+                    speed = $("#speed-cycle").val();
+                    power = $("#power").val();
+                }
+
+                let distance = $("#distance").val();
+                let content = $("#content").val();
+
+              if (speed === "" || isNaN(Number(speed))) {
+                    alert("속도를 다시 입력하세요");
+                    return false;
+                }
+                speed = Number(speed);
+
+                if (power !== null) {
+                    if (power === "" || isNaN(Number(power))) {
+                        alert("파워를 다시 입력하세요");
+                        return false;
+                    }
+                    power = Number(power);
+                }
+
+                if (distance === "" || isNaN(Number(distance))) {
+                    alert("거리를 다시 입력하세요");
+                    return false;
+                }
+                distance = Number(distance);
+
+                let radioList = document.querySelectorAll('.status-radio');
+                let statusMap = {};
+
+                radioList.forEach(radio => {
+                    if (radio.checked) {
+                        let userId = radio.getAttribute('data-userid'); // 소문자 권장
+                        statusMap[userId] = radio.value;
+                    }
+                });
+
+    // formData 생성, AJAX 전송 등 계속 진행하세요.
+                });
+
+
+              });
+    </script>
 </body>
 <script>
 

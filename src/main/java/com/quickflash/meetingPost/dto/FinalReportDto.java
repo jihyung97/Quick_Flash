@@ -1,0 +1,49 @@
+package com.quickflash.meetingPost.dto;
+
+import com.quickflash.comment.dto.CommentDto;
+import com.quickflash.meeting_join.dto.MeetingJoinDto;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public class FinalReportDto {
+
+    private Integer postId;
+    private Integer userId;
+
+
+    private String title;
+    private String location;
+
+    private Double latitude;   // 위도 (Y)
+    private Double longitude;  // 경도 (X)
+    private String restLocation;
+
+    private LocalDateTime expiredAt;
+    private String contentText;
+
+
+    private String exerciseType;
+    private Double distance;
+    private Double speed;
+    private Double power;
+
+    private Integer headcount;
+
+    private Boolean isAbandonOkay;
+
+    private Boolean isLocationConnectedToKakao;
+    private Boolean isUserAbilityConnectedToStrava;
+    private Boolean isMyPaceShown;
+    private Boolean isMyFtpShown;
+
+
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    List<MeetingJoinDto> joinList;
+    List<CommentDto> commentList;
+    private String userName;
+    //ObjectUtils.isEmpty : null or  ''
+    private String imagePath;
+}

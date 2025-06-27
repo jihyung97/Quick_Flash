@@ -23,5 +23,5 @@ public class ReportMakingDto {
     private String imagePath;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    List<MeetingJoinDto> joinList;
+    List<MeetingJoinDto> meetingJoinList;
 }
