@@ -1,13 +1,11 @@
-package com.quickflash.join.domain;
+package com.quickflash.meeting_join.domain;
 
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Data
 @Builder
-public class Join{
+public class MeetingJoin {
 
     private int id;
     private int userId;

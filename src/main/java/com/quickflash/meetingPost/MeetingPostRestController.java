@@ -3,6 +3,7 @@ package com.quickflash.meetingPost;
 import com.quickflash.meetingPost.domain.MeetingPost;
 import com.quickflash.meetingPost.mapper.MeetingPostMapper;
 import com.quickflash.meetingPost.service.MeetingPostBO;
+import com.quickflash.meetingPost.service.Status;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,7 +95,7 @@ public class MeetingPostRestController {
 
                     .isMyPaceShown(isMyPaceShown != null ? isMyPaceShown : false)
                     .isMyFtpShown(isMyFtpShown != null ? isMyFtpShown : false)
-                    .currentStatus("모임 전")
+                    .currentStatus(Status.BEFORE_MEETING.name())
                     .build();
 
             meetingPostBO.addMeetingPost(meetingPost);

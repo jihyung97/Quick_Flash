@@ -19,8 +19,8 @@ public class MeetingPost {
     // 위경도 좌표: POINT에서 분리
     private Double latitude;   // 위도 (Y)
     private Double longitude;  // 경도 (X)
-    private String restLocation;
 
+    private String restLocation;
     private LocalDateTime expiredAt;
     private String contentText;
     private String afterMeetingContent;

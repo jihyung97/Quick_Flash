@@ -4,8 +4,6 @@ import com.quickflash.comment.dto.CommentDto;
 import com.quickflash.comment.entity.CommentEntity;
 import com.quickflash.comment.mapper.CommentMapper;
 import com.quickflash.comment.repository.CommentRepository;
-import com.quickflash.join.entity.JoinEntity;
-import com.quickflash.join.repository.JoinRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

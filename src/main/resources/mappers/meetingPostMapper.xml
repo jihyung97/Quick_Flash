@@ -129,15 +129,16 @@
         )
     </insert>
 
-    <select id="selectMeetingPostById" resultType="com.quickflash.meetingPost.domain.MeetingPost">
+    <select id="selectMeetingPostById"  parameterType = "int" resultType="com.quickflash.meetingPost.domain.MeetingPost">
         SELECT
         `id`,
         `userId`,
         `title`,
         `location`,
-        `restLocation`,
+
         ST_Y(locationpoint) AS `latitude`,
         ST_X(locationpoint) AS `longitude`,
+        `restLocation`,
         `expiredAt`,
         `contentText`,
         `afterMeetingContent`,
@@ -146,6 +147,7 @@
         `speed`,
         `power`,
         `minHeadCount`,
+        `maxHeadCount`,
         `isRestExist`,
         `isAbandonOkay`,
         `isAfterPartyExist`,

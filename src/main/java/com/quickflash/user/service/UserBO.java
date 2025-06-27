@@ -59,6 +59,10 @@ public class UserBO {
         return userRepository.findNameById(id);
     }
     public Map<Integer,String> getIdToUserNameMapByIdSet(Set<Integer> idSet){
+
+        if(idSet == null || idSet.isEmpty()){
+            return null;
+        }
        return userMapper.selectIdToUserNameMapByIdSet(idSet);
 
     }

@@ -1,15 +1,13 @@
-package com.quickflash.comment.repository;
+package com.quickflash.meeting_join.repository;
 
-import com.quickflash.comment.entity.CommentEntity;
 import com.quickflash.meeting_join.entity.MeetingJoinEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CommentRepository extends JpaRepository<CommentEntity,Integer> {
-    List<CommentEntity> findByPostId(int postId);
-
+public interface MeetingJoinRepository extends JpaRepository<MeetingJoinEntity,Integer> {
+    List<MeetingJoinEntity> findByPostId(int postId);
     Optional<MeetingJoinEntity> findByPostIdAndUserId(int postId, int userId);
 }
 

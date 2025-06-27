@@ -68,34 +68,60 @@
 
       </div>
     </div>
-    <div id="meeting-post-section ">
-      <div class="m-3 meeting-post d-flex justify-content-between bg-color" th:each="meetingPost : ${meetingPostList}">
-        <div id="image-thumbnail-section" class="bg-warning">
-          <img src="">
+    <div id="meeting-post-section">
+      <a th:href="@{/meeting-post/before-meeting(postId=${meetingPost.postId})}"
+         th:each="meetingPost : ${meetingPostList}"
+         class="text-dark text-decoration-none">
+
+        <div class="m-3 meeting-post d-flex justify-content-between bg-color" style="cursor: pointer;">
+
+          <!-- 썸네일 이미지 -->
+          <div id="image-thumbnail-section" class="bg-warning">
+            <img alt="썸네일" />
+          </div>
+
+          <!-- 모임 정보 -->
+          <div>
+            <div>
+              <span th:text="${meetingPost.title}">제목</span>
+            </div>
+
+            <th:block th:if="${meetingPost.exerciseType == 'RUNNING'}">
+              <div>
+                예상 페이스: <span th:text="${meetingPost.speed}">0</span> min/km
+              </div>
+            </th:block>
+
+            <th:block th:unless="${meetingPost.exerciseType == 'RUNNING'}">
+              <div>
+                예상 파워: <span th:text="${meetingPost.power}">300</span> W
+              </div>
+              <div>
+                예상 속도: <span th:text="${meetingPost.speed}">00</span> km/h
+              </div>
+            </th:block>
+
+            <div>
+              모임 장소: <span th:text="${meetingPost.location}">반포gs</span>
+            </div>
+          </div>
+
+          <!-- 참여 정보 -->
+          <div>
+            <div>
+              <span>남은 시간: </span>
+              <span>24시간 30분</span>
+            </div>
+            <div>
+              <span>0</span> /
+              <span th:text="${meetingPost.maxHeadCount}">5</span>
+            </div>
+          </div>
+
         </div>
-        <div>
-          <div><span th:text="${meetingPost.title}">제목</span></div>
-          <th:block th:if="${meetingPost.exerciseType == 'RUNNING'}">
-            <div>예상 페이스: <span th:text="${meetingPost.speed}">0</span> min/km</div>
-          </th:block>
-
-          <!-- 그 외 (사이클 등) -->
-          <th:block th:unless="${meetingPost.exerciseType == 'RUNNING'}">
-            <div>예상 파워: <span th:text="${meetingPost.power}">300</span> w</div>
-            <div>예상 속도: <span th:text="${meetingPost.speed}">00</span></div>
-          </th:block>
-
-          <div>모임 장소: <span th:text="${meetingPost.location}">반포gs</span></div>
-        </div>
-        <div>
-
-          <div><span>남은 시간: 24시간 30분</span></div>
-          <div><span>0명</span>/<span th:text="${meetingPost.maxHeadCount}"></span></div>
-
-        </div>
-
-      </div>
+      </a>
     </div>
+
 
   </div>
   <div id="main-right">
@@ -159,7 +185,7 @@
        });
     });
 
-    
+
 
 
 

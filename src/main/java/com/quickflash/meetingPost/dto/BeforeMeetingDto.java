@@ -1,12 +1,11 @@
 package com.quickflash.meetingPost.dto;
 
 import com.quickflash.comment.dto.CommentDto;
-import com.quickflash.comment.entity.CommentEntity;
-import com.quickflash.join.dto.JoinBeforeMeetingDto;
+import com.quickflash.meeting_join.dto.MeetingJoinDto;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.mapping.Join;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class BeforeMeetingDto {
     private LocalDateTime expiredAt;
     private String contentText;
 
-
+    private String remainedTime;
     private String exerciseType;
     private Double distance;
     private Double speed;
@@ -49,7 +48,7 @@ public class BeforeMeetingDto {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    List<JoinBeforeMeetingDto> joinList;
+    List<MeetingJoinDto> joinList;
     List<CommentDto> commentList;
     private String userName;
 

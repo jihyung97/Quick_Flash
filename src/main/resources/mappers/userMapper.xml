@@ -2,15 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.quickflash.comment.mapper.CommentMapper">
-    <select id="selectIdToUserNameMapByIdSet" resultType="map">
+<mapper namespace="com.quickflash.user.mapper.UserMapper">
+    <select id="selectIdToUserNameMapByIdSet" parameterType="java.util.Set" resultType="map">
         SELECT
-        id AS key,
-        name AS value
-        FROM
-        user
-        WHERE
-        id IN
+        id AS `key`,
+        name AS `value`
+        FROM user
+        WHERE id IN
         <foreach item="id" collection="idSet" open="(" separator="," close=")">
             #{id}
         </foreach>

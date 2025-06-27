@@ -10,7 +10,6 @@ import java.util.Set;
 
 @Mapper
 public interface UserMapper {
-   Map<Integer,String> selectIdToUserNameMapByIdSet(Set<Integer> idSet);
-
+   Map<Integer, String> selectIdToUserNameMapByIdSet(@Param("idSet") Set<Integer> idSet);
 
 }

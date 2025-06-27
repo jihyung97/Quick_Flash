@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+>
 <head>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
@@ -29,16 +32,21 @@
         <div class="w-75 join-list" >
             <div><h1>참여자list</h1></div>
             <div  class="w-75">
-                <div class="d-flex justify-content-between join">
-                    <div><span>jihyung97</span></div>
-                    <div class="d-flex justify-content-between">
-
-                        <div class="ml-2">참여</div>
-                        <div class="ml-2">중간낙오</div>
-                        <div class="ml-2">불참</div>
+                <div class="d-flex justify-content-between meeting-join" th:each="join : ${meetingPost.joinList}">
+                    <div>
+                        <span th:text="${join.userName}">참가자</span>
                     </div>
-
-
+                    <div class="d-flex justify-content-between">
+                        <div class="ml-2">
+                            <input type="checkbox" /> 참여
+                        </div>
+                        <div class="ml-2">
+                            <input type="checkbox" /> 중간낙오
+                        </div>
+                        <div class="ml-2">
+                            <input type="checkbox" /> 불참
+                        </div>
+                    </div>
                 </div>
             </div>
 

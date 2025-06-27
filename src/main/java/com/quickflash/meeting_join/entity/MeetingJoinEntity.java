@@ -1,20 +1,18 @@
-package com.quickflash.join.entity;
+package com.quickflash.meeting_join.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
-
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
-@Table(name="join")
+@Table(name="meeting_join")
 @Entity
-public class JoinEntity {
+public class MeetingJoinEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

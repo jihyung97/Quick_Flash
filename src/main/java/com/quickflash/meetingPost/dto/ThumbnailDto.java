@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.cglib.core.Local;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,6 +14,7 @@ public class ThumbnailDto {
     String title;
     String location;
     LocalDateTime expiredAt;
+    Duration remainedTime;
     String exerciseType;
     double distance;
     double speed;

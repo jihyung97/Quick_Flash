@@ -7,6 +7,7 @@ import com.quickflash.meetingPost.service.MeetingPostService;
 import com.quickflash.meetingPost.service.ViewOption;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/meeting-post")
+@Slf4j
 public class MeetingPostController {
     private final MeetingPostBO meetingPostBO;
     private final MeetingPostService meetingPostService;
@@ -38,7 +40,7 @@ public class MeetingPostController {
         }
         //어디로 갈지 option 정함
        ViewOption option = meetingPostService.decideViewWhenGoToMakeMeeting(sessionId,postId, LocalDateTime.now());
-
+        log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + option.name());
 
 
         if (option == ViewOption.UPDATE_MakeMeeting_VIEW && postId != null) {
@@ -69,12 +71,18 @@ public class MeetingPostController {
         if(sessionId == null) {
             return "redirect:/main-page/before-meeting";
         }
+
         ViewOption option =  meetingPostService.decideViewWhenMeetingPostClicked(sessionId,postId, LocalDateTime.now());
+        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + option.name());
+        if( ViewOption.REPORT_MAKING_VIEW.equals(option)){
+            return "redirect:/meeting-post/report-making?postId=" + postId;
+        }
         if(!(option == ViewOption.BEFORE_MAKING_LEADER_VIEW || option == ViewOption.BEFORE_MAKING_MEMBER_VIEW || option == ViewOption.BEFORE_MAKING_NONE_VIEW)){
             return "redirect:/main-page/before-meeting";
         }
 
             model.addAttribute("meetingPost", meetingPostService.generateBeforeMeetingDto(postId));
+
         if(option == ViewOption.BEFORE_MAKING_LEADER_VIEW) {
             model.addAttribute("userType", "leader");
         }else if(option == ViewOption.BEFORE_MAKING_MEMBER_VIEW) {
@@ -92,9 +100,27 @@ public class MeetingPostController {
     public String finalReport(){
         return "meeting_post/finalReport";
     }
+
+
+
     //localhost:8080/meeting-post/report-making
     @RequestMapping("/report-making")
-    public String reportMaking(){
+    public String reportMaking(Model model, HttpSession session,@RequestParam(value="postId") Integer postId) {
+        Integer sessionId = (Integer) session.getAttribute("userId");
+
+        if (sessionId == null || postId == null) {
+            return "redirect:/main-page/before-meeting";
+        }
+
+        ViewOption option = meetingPostService.decideViewWhenMeetingPostClicked(sessionId, postId, LocalDateTime.now());
+        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + option.name());
+        if (!(option == ViewOption.REPORT_MAKING_VIEW)) {
+            return "redirect:/main-page/before-meeting";
+        }
+
+        model.addAttribute("meetingPost", meetingPostService.generateReportMakingDto(postId));
+
+
         return "meeting_post/reportMaking";
     }
 }

@@ -53,8 +53,9 @@ public class MeetingPostBO {
            return null; // or throw exception
        }
 
-        if(currentTime.isAfter(expiredAt)  && statusOfMeeting.equals("기록 전")){
-            updateStatusById("기록페이지",id);
+        if(currentTime.isAfter(expiredAt)  && statusOfMeeting.equals(Status.BEFORE_MEETING.name())){
+            updateStatusById(Status.REPORT_MAKING.name(), id);
+            expiredAtAndStatus.put("currentStatus", Status.REPORT_MAKING.name());
 
         }
 
