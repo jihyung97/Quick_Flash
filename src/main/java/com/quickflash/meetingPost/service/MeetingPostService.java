@@ -95,7 +95,7 @@ public class MeetingPostService {
 
         if (Status.BEFORE_MEETING.name().equals(result.get("currentStatus"))) {
             if (durationSinceExpired.toSeconds() >= -10800) {
-                return Qualification.AFTER_UPDATE_TIME; // 삭제 제한 상태
+                return Qualification.AFTER_UPDATE_TIME; // 모임전 3시간 부터 모임바로 전까지 제한
             } else {
                 return Qualification.UPDATE_OK_BEFORE_MEETING;
             }

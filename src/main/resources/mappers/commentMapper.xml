@@ -5,6 +5,7 @@
 
     <select id="selectCommentDtoListByPostId" resultType="com.quickflash.comment.dto.CommentDto">
         SELECT
+          `id`,
           `postId`,
           `userId`,
           `content`,

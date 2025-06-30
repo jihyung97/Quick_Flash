@@ -150,12 +150,12 @@
                 distance = Number(distance);
 
                 let radioList = document.querySelectorAll('.status-radio');
-                let statusMap = {};
+                let userIdToJoinStatus = {};
 
                 radioList.forEach(radio => {
                     if (radio.checked) {
                         let userId = radio.getAttribute('data-userid'); 
-                        statusMap[userId] = radio.value;
+                        userIdToJoinStatus[userId] = radio.value;
                     }
                 });
 
@@ -175,7 +175,7 @@
                     }
 
                     //statusMap json화해서 저장한다
-                    formData.append("statusMap", JSON.stringify(statusMap));
+                   
                     console.log([...formData.entries()]);
 
                      
@@ -195,8 +195,26 @@
                         }
                     });
 
-              });
+                      formData = new FormData();
+                    formData.append("postId", postId);
+                    formData.append("userIdToJoinStatus", JSON.stringify(userIdToJoinStatus));  // { "1": "approved", "2": "rejected" } 같은 형태
+
+                    $.ajax({
+                        url: "/meeting-join/update",
+                        type: "POST",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            alert("참여자의 상태가 정상적으로 변경되었습니다.");
+                        },
+                        error: function (data) {
+                            console.error(data);
+                            alert("제출 중 오류가 발생했습니다.");
+                        }
+                    });
             });
+    });
     </script>
 </body>
  

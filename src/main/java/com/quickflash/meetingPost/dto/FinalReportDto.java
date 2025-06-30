@@ -42,7 +42,8 @@ public class FinalReportDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     List<MeetingJoinDto> joinList;
-    List<CommentDto> commentList;
+    List<CommentDto> commentDtoListBeforeMeeting;
+    List<CommentDto> commentDtoListAfterMeeting;
     private String userName;
     //ObjectUtils.isEmpty : null or  ''
     private String imagePath;

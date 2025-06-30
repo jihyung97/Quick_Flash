@@ -4,15 +4,14 @@ import com.quickflash.comment.dto.CommentDto;
 import com.quickflash.comment.entity.CommentEntity;
 import com.quickflash.comment.mapper.CommentMapper;
 import com.quickflash.comment.repository.CommentRepository;
+import com.quickflash.meetingPost.service.MeetingPostBO;
+import com.quickflash.meetingPost.service.Qualification;
 import com.quickflash.user.service.UserBO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -20,6 +19,7 @@ import java.util.Set;
 public class CommentService {
     private final UserBO userBO;
     private final CommentMapper commentMapper;
+    private final MeetingPostBO meetingPostBO;
 
 
     public List<CommentDto> generateCommentDtoListByPostId(int postId){
@@ -35,6 +35,46 @@ public class CommentService {
             commentDto.setUserName(idToUserName.get(commentDto.getUserId()));
         }
         return commentDtoList;
+    }
+    //commentDtoList 는 이미 최신순으로 나열되어 있으므로 그냥 순회하며 before after 구분해 넣어도 각각 최신순 됨
+    public Map<String,List<CommentDto>> seperateCommentDtoListByBeforeOrAfter(List<CommentDto> commentDtoList){
+        Map<String,List<CommentDto>> result = new HashMap<>();
+        List<CommentDto> commentDtoListBefore = new ArrayList<>();
+        List<CommentDto> commentDtoListAfter = new ArrayList<>();
+        for(CommentDto commentDto : commentDtoList){
+            if(commentDto.isBeforeMeeting()){
+                commentDtoListBefore.add(commentDto);
+            }else{
+                commentDtoListAfter.add(commentDto);
+            }
+        }
+        result.put("before", commentDtoListBefore);
+        result.put("after", commentDtoListAfter);
+        return result;
+    }
+
+    public Qualification isCommentCreateOk(int postId, int sessionId){
+        if(!meetingPostBO.isPostExist(postId)){
+            return Qualification.POST_NOT_EXIST;
+        }
+        return Qualification.OK;
+
+    }
+
+    public Qualification isCommentUpdateOk(int postId, int sessionId){
+        if(!meetingPostBO.isPostExist(postId)){
+            return Qualification.POST_NOT_EXIST;
+        }
+        return Qualification.OK;
+
+    }
+
+    public Qualification isCommentDeleteOk(int postId, int sessionId){
+        if(!meetingPostBO.isPostExist(postId)){
+            return Qualification.POST_NOT_EXIST;
+        }
+        return Qualification.OK;
+
     }
 
 

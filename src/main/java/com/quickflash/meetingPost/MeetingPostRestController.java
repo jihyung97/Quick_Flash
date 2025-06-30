@@ -158,13 +158,13 @@ public class MeetingPostRestController {
 
 
         Qualification option = meetingPostService.isMeetingPostUpdateOk(postId,sessionId);
-        log.info("업데이트 되도 되는지 + {}", option.name());
+        log.info(" update/create 업데이트 되도 되는지 + {}", option.name());
         if(!(option.equals(Qualification .UPDATE_OK_BEFORE_MEETING) || option.equals(Qualification .UPDATE_OK_AFTER_MEETING))){
             result.put("result", Response.FAILED.name());
             return result;
 
         }
-        try {
+
             if(option.equals(Qualification .UPDATE_OK_BEFORE_MEETING)){
                 meetingPostBO.updateMeetingPostWhenBeforeMeeting(
                         sessionId,
@@ -193,7 +193,7 @@ public class MeetingPostRestController {
 
                 );
             }else{
-
+                log.info("updateMeetingPostWhenAfeterMeeting에서 업데이트 되고있나");
                 meetingPostBO.updateMeetingPostWhenAfterMeeting(
 
                         sessionId,
@@ -213,13 +213,10 @@ public class MeetingPostRestController {
 
             }
             result.put("result", Response.RESULT_OK.name());
+            log.info( "업데이트 결과는 + {}",result.get("result"));
             return result;
 
-        }catch (Exception e) {
-            log.error("updateMeetingPost 실패", e);
-            result.put("result", Response.FAILED.name());
-            return result;
-        }
+
 
 
     //여기에 더 추가되는 거 있으면 추가.........

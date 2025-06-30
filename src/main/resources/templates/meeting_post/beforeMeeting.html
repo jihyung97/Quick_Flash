@@ -113,13 +113,13 @@
             <div><h2>댓글 리스트</h2></div>
             <div th:each="comment : ${meetingPost.commentList}">
                 <div class="d-flex comment-dto">
-                    <div><span th:text="${comment.writerName}">나는 쉬지롱</span></div>
+                    <div><span th:text="${comment.userName}">나는 쉬지롱</span></div>
                     <div class="ml-2"><span th:text="${comment.content}">어우 고생들 많으십니다^^</span></div>
                 </div>
             </div>
             <div class="d-flex mt-2">
-                <input type="text" placeholder="댓글 작성">
-                <button>댓글 달기</button>
+                <input type="text"  id="comment-content" placeholder="댓글 작성">
+                <button id="btn-comment">댓글 달기</button>
             </div>
         </div>
 
@@ -186,6 +186,35 @@
                     });
 
               });
+
+              $("#btn-comment").on("click", function () {
+                
+                let content = $("#comment-content).val();
+                let postId = $("#before-meeting").data("postId");
+                let isBeforeMeeting = "BEFORE"
+               
+                
+               
+              
+                     
+                    $.ajax({
+                        url: "/meeting-join/create"  , 
+                        type: "POST",
+                        data: {"isSafetyAgree":isSafetyAgree, "postId":postId},
+                       
+                        success: function (data) {
+                            alert(" 성공적으로 join  되었습니다");
+                            // 필요 시 페이지 이동 또는 폼 초기화
+                        },
+                        error: function (data) {
+                            console.error(data);
+                            alert("제출 중 오류가 발생했습니다.");
+                        }
+                    });
+
+              });
+
+              
         });
         
 </script>

@@ -1,6 +1,8 @@
 package com.quickflash.meeting_join;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quickflash.meetingPost.repository.MeetingPostRepository;
 import com.quickflash.meetingPost.service.MeetingPostBO;
 import com.quickflash.meetingPost.service.MeetingPostService;
@@ -102,7 +104,7 @@ public class MeetingJoinRestController {
     @PostMapping("/update")
     public Map<String,Object> udpateMeetingJoin(HttpSession session,
                                                 @RequestParam int postId,
-                                                @RequestParam("userIdToJoinStatus") Map<Integer,String> userIdToJoinStatus
+                                                @RequestParam("userIdToJoinStatus") String userIdToJoinStatusJson
 
 
     ){
@@ -116,12 +118,23 @@ public class MeetingJoinRestController {
             result.put("result", Response.FAILED.name());
             return result;
         }
+        //meetingJoin 유효성 검사가 되지않으면 result는 fail
         if(!Qualification.UPDATE_OK_AFTER_MEETING .equals(meetingJoinService.isMeetingJoinUpdateOk(sessionId,postId)) ){
             result.put("result", Response.FAILED);
             return result;
         }
         log.info("updateMeetingJoin {}", meetingJoinService.isMeetingJoinUpdateOk(sessionId,postId));
         try{
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<Integer, String> userIdToJoinStatus  ;
+
+
+                userIdToJoinStatus = mapper.readValue(
+                        userIdToJoinStatusJson,
+                        new TypeReference<Map<Integer, String>>() {}
+                );
+
 
             meetingJoinBO.updateMeetingJoinStatusByPostIdAndUserIdList(postId,userIdToJoinStatus);
             result.put("result", Response.RESULT_OK);

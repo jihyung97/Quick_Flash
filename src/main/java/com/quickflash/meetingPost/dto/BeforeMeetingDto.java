@@ -52,4 +52,5 @@ public class BeforeMeetingDto {
     List<CommentDto> commentList;
     private String userName;
 
+
 }

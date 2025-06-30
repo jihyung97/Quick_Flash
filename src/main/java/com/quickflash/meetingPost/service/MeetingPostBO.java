@@ -184,7 +184,7 @@ public class MeetingPostBO {
                     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 모임후에 업데이트시엔 무조건 final_report로! (report_making에서  final_report로)
                     .updatedAt(LocalDateTime.now()) // 수정일 업데이트
                     .build();
-            meetingPostMapper.updateMeetingPostBeforeMeetingById(updatedMeetingPost );
+            meetingPostMapper.updateMeetingPostAfterMeeting(updatedMeetingPost );
             return true;
 
             }catch(Exception e){

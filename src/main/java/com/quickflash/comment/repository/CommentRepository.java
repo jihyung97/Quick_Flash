@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<CommentEntity,Integer> {
     List<CommentEntity> findByPostId(int postId);
 
-    Optional<MeetingJoinEntity> findByPostIdAndUserId(int postId, int userId);
+    Optional<MeetingJoinEntity> findByPostId(int postId, int userId);
 }
 

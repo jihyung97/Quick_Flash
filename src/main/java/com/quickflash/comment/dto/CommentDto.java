@@ -11,7 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Data
 @Builder
 public class CommentDto {
-
+    private int id; //나중에 지울때 반드시 필요함
     private String userName;
     private int userId;
     private int postId;
