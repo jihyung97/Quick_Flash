@@ -18,5 +18,10 @@ public interface MeetingPostMapper {
     MeetingPost selectMeetingPostById(int id);
     List<Map<String,Object>> selectMeetingPostListForThumbnailTest();
 
+    int updateMeetingPost(MeetingPost meetingPost);
+    int updateMeetingPostBeforeMeetingById (MeetingPost meetingPost);
+    int updateMeetingPostAfterMeeting(MeetingPost meetingPost);
+
+
 
 }

@@ -17,6 +17,7 @@ public class ReportMakingDto {
     private String location;
     private String contentText;
     private String exerciseType;
+    private LocalDateTime expiredAt;
     private Double distance;
     private Double speed;
     private Double power;

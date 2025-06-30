@@ -16,7 +16,7 @@
 </head>
 <body>
 <div class="container bg-color">
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end" id="before-meeting" th:data-post-id="${meetingPost.postId}">
         <div>
             <div class="d-flex">
                 <div><h4>남은시간:</h4></div>
@@ -144,10 +144,10 @@
             <div class="d-flex mt-3">
                 <div class="d-flex">
                     <div><span>모든 사고 책임은 개인에게 있음을 동의합니다</span></div>
-                    <div><input type="checkbox" name="agreePolicy"></div>
+                    <div><input type="checkbox" name="agreePolicy" id="isSafetyAgree"></div>
                 </div>
                 <div class="ml-3">
-                    <button>참가</button>
+                    <button id="btn-join">참가</button>
                 </div>
             </div>
         </div>
@@ -159,5 +159,35 @@
         <button>모임취소</button>
     </div>
 </div>
+
+<script>
+    $(function(){
+      $("#btn-join").on("click", function () {
+                
+                let isSafetyAgree = $("#isSafetyAgree").is(":checked");
+               let postId = $("#before-meeting").data("postId");
+                
+                alert(isSafetyAgree);
+              
+                     
+                    $.ajax({
+                        url: "/meeting-join/create"  , 
+                        type: "POST",
+                        data: {"isSafetyAgree":isSafetyAgree, "postId":postId},
+                       
+                        success: function (data) {
+                            alert(" 성공적으로 join  되었습니다");
+                            // 필요 시 페이지 이동 또는 폼 초기화
+                        },
+                        error: function (data) {
+                            console.error(data);
+                            alert("제출 중 오류가 발생했습니다.");
+                        }
+                    });
+
+              });
+        });
+        
+</script>
 </body>
 </html>

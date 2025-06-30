@@ -185,6 +185,82 @@
         `id` = #{id}
     </select>
 
+    <update id="updateMeetingPost" parameterType="com.quickflash.meetingPost.domain.MeetingPost">
+        UPDATE `meetingPost`
+        SET
+        `title` = #{title},
+        `location` = #{location},
+        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')'), 4326),
+        `restLocation` = #{restLocation},
+        `expiredAt` = #{expiredAt},
+        `contentText` = #{contentText},
+        `afterMeetingContent` = #{afterMeetingContent},
+        `exerciseType` = #{exerciseType},
+        `distance` = #{distance},
+        `speed`= #{speed},
+        `power` = #{power},
+        `minHeadCount` = #{minHeadCount},
+        `maxHeadCount` = #{maxHeadCount},
+        `isRestExist` = #{isRestExist},
+        `isAbandonOkay` = #{isAbandonOkay},
+        `isAfterPartyExist` = #{isAfterPartyExist},
+        `isLocationConnectedToKakao` = #{isLocationConnectedToKakao},
+        `isUserAbilityConnectedToStrava` = #{isUserAbilityConnectedToStrava},
+        `isMyPaceShown` = #{isMyPaceShown},
+        `isMyFtpShown` = #{isMyFtpShown},
+        `currentStatus` = #{currentStatus},
+        `updatedAt` = #{updatedAt}
+        WHERE `id` = #{id}
+    </update>
+    <update id="updateMeetingPostBeforeMeeting" parameterType="com.quickflash.meetingPost.domain.MeetingPost">
+        UPDATE `meetingPost`
+        SET
+        `title` = #{title},
+        `location` = #{location},
+        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')'), 4326),
+        `restLocation` = #{restLocation},
+        `expiredAt` = #{expiredAt},
+        `contentText` = #{contentText},
+
+
+        `distance` = #{distance},
+        `speed`= #{speed},
+        `power` = #{power},
+        `minHeadCount` = #{minHeadCount},
+        `maxHeadCount` = #{maxHeadCount},
+        `isRestExist` = #{isRestExist},
+        `isAbandonOkay` = #{isAbandonOkay},
+        `isAfterPartyExist` = #{isAfterPartyExist},
+        `isLocationConnectedToKakao` = #{isLocationConnectedToKakao},
+        `isUserAbilityConnectedToStrava` = #{isUserAbilityConnectedToStrava},
+        `isMyPaceShown` = #{isMyPaceShown},
+        `isMyFtpShown` = #{isMyFtpShown},
+
+        `updatedAt` = #{updatedAt}
+        WHERE `id` = #{id}
+    </update>
+
+    <update id="updateMeetingPostAfterMeeting" parameterType="com.quickflash.meetingPost.domain.MeetingPost">
+        UPDATE `meetingPost`
+        SET
+
+        `location` = #{location},
+        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')'), 4326),
+        `restLocation` = #{restLocation},
+
+        `afterMeetingContent` = #{afterMeetingContent},
+
+        `distance` = #{distance},
+        `speed`= #{speed},
+        `power` = #{power},
+
+        `isLocationConnectedToKakao` = #{isLocationConnectedToKakao},
+        `isUserAbilityConnectedToStrava` = #{isUserAbilityConnectedToStrava},
+
+        `currentStatus` = #{currentStatus},
+        `updatedAt` = #{updatedAt}
+        WHERE `id` = #{id}
+    </update>
 
 
 </mapper>

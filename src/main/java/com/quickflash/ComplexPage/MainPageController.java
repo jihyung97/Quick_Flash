@@ -1,6 +1,7 @@
 package com.quickflash.ComplexPage;
 
 import com.quickflash.meetingPost.service.MeetingPostBO;
+import com.quickflash.meetingPost.service.MeetingPostDtoMaker;
 import com.quickflash.meetingPost.service.MeetingPostService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class MainPageController {
 
     private final MeetingPostBO meetingPostBO;
     private final MeetingPostService meetingPostService;
+    private final MeetingPostDtoMaker meetingPostDtoMaker;
     //localhost:8080/main-page/before-meeting
     @RequestMapping("/before-meeting")
     public String MainPageBeforeMeeting(
@@ -36,7 +38,7 @@ public class MainPageController {
             userInfo.put("userName",userName);
             userInfo.put("userLoginId",userLoginId);
             model.addAttribute("userInfo", userInfo);
-            model.addAttribute("meetingPostList", meetingPostService.generateMeetingPostThumbnailDtoListForTest() );
+            model.addAttribute("meetingPostList", meetingPostDtoMaker.generateMeetingPostThumbnailDtoListForTest() );
             //log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + meetingPostService.generateMeetingPostThumbnailDtoListForTest().get(0).getTitle());
         }
         return "main_page/beforeMeeting";

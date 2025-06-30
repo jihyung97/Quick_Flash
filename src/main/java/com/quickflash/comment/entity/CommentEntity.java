@@ -24,10 +24,10 @@ public class CommentEntity {
     private boolean isBeforeMeeting;
     private String isSafetyAgree;
     @CreationTimestamp
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
 
 }

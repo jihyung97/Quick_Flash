@@ -1,0 +1,19 @@
+package com.quickflash.meetingPost.service;
+
+public enum Qualification {
+    OK,
+    TIME_PASSED,
+    JOIN_ALREADY_EXISTS,
+    ERROR_GO_TO_MAIN,
+    POST_NOT_EXIST,
+    NOT_LEADER,
+    AFTER_DELETE_TIME,
+    AFTER_UPDATE_TIME,
+    UPDATE_OK_BEFORE_MEETING,
+    UPDATE_OK_AFTER_MEETING,
+    CREATE_OK_MEETING_JOIN,
+    I_AM_LEADER,
+    I_AM_MEMBER,
+    NOT_MEMBER,
+    DELETE_OK_MEETING_JOIN
+}

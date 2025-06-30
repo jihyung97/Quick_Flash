@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.quickflash.meeting_join.mapper.MeetingJoinMapper">
 
-    <select id="selectMeetingJoinListForDtoByPostId"  parameterType="int" resultType="com.quickflash.meeting_join.dto.MeetingJoinDto">
+    <select id="selectMeetingJoinListForDtoByPostId"  parameterType="int" resultType="map">
         SELECT
         `userId`,
         `postId`,
@@ -13,7 +13,21 @@
         WHERE postId = #{postId}
     </select>
 
+    <update id="updateMeetingJoinList">
+        UPDATE `meeting_join`
+        SET `joinStatus` = CASE `userId`
+        <foreach collection="userIdToJoinStatus" item="status" index="userId">
+            WHEN #{userId} THEN #{status}
+        </foreach>
+        END
+        WHERE `postId` = #{postId}
+        AND `userId` IN
+        <foreach collection="userIdToJoinStatus.keySet()" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </update>
 
 
 </mapper>
+
 

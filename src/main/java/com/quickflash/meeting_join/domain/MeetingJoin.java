@@ -3,6 +3,8 @@ package com.quickflash.meeting_join.domain;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class MeetingJoin {
@@ -14,9 +16,9 @@ public class MeetingJoin {
     private String joinStatus;
     private String isSafetyAgree;
 
-    private String createdAt;
+    private LocalDateTime createdAt;
 
 
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
 }

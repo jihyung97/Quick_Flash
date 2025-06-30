@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
+
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,12 +22,12 @@ public class MeetingJoinEntity {
     private int postId;
     private String userName;
     private String joinStatus;
-    private String isSafetyAgree;
+    private boolean isSafetyAgree;
     @CreationTimestamp
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
 
 
