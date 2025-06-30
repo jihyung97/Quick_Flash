@@ -3,13 +3,15 @@ package com.quickflash.comment.dto;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
 public class CommentDto {
     private int id; //나중에 지울때 반드시 필요함
     private String userName;

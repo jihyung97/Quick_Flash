@@ -1,14 +1,17 @@
 package com.quickflash.meetingPost.service;
 
+import com.quickflash.comment.dto.CommentDto;
 import com.quickflash.comment.service.CommentBO;
 import com.quickflash.comment.service.CommentService;
 import com.quickflash.meetingPost.domain.MeetingPost;
 import com.quickflash.meetingPost.dto.BeforeMeetingDto;
+import com.quickflash.meetingPost.dto.FinalReportDto;
 import com.quickflash.meetingPost.dto.ReportMakingDto;
 import com.quickflash.meetingPost.dto.ThumbnailDto;
 import com.quickflash.meeting_join.service.MeetingJoinBO;
 import com.quickflash.meeting_join.service.MeetingJoinDtoMaker;
 import com.quickflash.user.service.UserBO;
+import com.quickflash.utility.time.TimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +33,7 @@ public class MeetingPostDtoMaker {
     private final UserBO userBO;
     private final MeetingJoinDtoMaker meetingJoinDtoMaker;
     private final MeetingJoinBO meetingJoinBO;
-
+    private final TimeService timeService;
 
 
 
@@ -38,8 +41,12 @@ public class MeetingPostDtoMaker {
     public List<ThumbnailDto> generateMeetingPostThumbnailDtoListForTest(){
         List<ThumbnailDto> thumbnailDtoList = new ArrayList<>();
         List<Map<String,Object>> parametersOfMeetingPostList = meetingPostBO.getMeetingPostForThumbnailListForTest();
+
         for(Map<String,Object> parametersOfMeetingPost : parametersOfMeetingPostList){
-            Duration remainedTime = Duration.between((LocalDateTime)parametersOfMeetingPost.get("expiredAt"), LocalDateTime.now());
+
+
+
+
             ThumbnailDto thumbnailDto = ThumbnailDto.builder()
                     .title((String)parametersOfMeetingPost.get("title"))
                     .isAbandonOkay((boolean)parametersOfMeetingPost.get("isAbandonOkay"))
@@ -54,7 +61,7 @@ public class MeetingPostDtoMaker {
                     .maxHeadCount((int)parametersOfMeetingPost.get("maxHeadCount"))
                     .postId((int)parametersOfMeetingPost.get("id"))
                     .exerciseType((String)parametersOfMeetingPost.get("exerciseType"))
-                    .remainedTime(remainedTime)
+                    .remainedTime(timeService.show_remainedTime(LocalDateTime.now(),(LocalDateTime)parametersOfMeetingPost.get("expiredAt")))
                     .build();
             thumbnailDtoList.add(thumbnailDto);
             //여기에 thumbnailDto 에 다른  domain 의 정보를 추가
@@ -71,19 +78,9 @@ public class MeetingPostDtoMaker {
         if(meetingPost == null){
             return null;
         }
-        Duration duration = Duration.between(LocalDateTime.now(),meetingPost.getExpiredAt() );
-
-        String remainedTimeStr;
-        if (duration.isNegative()) {
-            remainedTimeStr = "마감됨";
-        } else {
-            long hours = duration.toHours();
-            long minutes = duration.minusHours(hours).toMinutes();
-            remainedTimeStr = String.format("%02d시간 %02d분", hours, minutes);
-        }
 
 
-        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" + remainedTimeStr);
+
         BeforeMeetingDto beforeMeetingDto = BeforeMeetingDto.builder()
                 .postId(meetingPost.getId())
                 .userId(meetingPost.getUserId())
@@ -110,10 +107,10 @@ public class MeetingPostDtoMaker {
                 .currentStatus(meetingPost.getCurrentStatus())
                 .createdAt(meetingPost.getCreatedAt())
                 .updatedAt(meetingPost.getUpdatedAt())
-                .joinList(meetingJoinDtoMaker.generateMeetingJoinBeforeMeetingDtoListByPostId(postId))
+                .meetingJoinList(meetingJoinDtoMaker.generateMeetingJoinBeforeMeetingDtoListByPostId(postId))
                 .commentList(commentService.generateCommentDtoListByPostId(postId))
                 .userName(userBO.getUserNameById(meetingPost.getUserId()))  // 필요 시
-                .remainedTime(remainedTimeStr)
+                .remainedTime(timeService.show_remainedTime(LocalDateTime.now(),meetingPost.getExpiredAt()))
                 .build();
 
         log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!generateBeforeMeetingDTo");
@@ -150,6 +147,54 @@ public class MeetingPostDtoMaker {
 
 
         return reportMakingDto;
+
+    }
+
+    public FinalReportDto generateFinalReportDto(int postId ){
+        MeetingPost meetingPost = meetingPostBO.getMeetingPostById(postId) ;
+        if(meetingPost == null){
+            return null;
+        }
+
+            // 모이전과 모임후의 댓글을 분리한다
+        Map<String,List<CommentDto>> pairOfCommentList = commentService.
+                seperateCommentDtoListByBeforeOrAfter(commentService.generateCommentDtoListByPostId(postId));
+
+        FinalReportDto afterMeetingDto = FinalReportDto.builder()
+                .postId(meetingPost.getId())
+                .userId(meetingPost.getUserId())
+                .title(meetingPost.getTitle())
+                .location(meetingPost.getLocation())
+                .latitude(meetingPost.getLatitude())
+                .longitude(meetingPost.getLongitude())
+                .restLocation(meetingPost.getRestLocation())
+                .expiredAt(meetingPost.getExpiredAt())
+                .contentText(meetingPost.getContentText())
+                .exerciseType(meetingPost.getExerciseType())
+                .distance(meetingPost.getDistance())
+                .speed(meetingPost.getSpeed())
+                .power(meetingPost.getPower())
+                .minHeadCount(meetingPost.getMinHeadCount())
+                .maxHeadCount(meetingPost.getMaxHeadCount())
+                .isRestExist(meetingPost.getIsRestExist())
+                .isAbandonOkay(meetingPost.getIsAbandonOkay())
+                .isAfterPartyExist(meetingPost.getIsAfterPartyExist())
+                .isLocationConnectedToKakao(meetingPost.getIsLocationConnectedToKakao())
+                .isUserAbilityConnectedToStrava(meetingPost.getIsUserAbilityConnectedToStrava())
+                .isMyPaceShown(meetingPost.getIsMyPaceShown())
+                .isMyFtpShown(meetingPost.getIsMyFtpShown())
+                .currentStatus(meetingPost.getCurrentStatus())
+                .createdAt(meetingPost.getCreatedAt())
+                .updatedAt(meetingPost.getUpdatedAt())
+                .meetingJoinList(meetingJoinDtoMaker.generateMeetingJoinBeforeMeetingDtoListByPostId(postId))
+                .commentDtoListBeforeMeeting(pairOfCommentList.get("before"))
+                .commentDtoListAfterMeeting(pairOfCommentList.get("after"))
+                .userName(userBO.getUserNameById(meetingPost.getUserId()))  // 필요 시
+                .remainedTime(timeService.show_remainedTime(LocalDateTime.now(),meetingPost.getExpiredAt()))
+                .build();
+
+        log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!generateBeforeMeetingDTo");
+        return afterMeetingDto;
 
     }
 

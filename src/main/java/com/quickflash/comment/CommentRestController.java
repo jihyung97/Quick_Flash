@@ -2,6 +2,7 @@ package com.quickflash.comment;
 
 
 import com.quickflash.comment.domain.Comment;
+import com.quickflash.comment.service.CommentBO;
 import com.quickflash.comment.service.CommentService;
 import com.quickflash.meetingPost.service.Qualification;
 import com.quickflash.meetingPost.service.Response;
@@ -22,9 +23,10 @@ import java.util.Map;
 @Slf4j
 public class CommentRestController {
     private final CommentService commentService;
+    private final CommentBO commentBO;
     @PostMapping("/create")
     public Map<String,Object> createComment(HttpSession session,
-                                                @RequestParam int userId,
+
                                             @RequestParam int postId,
 
                                             @RequestParam String content,
@@ -51,8 +53,7 @@ public class CommentRestController {
         try{
 
           commentBO.addComment(
-                  userId,postId,content,isBeforeMeeting)
-          );
+                  sessionId,postId,content,isBeforeMeeting);
             result.put("result", Response.RESULT_OK.name());
         }catch(Exception e ){
             result.put("result", Response.FAILED.name());

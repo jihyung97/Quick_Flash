@@ -22,7 +22,7 @@ public class CommentEntity {
     private int postId;
     private String content;
     private boolean isBeforeMeeting;
-    private String isSafetyAgree;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

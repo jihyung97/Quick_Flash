@@ -48,7 +48,7 @@ public class BeforeMeetingDto {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    List<MeetingJoinDto> joinList;
+    List<MeetingJoinDto> meetingJoinList;
     List<CommentDto> commentList;
     private String userName;
 

@@ -3,12 +3,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.quickflash.user.mapper.UserMapper">
-    <select id="selectIdToUserNameMapByIdSet" parameterType="java.util.Set" resultType="map">
-        SELECT
-        id AS `key`,
-        name AS `value`
-        FROM user
-        WHERE id IN
+    <select id="selectIdToUserNameMapByIdSet"
+            parameterType="java.util.Set"
+            resultType="com.quickflash.user.dto.userIdToNameDto" >
+        SELECT  `id`,`name`
+        FROM `user`
+        WHERE `id` IN
         <foreach item="id" collection="idSet" open="(" separator="," close=")">
             #{id}
         </foreach>

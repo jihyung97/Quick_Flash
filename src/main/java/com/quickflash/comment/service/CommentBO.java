@@ -28,6 +28,7 @@ public class CommentBO {
     }
     @Transactional
     public boolean addComment(int userId,int postId, String content, boolean isBeforeMeeting){
+        log.info("addComment 엔 들어왔다");
         CommentEntity commentEntity = CommentEntity.builder()
                 .userId(userId)
                 .postId(postId)

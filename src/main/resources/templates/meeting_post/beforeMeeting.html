@@ -89,7 +89,7 @@
                 <div><h2>참가자 list</h2></div>
                 <div>
                     <!-- join dto 리스트 출력 예시 -->
-                    <div class="d-flex join-dto" th:each="joinDto : ${meetingPost.joinList}">
+                    <div class="d-flex join-dto" th:each="joinDto : ${meetingPost.meetingJoinList}">
                         <div><span th:text="${joinDto.userName}">jihyung97</span></div>
                         <th:block th:if="${meetingPost.exerciseType == 'CYCLE'}">
                             <div class="ml-2"><span th:text="${joinDto.power}">0W</span></div>
@@ -185,37 +185,37 @@
                         }
                     });
 
-              });
+    });
 
-              $("#btn-comment").on("click", function () {
-                
-                let content = $("#comment-content).val();
-                let postId = $("#before-meeting").data("postId");
-                let isBeforeMeeting = "BEFORE"
-               
-                
-               
-              
-                     
-                    $.ajax({
-                        url: "/meeting-join/create"  , 
-                        type: "POST",
-                        data: {"isSafetyAgree":isSafetyAgree, "postId":postId},
-                       
-                        success: function (data) {
-                            alert(" 성공적으로 join  되었습니다");
-                            // 필요 시 페이지 이동 또는 폼 초기화
-                        },
-                        error: function (data) {
-                            console.error(data);
-                            alert("제출 중 오류가 발생했습니다.");
-                        }
-                    });
-
-              });
-
-              
+    $("#btn-comment").on("click", function () {
+    
+            let content = $("#comment-content").val();
+            let postId = $("#before-meeting").data("postId");
+            let isBeforeMeeting = true;
+            
+    
+    
+    
+            
+        $.ajax({
+            url: "/comment/create"  , 
+            type: "POST",
+            data: {"content":content, "postId":postId, "isBeforeMeeting":isBeforeMeeting},
+            
+            success: function (data) {
+                alert(" 성공적으로 댓글 작성 되었습니다");
+                // 필요 시 페이지 이동 또는 폼 초기화
+            },
+            error: function (data) {
+                console.error(data);
+                alert("제출 중 오류가 발생했습니다.");
+            }
         });
+
+    });
+
+              
+});
         
 </script>
 </body>
