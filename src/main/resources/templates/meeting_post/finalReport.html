@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
@@ -11,7 +13,7 @@
     <title>Title</title>
 </head>
 <body>
-    <div class=" d-flex justify-content-between container large-page" >
+    <div class=" d-flex justify-content-between container large-page" id="final-report" th:data-postid="${meetingPost.postId}">
       <div class="w-50">
           <!--이미지 -->
           <div class="h-50">
@@ -24,8 +26,8 @@
           </div>
           <div class="d-flex justify-content-start">
               <div>
-                  <div><span>페이스: 0:00min/km</span></div>
-                  <div><span>총 거리: 100km</span></div>
+                  <div><span>페이스:</span> <input th:text="${meetingPost.speed}"> <Span>  min/km</span></div>
+                  <div><span>총거리:</span> <input th:text="${meetingPost.distance}"> <Span>  km</span></div>
                   <div><button>strava연동 완료</button></div>
 
               </div>
@@ -33,7 +35,7 @@
                   <div>
                       <div class="d-flex justify-content-between">
                           <div>jihyung97</div>
-                          <div class="ml-2">5.0w/kg</div>
+                          <div class="ml-2"> <input th:text="${meetingPost.power}"> <span>w/kg</span></div>
                       </div>
                       <div><button>참가자 추가하기</button></div>
                   </div>
@@ -46,10 +48,14 @@
               <div class="h-50">
                   <div><h2>운동 전 댓글 list</h2></div>
                   <div>
-                      <div class="d-flex justify-content-start">
-                          <div>나는 쉬지롱</div>
-                          <div class="ml-2">어우 고생들 많으십니다^^</div>
+                      <div class="d-flex justify-content-start" th:each="comment:${meetingPost.commentDtoListBeforeMeeting}">
+                          <div th:text="${comment.userName}">나는 쉬지롱</div>
+                          <div class="ml-2" th:text="${comment.content}"><input type="text" th:text="${comment.content}">어우 고생들 많으십니다^^</div>
                       </div>
+<!--                      <div class="d-flex">-->
+<!--                          <div><input type="text" id="comment-before-meeting"></div>-->
+<!--                          <button id="btn-comment-before">댓글작성</button>-->
+<!--                      </div>-->
                   </div>
               </div>
               <div class="h-50">
@@ -57,10 +63,15 @@
                   <div>
                       <div><h2>운동 후 댓글 list</h2></div>
                       <div>
-                          <div class="d-flex justify-content-start">
-                              <div>나는 쉬지롱</div>
-                              <div class="ml-2">어우 고생들 많으십니다^^</div>
+                          <div class="d-flex justify-content-start" th:each="comment:${meetingPost.commentDtoListAfterMeeting}">
+                              <div th:text="${comment.userName}">나는 쉬지롱</div>
+                              <div class="ml-2" th:text="${comment.content}"><input type="text" th:text="${comment.content}">어우 고생들 많으십니다^^</div>
                           </div>
+                          <div class="d-flex">
+                              <div><input type="text" id="comment-after-meeting"></div>
+                              <button id="btn-comment-after">댓글작성</button>
+                          </div>
+
                       </div>
 
                   </div>
@@ -81,5 +92,43 @@
 
       </div>
     </div>
+    <script>
+
+        $(function(){
+
+
+
+              $("#btn-comment-after").on("click", function () {
+            
+                    let content = $("#comment-after-meeting").val();
+                   let postId = $("#final-report").data("postid");
+                    let isBeforeMeeting = false;
+                    
+            
+            
+            
+                    
+                    $.ajax({
+                        url: "/comment/create"  , 
+                        type: "POST",
+                        data: {"content":content, "postId":postId, "isBeforeMeeting":isBeforeMeeting},
+                        
+                        success: function (data) {
+                            alert(" 성공적으로 댓글 작성 되었습니다");
+                            // 필요 시 페이지 이동 또는 폼 초기화
+                        },
+                        error: function (data) {
+                            console.error(data);
+                            alert("제출 중 오류가 발생했습니다.");
+                        }
+                    });
+
+             });
+    })
+
+    </script>
+    
+   
+
 </body>
 </html>

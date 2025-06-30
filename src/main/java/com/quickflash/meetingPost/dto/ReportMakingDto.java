@@ -25,4 +25,5 @@ public class ReportMakingDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     List<MeetingJoinDto> meetingJoinList;
+
 }

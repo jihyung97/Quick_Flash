@@ -1,6 +1,7 @@
 package com.quickflash.user.service;
 
 import com.quickflash.common.HashUtils;
+import com.quickflash.user.dto.userIdToNameDto;
 import com.quickflash.user.entity.UserEntity;
 import com.quickflash.user.mapper.UserMapper;
 import com.quickflash.user.repository.UserRepository;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,7 +60,7 @@ public class UserBO {
     public String getUserNameById(int id){
         return userRepository.findNameById(id);
     }
-    public Map<Integer,String> getIdToUserNameMapByIdSet(Set<Integer> idSet){
+    public List<userIdToNameDto> getIdToUserNameMapByIdSet(Set<Integer> idSet){
 
         if(idSet == null || idSet.isEmpty()){
             return null;

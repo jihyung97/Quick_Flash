@@ -100,14 +100,19 @@ public class MeetingPostService {
                 return Qualification.UPDATE_OK_BEFORE_MEETING;
             }
 
-        } else if (Status.REPORT_MAKING.name().equals(result.get("currentStatus")) || Status.FINAL_REPORT .name().equals(result.get("currentStatus"))) {
-            //모임 종료 후 3시간전까지는 업데이트 가능 (reportMaking, final report일때)
+        } else if (Status.REPORT_MAKING.name().equals(result.get("currentStatus")) ) {
+            //report_making일때는  3시간이 지나도 업데이트 가능하다
+             return Qualification.UPDATE_OK_AFTER_MEETING;
+
+        } else if(Status.FINAL_REPORT.name().equals(result.get("currentStatus"))){
+            //모임 종료 후 3시간전까지는 업데이트 가능 (  final report일때)
             if (durationSinceExpired.toSeconds() <= 10800) {
                 return Qualification.UPDATE_OK_AFTER_MEETING;
             } else {
 
                 return Qualification.AFTER_UPDATE_TIME;
             }
+
         }
 
         return Qualification.ERROR_GO_TO_MAIN;

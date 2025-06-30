@@ -14,7 +14,7 @@ public class ThumbnailDto {
     String title;
     String location;
     LocalDateTime expiredAt;
-    Duration remainedTime;
+   String remainedTime;
     String exerciseType;
     double distance;
     double speed;

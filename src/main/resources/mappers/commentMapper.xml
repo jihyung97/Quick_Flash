@@ -12,6 +12,7 @@
           `isBeforeMeeting`
         FROM `comment`
         WHERE postId = #{postId}
+        ORDER BY `createdAt` DESC
     </select>
 
 </mapper>

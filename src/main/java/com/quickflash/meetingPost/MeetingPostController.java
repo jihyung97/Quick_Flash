@@ -79,6 +79,9 @@ public class MeetingPostController {
         if( ViewOption.REPORT_MAKING_VIEW.equals(option)){
             return "redirect:/meeting-post/report-making?postId=" + postId;
         }
+        if( ViewOption.FINAL_REPORT_VIEW.equals(option)){
+            return "redirect:/meeting-post/final-report?postId=" + postId;
+        }
         //before_making view에 들어갈 조건이 아니라면 메인페이지로 감
         if(!(option == ViewOption.BEFORE_MAKING_LEADER_VIEW || option == ViewOption.BEFORE_MAKING_MEMBER_VIEW || option == ViewOption.BEFORE_MAKING_NONE_VIEW)){
             return "redirect:/main-page/before-meeting";
@@ -126,7 +129,21 @@ public class MeetingPostController {
 
     //localhost:8080/meeting-post/final-report
     @RequestMapping("/final-report")
-    public String finalReport(){
+    public String finalReport(Model model, HttpSession session,@RequestParam(value="postId") Integer postId){
+        Integer sessionId = (Integer) session.getAttribute("userId");
+
+        if (sessionId == null || postId == null) {
+            return "redirect:/main-page/before-meeting";
+        }
+
+        ViewOption option = meetingPostViewDecider.decideViewWhenMeetingPostClicked(sessionId, postId, LocalDateTime.now());
+        log.info("meetingPostViewDecider " + option.name());
+        if (!(option == ViewOption.FINAL_REPORT_VIEW)) {
+            return "redirect:/main-page/before-meeting";
+        }
+
+        model.addAttribute("meetingPost", meetingPostDtoMaker.generateFinalReportDto(postId));
+
         return "meeting_post/finalReport";
     }
 
