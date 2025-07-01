@@ -2,6 +2,7 @@ package com.quickflash.user;
 
 import com.quickflash.user.entity.UserEntity;
 import com.quickflash.user.service.UserBO;
+import com.quickflash.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Slf4j
 public class UserRestController {
     private final UserBO userBO;
+    private final UserService userService;
 
     @RequestMapping("/create")
     public Map<String,Object> CreateUser(
@@ -41,19 +43,12 @@ public class UserRestController {
             return result;
 
         }
-        boolean isAdded = userBO.addUser(
-                loginId
-                ,password
-                ,name
-                ,defaultLocation
-        );
+        userService. addAllTableRelatedToUser(
+         userId,  loginId,   password,  name,   defaultLocation);
 
-        if(isAdded){
-            result.put("code",200);
 
-        }else{
-            result.put("code",500);
-        }
+
+
 
         return result;
 

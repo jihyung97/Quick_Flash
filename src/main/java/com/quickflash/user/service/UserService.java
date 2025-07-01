@@ -1,6 +1,7 @@
 package com.quickflash.user.service;
 
 import com.quickflash.common.HashUtils;
+import com.quickflash.trust.service.TrustBO;
 import com.quickflash.user.entity.UserEntity;
 import com.quickflash.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,25 +13,19 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final TrustBO trustBO;
+    private final UserBO userBO;
 
-    public boolean addUser(
-            String loginId
+    public boolean addAllTableRelatedToUser(
+            int userId
+            ,String loginId
             , String password
             , String name
             , String defaultLocation
     ) {
-        log.info("!!!!" + loginId);
+      userBO.addUser(loginId,  password, name, defaultLocation);
 
-        String hashedPassword = HashUtils.md5(password);
-        UserEntity userEntity = UserEntity.builder()
-                .loginId(loginId)
-                .password(hashedPassword)
-                .name(name)
-                .defaultLocation(defaultLocation)
-                .build();
-        log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + userEntity.getName());
-
-        userRepository.save(userEntity);
+      trustBO.addTrust(userId);
         return true;
 
 
