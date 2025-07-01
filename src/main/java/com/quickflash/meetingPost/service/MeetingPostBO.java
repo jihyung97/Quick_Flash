@@ -50,6 +50,7 @@ public class MeetingPostBO {
         return meetingPostMapper.selectMeetingPostById(id);
     }
 
+    public int getMaxHeadCountById(int id){return meetingPostMapper.selectMaxCountById(id);};
 
 
 

@@ -18,6 +18,8 @@ public class ThumbnailDto {
     String exerciseType;
     double distance;
     double speed;
+   Integer speed_min;
+    Integer speed_sec;
     double power;
     int minHeadCount;
     int maxHeadCount;
@@ -27,5 +29,6 @@ public class ThumbnailDto {
     double leaderFtp;
     LocalDateTime createdAt;
     String leaderName;
+    int currentHeadCount;
 
 }

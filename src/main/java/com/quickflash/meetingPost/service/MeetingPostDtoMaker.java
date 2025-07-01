@@ -8,9 +8,11 @@ import com.quickflash.meetingPost.dto.BeforeMeetingDto;
 import com.quickflash.meetingPost.dto.FinalReportDto;
 import com.quickflash.meetingPost.dto.ReportMakingDto;
 import com.quickflash.meetingPost.dto.ThumbnailDto;
+import com.quickflash.meeting_join.dto.MeetingJoinDto;
 import com.quickflash.meeting_join.service.MeetingJoinBO;
 import com.quickflash.meeting_join.service.MeetingJoinDtoMaker;
 import com.quickflash.user.service.UserBO;
+import com.quickflash.utility.calculation.CalculationService;
 import com.quickflash.utility.time.TimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,8 @@ public class MeetingPostDtoMaker {
     private final MeetingJoinDtoMaker meetingJoinDtoMaker;
     private final MeetingJoinBO meetingJoinBO;
     private final TimeService timeService;
+    private final CalculationService calculationService;
+
 
 
 
@@ -44,7 +48,9 @@ public class MeetingPostDtoMaker {
 
         for(Map<String,Object> parametersOfMeetingPost : parametersOfMeetingPostList){
 
+            //speed (km/h)를 페이스로 바꾼다 (min/kim)
 
+            Map<String,Integer> pace = calculationService.convertspeedTopace((double)parametersOfMeetingPost.get("speed"));
 
 
             ThumbnailDto thumbnailDto = ThumbnailDto.builder()
@@ -55,10 +61,13 @@ public class MeetingPostDtoMaker {
                     .location((String)parametersOfMeetingPost.get("location"))
                     .power((double)parametersOfMeetingPost.get("power"))
                     .speed((double)parametersOfMeetingPost.get("speed"))
+                    .speed_min(pace.get("min"))
+                    .speed_sec(pace.get("sec"))
                     .distance((double)parametersOfMeetingPost.get("distance"))
                     .createdAt((LocalDateTime) parametersOfMeetingPost.get("createdAt"))
                     .expiredAt((LocalDateTime)parametersOfMeetingPost.get("expiredAt"))
                     .maxHeadCount((int)parametersOfMeetingPost.get("maxHeadCount"))
+                    .currentHeadCount(meetingJoinBO.countMember((int)parametersOfMeetingPost.get("id")) + 1)//리더까지 참여인원수에 포함
                     .postId((int)parametersOfMeetingPost.get("id"))
                     .exerciseType((String)parametersOfMeetingPost.get("exerciseType"))
                     .remainedTime(timeService.show_remainedTime(LocalDateTime.now(),(LocalDateTime)parametersOfMeetingPost.get("expiredAt")))
@@ -79,7 +88,8 @@ public class MeetingPostDtoMaker {
             return null;
         }
 
-
+        Map<String,Integer> pace = calculationService.convertspeedTopace(meetingPost.getSpeed());
+        List<MeetingJoinDto> joinDtoList = meetingJoinDtoMaker.generateMeetingJoinBeforeMeetingDtoListByPostId(postId);
 
         BeforeMeetingDto beforeMeetingDto = BeforeMeetingDto.builder()
                 .postId(meetingPost.getId())
@@ -94,9 +104,12 @@ public class MeetingPostDtoMaker {
                 .exerciseType(meetingPost.getExerciseType())
                 .distance(meetingPost.getDistance())
                 .speed(meetingPost.getSpeed())
+                .speed_min(pace.get("min"))
+                .speed_sec(pace.get("sec"))
                 .power(meetingPost.getPower())
                 .minHeadCount(meetingPost.getMinHeadCount())
                 .maxHeadCount(meetingPost.getMaxHeadCount())
+                .currentHeadCount(joinDtoList.size())
                 .isRestExist(meetingPost.getIsRestExist())
                 .isAbandonOkay(meetingPost.getIsAbandonOkay())
                 .isAfterPartyExist(meetingPost.getIsAfterPartyExist())
@@ -107,7 +120,7 @@ public class MeetingPostDtoMaker {
                 .currentStatus(meetingPost.getCurrentStatus())
                 .createdAt(meetingPost.getCreatedAt())
                 .updatedAt(meetingPost.getUpdatedAt())
-                .meetingJoinList(meetingJoinDtoMaker.generateMeetingJoinBeforeMeetingDtoListByPostId(postId))
+                .meetingJoinList(joinDtoList)
                 .commentList(commentService.generateCommentDtoListByPostId(postId))
                 .userName(userBO.getUserNameById(meetingPost.getUserId()))  // 필요 시
                 .remainedTime(timeService.show_remainedTime(LocalDateTime.now(),meetingPost.getExpiredAt()))

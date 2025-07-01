@@ -15,5 +15,6 @@ public enum Qualification {
     I_AM_LEADER,
     I_AM_MEMBER,
     NOT_MEMBER,
-    DELETE_OK_MEETING_JOIN
+    DELETE_OK_MEETING_JOIN,
+    MAX_HEADCOUNT
 }

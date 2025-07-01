@@ -21,6 +21,7 @@ public interface MeetingPostMapper {
     int updateMeetingPost(MeetingPost meetingPost);
     int updateMeetingPostBeforeMeetingById (MeetingPost meetingPost);
     int updateMeetingPostAfterMeeting(MeetingPost meetingPost);
+    int selectMaxCountById(int id);
 
 
 

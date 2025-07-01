@@ -88,7 +88,10 @@
 
             <th:block th:if="${meetingPost.exerciseType == 'RUNNING'}">
               <div>
-                예상 페이스: <span th:text="${meetingPost.speed}">0</span> min/km
+               <span>예상 페이스: km 당</span>
+                <span th:text="${meetingPost.speed_min}">0</span> 분
+                 <span th:text="${meetingPost.speed_sec}">0</span> 초
+
               </div>
             </th:block>
 
@@ -113,7 +116,7 @@
               <span th:text="${meetingPost.remainedTime}">00시간 00분 남음</span>
             </div>
             <div>
-              <span>0</span> /
+              <span  th:text="${meetingPost.currentHeadCount}">0</span> /
               <span th:text="${meetingPost.maxHeadCount}">5</span>
             </div>
           </div>

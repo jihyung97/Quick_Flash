@@ -23,7 +23,7 @@
                <!-- <div><h4 th:text="${meetingPost.remainedTime}">00시간 00분</h4></div> -->
             </div>
             <div class="d-flex">
-                <div><span>4명</span></div>
+                <div><span th:text="${meetingPost.currentHeadCount}">0명</span></div>
                 <div><h1>/</h1></div>
                 <div><span th:text="${meetingPost.maxHeadCount}">5명</span></div>
             </div>
@@ -45,8 +45,9 @@
             <div class="d-flex">
                 <th:block th:if="${meetingPost.exerciseType == 'RUNNING'}">
                     <div class="d-flex">
-                        <div><span>예상 페이스:</span></div>
-                        <div><span th:text="${meetingPost.speed}">0:00</span></div>
+                        <div><span>예상 페이스: km당   </span></div>
+                        <div><span th:text="${meetingPost.speed_min}">0</span>분</div>
+                        <div><span th:text="${meetingPost.speed_sec}">0</span>초</div>
                         <div class="ml-3"><span>min/km</span></div>
                     </div>
                 </th:block>
@@ -96,7 +97,7 @@
                         </th:block>
 
                         <th:block th:if="${meetingPost.exerciseType == 'RUNNING'}">
-                            <div class="ml-2"><span th:text="${joinDto.speed}">0W</span></div>
+                            <div class="ml-2"><span th:text="${joinDto.speed}">0</span></div>
                         </th:block>
 
 

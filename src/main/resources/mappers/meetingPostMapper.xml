@@ -129,6 +129,18 @@
         )
     </insert>
 
+
+    <select id="selectMaxCountById"  parameterType = "int" resultType="int">
+        SELECT
+
+        `maxHeadCount`
+
+        FROM
+        `meetingPost`
+        WHERE
+        `id` = #{id}
+    </select>
+
     <select id="selectMeetingPostById"  parameterType = "int" resultType="com.quickflash.meetingPost.domain.MeetingPost">
         SELECT
         `id`,

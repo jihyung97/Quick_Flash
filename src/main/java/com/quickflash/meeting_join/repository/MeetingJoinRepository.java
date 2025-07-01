@@ -9,5 +9,6 @@ import java.util.Optional;
 public interface MeetingJoinRepository extends JpaRepository<MeetingJoinEntity,Integer> {
     List<MeetingJoinEntity> findByPostId(int postId);
     Optional<MeetingJoinEntity> findByPostIdAndUserId(int postId, int userId);
+    int countByPostId(int postId);
 }
 

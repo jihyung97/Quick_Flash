@@ -32,6 +32,9 @@ public class MeetingJoinBO {
     public Boolean isIMember(int postId, int userId){
         return meetingJoinRepository.findByPostIdAndUserId(postId,userId).isPresent();
     }
+    public int countMember(int postId){
+        return meetingJoinRepository.countByPostId(postId) ;
+    }
 
    public List<Map<String,Object>> getMeetingJoinListForDtoByPostId(int postId){
         return     meetingJoinMapper.selectMeetingJoinListForDtoByPostId(postId);

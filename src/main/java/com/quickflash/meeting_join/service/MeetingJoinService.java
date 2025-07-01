@@ -71,6 +71,10 @@ public class MeetingJoinService {
        if(!Status.BEFORE_MEETING.name().equals( result.get("currentStatus"))){
            return Qualification.TIME_PASSED;
        }
+       //post의 최대가능 인원수가 찼으면 더 이상 참가 불가
+       if(meetingJoinBO.countMember(postId) + 1 >= meetingPostBO.getMaxHeadCountById(postId)){
+           return Qualification.MAX_HEADCOUNT;
+       }
        return Qualification.CREATE_OK_MEETING_JOIN;
 
     }

@@ -34,8 +34,12 @@ public class BeforeMeetingDto {
     private Double speed;
     private Double power;
 
+    Integer speed_min;
+    Integer speed_sec;
+
     private Integer minHeadCount;
     private Integer maxHeadCount;
+    private Integer currentHeadCount;
     private Boolean isRestExist;
     private Boolean isAbandonOkay;
     private Boolean isAfterPartyExist;
