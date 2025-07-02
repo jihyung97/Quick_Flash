@@ -21,7 +21,7 @@ public class UserBO {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public boolean addUser(
+    public int addUser(
             String loginId
             , String password
             , String name
@@ -38,8 +38,8 @@ public class UserBO {
                     .build();
             log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + userEntity.getName());
 
-            userRepository.save(userEntity);
-            return true;
+          return  userRepository.save(userEntity).getId(); // User를 생성하는 동시에 그 id로 trust 테이블을 만들기 위해 addUser는 userId를 반환
+
 
 
 
@@ -67,6 +67,11 @@ public class UserBO {
         }
        return userMapper.selectIdToUserNameMapByIdSet(idSet);
 
+    }
+
+
+    public List<Integer> getUserIdsForTrustBatch(int offset, int batch) {
+        return userMapper.selectUserIdsForBatch(offset, batch);
     }
 
 

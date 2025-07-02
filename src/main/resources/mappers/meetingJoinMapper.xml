@@ -26,6 +26,20 @@
             #{userId}
         </foreach>
     </update>
+    <select id="selectMeetingJoinForTrustBatch"  parameterType="list" resultType="com.quickflash.meeting_join.domain.MeetingJoin">
+
+            SELECT * FROM (
+            SELECT *, ROW_NUMBER() OVER (PARTITION BY `userId` ORDER BY `updatedAt` DESC) as rn
+            FROM `meeting_join`
+            WHERE `updatedAt` >= #{oneMonthAgo}
+            AND `userId` IN
+            <foreach collection="userIdList" item="userId" open="(" separator="," close=")">
+                #{userId}
+            </foreach>
+            ) t
+            WHERE t.rn &lt; 10
+
+    </select>
 
 
 </mapper>

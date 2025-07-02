@@ -15,5 +15,6 @@ public interface UserMapper {
 
 
    List<userIdToNameDto> selectIdToUserNameMapByIdSet(@Param("idSet") Set<Integer> idSet);
+   List<Integer> selectUserIdsForBatch(@Param("offset") int offset, @Param("limit") int limit);
 
 }

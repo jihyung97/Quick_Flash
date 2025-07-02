@@ -7,6 +7,7 @@ import com.quickflash.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -15,15 +16,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final TrustBO trustBO;
     private final UserBO userBO;
-
+   @Transactional
     public boolean addAllTableRelatedToUser(
-            int userId
-            ,String loginId
+
+            String loginId
             , String password
             , String name
             , String defaultLocation
     ) {
-      userBO.addUser(loginId,  password, name, defaultLocation);
+      int userId = userBO.addUser(loginId,  password, name, defaultLocation);
 
       trustBO.addTrust(userId);
         return true;

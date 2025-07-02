@@ -15,6 +15,9 @@ import java.time.LocalDateTime;
 @Table(name="trust")
 @Entity
 public class TrustEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private int userId;
     private Double trustOfLeader;
     private Double trustOfMember;

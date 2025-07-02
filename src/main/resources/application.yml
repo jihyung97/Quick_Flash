@@ -1,6 +1,10 @@
 server:
 
 spring:
+  batch:
+    initialize-schema: never
+    job:
+      enabled: true
   thymeleaf:
     cache: false
 

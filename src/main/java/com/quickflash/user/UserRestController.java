@@ -44,7 +44,7 @@ public class UserRestController {
 
         }
         userService. addAllTableRelatedToUser(
-         userId,  loginId,   password,  name,   defaultLocation);
+           loginId,   password,  name,   defaultLocation);
 
 
 
