@@ -32,7 +32,7 @@
         SELECT `id`
         FROM `meeting_join`
         WHERE `createdAt` >= #{oneMonthAgo}
-        ORDER BY `createdAt` ASC
+
         LIMIT 1
     </select>
     <select id="selectMeetingJoinForTrustBatch"  parameterType="map" resultType="com.quickflash.meeting_join.dto.MeetingJoinDtoForBatch">

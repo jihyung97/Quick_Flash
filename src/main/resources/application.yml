@@ -30,3 +30,7 @@ mybatis:
   mapper-locations: mappers/*Mapper.xml
 
  
+strava:
+  client-id: 166853
+  client-secret: c1786d31435c9fbcbde3f4a6e094a5ef7b1cefb9
+  redirect-uri: http://localhost:8080/oauth/strava/callback

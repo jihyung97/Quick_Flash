@@ -21,7 +21,10 @@ public class StravaOAuthClient {
 
 
     public String buildAuthorizeUrl() {
-        return UriComponentsBuilder.fromHttpUrl("https://www.strava.com/oauth/authorize")
+        return UriComponentsBuilder.newInstance()
+                .scheme("https")
+                .host("www.strava.com")
+                .path("/oauth/authorize")
                 .queryParam("client_id", properties.getClientId())
                 .queryParam("response_type", "code")
                 .queryParam("redirect_uri", properties.getRedirectUri())
@@ -31,11 +34,13 @@ public class StravaOAuthClient {
                 .toUriString();
     }
 
+    
+    //authentication code를 parameter로 받고 code와 client id, secret,code, 등을 넣어 서버에 보내고 토큰을 받음
     public StravaTokenResponse exchangeCodeForToken(String code) {
         String url = "https://www.strava.com/oauth/token";
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("client_id", properties.getClientId());
+        params.add("client_id", properties.getClientId() );
         params.add("client_secret", properties.getClientSecret());
         params.add("code", code);
         params.add("grant_type", "authorization_code");

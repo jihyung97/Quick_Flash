@@ -17,6 +17,14 @@ public class StravaTokenResponse {
     @JsonProperty("expires_at")
     private long expiresAt;
 
+    @JsonProperty("expires_in")
+    private long expiresIn;
+
+    @JsonProperty("token_type")
+    private String tokenType;
+
+
+
     private Athlete athlete;
 
     @Getter

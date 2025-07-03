@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class StravaOAuthController {
 
     private final StravaOAuthClient stravaOAuthClient;
+    private final StravaTokenService stravaTokenService;
 
     @GetMapping("/connect/strava")
     public String connectStrava(HttpSession session) {
@@ -35,15 +36,16 @@ public class StravaOAuthController {
 
     @GetMapping("/oauth/strava/callback")
     //여기서 code는 connectStrava에서 redirect하면서 받은 authentication code?
+    //여기서 콜백 받으면 code를 보내 토큰을 받아온다. 그후 db에 저장
     public String handleCallback(@RequestParam("code") String code, HttpSession session) {
         Integer userId = (Integer) session.getAttribute("userId");
 
         // code로 access_token 교환
-        StravaTokenResponse token = stravaOAuthClient.exchangeCodeForToken(code);
+        StravaTokenResponse stravaTokenResponse = stravaOAuthClient.exchangeCodeForToken(code);
 
         // 토큰 저장 (DB or 세션)
-        stravaTokenService.save(userId, token);
+        stravaTokenService.addStravaToken(userId, stravaTokenResponse);
 
-        return "redirect:/profile";
+        return "redirect:/main-page/before-meeting";
     }
 }
