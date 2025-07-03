@@ -19,7 +19,7 @@ public class TrustJobScheduler {
     private final JobLauncher jobLauncher;
     private final Job trustJob;
 
-    @Scheduled(cron = "*/10 * * * * ?")// 매일 새벽 2시에 실행
+    @Scheduled(fixedRate = 60000)// 매일 새벽 2시에 실행
     public void runTrustJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
@@ -30,7 +30,7 @@ public class TrustJobScheduler {
 
         } catch (Exception e) {
             // 로깅 등 에러 처리
-            e.printStackTrace();
+
         }
     }
 }

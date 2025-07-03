@@ -1,17 +1,15 @@
 package com.quickflash.user.service;
 
 import com.quickflash.common.HashUtils;
-import com.quickflash.user.dto.userIdToNameDto;
+import com.quickflash.user.dto.UserIdToNameDto;
 import com.quickflash.user.entity.UserEntity;
 import com.quickflash.user.mapper.UserMapper;
 import com.quickflash.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -60,7 +58,7 @@ public class UserBO {
     public String getUserNameById(int id){
         return userRepository.findNameById(id);
     }
-    public List<userIdToNameDto> getIdToUserNameMapByIdSet(Set<Integer> idSet){
+    public List<UserIdToNameDto> getIdToUserNameMapByIdSet(Set<Integer> idSet){
 
         if(idSet == null || idSet.isEmpty()){
             return null;
@@ -71,7 +69,10 @@ public class UserBO {
 
 
     public List<Integer> getUserIdsForTrustBatch(int offset, int batch) {
-        return userMapper.selectUserIdsForBatch(offset, batch);
+        log.info("");
+        List<Integer> batchList = userMapper.selectUserIdsForBatch(offset,batch);
+        log.info("{}",batchList);
+        return batchList;
     }
 
 

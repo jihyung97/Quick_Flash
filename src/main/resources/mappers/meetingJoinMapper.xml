@@ -26,20 +26,29 @@
             #{userId}
         </foreach>
     </update>
-    <select id="selectMeetingJoinForTrustBatch"  parameterType="list" resultType="com.quickflash.meeting_join.domain.MeetingJoin">
 
-            SELECT * FROM (
-            SELECT *, ROW_NUMBER() OVER (PARTITION BY `userId` ORDER BY `updatedAt` DESC) as rn
-            FROM `meeting_join`
-            WHERE `updatedAt` >= #{oneMonthAgo}
-            AND `userId` IN
-            <foreach collection="userIdList" item="userId" open="(" separator="," close=")">
-                #{userId}
-            </foreach>
-            ) t
-            WHERE t.rn &lt; 10
+
+    <select id="selectIdForDateStandard" parameterType="java.time.LocalDateTime" resultType="int">
+        SELECT `id`
+        FROM `meeting_join`
+        WHERE `createdAt` >= #{oneMonthAgo}
+        ORDER BY `createdAt` ASC
+        LIMIT 1
+    </select>
+    <select id="selectMeetingJoinForTrustBatch"  parameterType="map" resultType="com.quickflash.meeting_join.dto.MeetingJoinDtoForBatch">
+
+       SELECT `id`,`userId`,`joinStatus` FROM `meeting_join`
+        WHERE `id` >= #{standardId}
+        AND `userId` IN
+        <foreach collection="userIdList" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+        ORDER BY `id` DESC
+
+
 
     </select>
+
 
 
 </mapper>

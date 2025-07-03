@@ -1,12 +1,10 @@
 package com.quickflash.comment.service;
 
 import com.quickflash.comment.dto.CommentDto;
-import com.quickflash.comment.entity.CommentEntity;
 import com.quickflash.comment.mapper.CommentMapper;
-import com.quickflash.comment.repository.CommentRepository;
 import com.quickflash.meetingPost.service.MeetingPostBO;
 import com.quickflash.meetingPost.service.Qualification;
-import com.quickflash.user.dto.userIdToNameDto;
+import com.quickflash.user.dto.UserIdToNameDto;
 import com.quickflash.user.service.UserBO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,11 +29,11 @@ public class CommentService {
             userIdSet.add(commentDto.getUserId());
         }
         // 쿼리 실행을 n번에서 1번으로 줄여서  db의 부담을 최소화 한다
-        List<userIdToNameDto> userIdToNameList =  userBO.getIdToUserNameMapByIdSet(userIdSet);
+        List<UserIdToNameDto> userIdToNameList =  userBO.getIdToUserNameMapByIdSet(userIdSet);
         Map<Integer,String> userIdToNameMap = new HashMap<>();
         if(userIdToNameList!= null){
-            for(userIdToNameDto userIdToName : userIdToNameList){
-                userIdToNameMap.put(userIdToName.getUserId(),userIdToName.getName());
+            for(UserIdToNameDto userIdToName : userIdToNameList){
+                userIdToNameMap.put(userIdToName.getId(),userIdToName.getName());
 
 
             }

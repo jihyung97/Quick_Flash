@@ -2,6 +2,7 @@ package com.quickflash.meeting_join.mapper;
 
 import com.quickflash.meeting_join.domain.MeetingJoin;
 import com.quickflash.meeting_join.dto.MeetingJoinDto;
+import com.quickflash.meeting_join.dto.MeetingJoinDtoForBatch;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,7 +17,7 @@ public interface MeetingJoinMapper {
 
     boolean updateMeetingJoinList(@Param("postId") int postId,
                                   @Param("userIdToJoinStatus") Map<Integer, String> userIdToJoinStatus);
-    List<MeetingJoin> selectMeetingJoinForTrustBatch(@Param("userIdList")List<Integer> userIdList , @Param("oneMonthAgo")   LocalDateTime oneMonthAgo) ;;
-
+    List<MeetingJoinDtoForBatch> selectMeetingJoinForTrustBatch(@Param("userIdList")List<Integer> userIdList , @Param("standardId") int standardId) ;;
+   int selectIdForDateStandard(LocalDateTime oneMonthAgo);
 
 }

@@ -5,7 +5,7 @@
 <mapper namespace="com.quickflash.user.mapper.UserMapper">
     <select id="selectIdToUserNameMapByIdSet"
             parameterType="java.util.Set"
-            resultType="com.quickflash.user.dto.userIdToNameDto" >
+            resultType="com.quickflash.user.dto.UserIdToNameDto" >
         SELECT  `id`,`name`
         FROM `user`
         WHERE `id` IN
@@ -14,7 +14,7 @@
         </foreach>
     </select>
 
-    <select id="selectUserIdsForBatch"  parameterType = "map" resultType="int">
+    <select id="selectUserIdsForBatch"  parameterType = "map" resultType="int" >
         SELECT `id`
         FROM `user`
         ORDER BY `id`
