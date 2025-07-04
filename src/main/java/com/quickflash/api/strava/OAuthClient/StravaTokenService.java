@@ -32,6 +32,9 @@ public class StravaTokenService {
 
         stravaTokenRepository.save(token);
     }
+    public Optional<StravaTokenEntity> getAccessToken(Integer userId ) {
+         return stravaTokenRepository.findById(userId);
+    }
 
 
 

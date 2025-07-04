@@ -21,14 +21,14 @@ public class StravaOAuthController {
 
     @GetMapping("/connect/strava")
     public String connectStrava(HttpSession session) {
-        // ⚠️ 로그인된 사용자 확인 (선택)
+        //   로그인된 사용자 확인
         Integer userId = (Integer) session.getAttribute("userId");
         if (userId == null) {
-            return "redirect:/login";
+            return "redirect:/main-page/before-meeting";
         }
 
          // authentication url로 이동
-        String authorizeUrl = stravaOAuthClient.buildAuthorizeUrl();
+        String authorizeUrl = stravaOAuthClient.buildAuthorizeUrl( );
         return "redirect:" + authorizeUrl;
     }
 
@@ -39,13 +39,26 @@ public class StravaOAuthController {
     //여기서 콜백 받으면 code를 보내 토큰을 받아온다. 그후 db에 저장
     public String handleCallback(@RequestParam("code") String code, HttpSession session) {
         Integer userId = (Integer) session.getAttribute("userId");
+        try{
 
-        // code로 access_token 교환
-        StravaTokenResponse stravaTokenResponse = stravaOAuthClient.exchangeCodeForToken(code);
+            // code로 access_token 교환
+            StravaTokenResponse stravaTokenResponse = stravaOAuthClient.exchangeCodeForToken(code);
 
-        // 토큰 저장 (DB or 세션)
-        stravaTokenService.addStravaToken(userId, stravaTokenResponse);
+            // 토큰 저장 (DB or 세션)
+            stravaTokenService.addStravaToken(userId, stravaTokenResponse);
+            String endPoint = (String) session.getAttribute("connect-exercise");
+            return "redirect:" + endPoint; // 다시 connect-cycle로 돌아감
 
-        return "redirect:/main-page/before-meeting";
+
+        }catch(Exception e){
+            return (String)session.getAttribute("defaultPage"); // 스트라바 연동버튼을 눌러 결국 토큰을 받는데 실패했을 때는 그냥 원래 페이지로 돌아간다.
+        }
+
+
+
+
+
     }
+
+
 }

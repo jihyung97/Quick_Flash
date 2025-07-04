@@ -124,6 +124,8 @@
         </div>
       </a>
       <a href="/connect/strava">스트라바 연동하기</a>
+      <button id="btn-connect-cycle"> 자전거 연동하기</button>
+
     </div>
 
 
@@ -190,6 +192,31 @@
     });
 
 
+     $("#btn-connect-cycle").on("click",function(){
+
+
+        let pageUrl = "/main-page/before-meeting";
+       
+       $.ajax({
+            url: "/strava-api/connect-cycle",
+            type: "GET",
+            data: {
+               "pageUrl" : pageUrl
+            },
+            success: function (data) {
+                if (data.result === "success") {
+                    alert("연동 성공");
+                } else if(data.result === "fail_get_token") {
+                     window.location.href = data.url;
+                }else{
+                  alert(result.result);
+                }
+            },
+            error: function (e) {
+                alert("연동에 실패하였습니다");
+            }
+       });
+    });
 
 
 

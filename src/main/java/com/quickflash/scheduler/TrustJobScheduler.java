@@ -19,7 +19,7 @@ public class TrustJobScheduler {
     private final JobLauncher jobLauncher;
     private final Job trustJob;
 
-    @Scheduled(fixedRate = 60000)// 매일 새벽 2시에 실행
+    @Scheduled(cron = "0 0 * * * *")// 정각마다
     public void runTrustJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()

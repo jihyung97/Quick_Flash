@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RequiredArgsConstructor
@@ -17,10 +19,12 @@ public class StravaOAuthClient {
 
     private final StravaOAuthProperties properties;
     private final RestTemplate restTemplate;
+    private final WebClient webClient;
+    private final StravaOAuthProperties stravaOAuthProperties;
 
 
 
-    public String buildAuthorizeUrl() {
+    public String buildAuthorizeUrl( ) {
         return UriComponentsBuilder.newInstance()
                 .scheme("https")
                 .host("www.strava.com")
@@ -30,6 +34,7 @@ public class StravaOAuthClient {
                 .queryParam("redirect_uri", properties.getRedirectUri())
                 .queryParam("scope", "read,activity:read")
                 .queryParam("approval_prompt", "auto")
+
                 .build()
                 .toUriString();
     }
@@ -37,23 +42,17 @@ public class StravaOAuthClient {
     
     //authentication code를 parameter로 받고 code와 client id, secret,code, 등을 넣어 서버에 보내고 토큰을 받음
     public StravaTokenResponse exchangeCodeForToken(String code) {
-        String url = "https://www.strava.com/oauth/token";
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("client_id", properties.getClientId() );
-        params.add("client_secret", properties.getClientSecret());
-        params.add("code", code);
-        params.add("grant_type", "authorization_code");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
-
-        ResponseEntity<StravaTokenResponse> response =
-                restTemplate.postForEntity(url, request, StravaTokenResponse.class);
-
-        return response.getBody();
+        return webClient.post()
+                . uri("https://www.strava.com/oauth/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters
+                        .fromFormData("client_id", properties.getClientId())
+                        .with("client_secret", properties.getClientSecret())
+                        .with("code", code)
+                        .with("grant_type", "authorization_code"))
+                .retrieve()
+                .bodyToMono(StravaTokenResponse.class)
+                .block();
     }
 }
 

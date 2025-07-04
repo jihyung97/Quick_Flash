@@ -40,7 +40,7 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok:1.18.24'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
-
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 }
 

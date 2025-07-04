@@ -37,8 +37,9 @@
                 <div><h2>모이는 위치</h2></div>
                 <div><span th:text="${meetingPost.location}"></span></div>
                 <div>
-                    <div>지도</div>
-                    <div><div class="bg-warning"></div></div>
+                    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=dd189a1a763710dd5dc72319d26d4284"></script>
+                    <div id="map" style="width:500px; height:400px;"></div>
+
                 </div>
             </div>
 
