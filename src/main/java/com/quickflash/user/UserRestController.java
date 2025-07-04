@@ -23,6 +23,8 @@ public class UserRestController {
     private final UserBO userBO;
     private final UserService userService;
 
+
+
     @RequestMapping("/create")
     public Map<String,Object> CreateUser(
             @RequestParam("loginId") String loginId
