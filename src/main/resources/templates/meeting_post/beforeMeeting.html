@@ -38,7 +38,7 @@
                 <div><span th:text="${meetingPost.location}"></span></div>
                 <div>
 
-                    <div id="map" style="width:50px;height:50px;"></div>
+                    <div id="map" style="width:400px;height:200px;"></div>
 
                 </div>
             </div>
@@ -154,22 +154,100 @@
             </div>
         </div>
     </div>
-
+    <span>latitude</span><span th:text="${meetingPost.latitude}" id="position-lat"></span>
+    <span>longitude</span><span th:text="${meetingPost.longitude}" id="position-lng"></span>
     <div class="d-flex justify-content-end mt-4">
         <button>닫기</button>
         <button>수정하기</button>
         <button>모임취소</button>
     </div>
 </div>
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dd189a1a763710dd5dc72319d26d4284"></script>
-<script>
-    var container = document.getElementById('map');
-    var options = {
-        center: new kakao.maps.LatLng(33.450701, 126.570667),
-        level: 3
-    };
+ 
 
-    var map = new kakao.maps.Map(container, options);
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dd189a1a763710dd5dc72319d26d4284&libraries=services"></script>
+        <script>
+            var container = document.getElementById('map');
+            var options = {
+                center: new kakao.maps.LatLng($("#position-lat").text(), $("#position-lng").text()),
+                level: 3
+            };
+
+            var map = new kakao.maps.Map(container, options);
+
+
+            var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+              var infowindow2 = new kakao.maps.InfoWindow({zIndex:1});
+
+
+
+
+ 
+
+            var marker = new kakao.maps.Marker({
+                // 지도 중심좌표에 마커를 생성합니다
+                
+                 position: new kakao.maps.LatLng($("#position-lat").text(), $("#position-lng").text())
+              //  clickable: true
+              });
+            // 지도에 마커를 표시합니다
+            marker.setMap(map);
+
+            //클릭할 때의 마커 객체를 하나 더 생성
+            var marker2 = new kakao.maps.Marker({});
+            var geocoder = new kakao.maps.services.Geocoder();
+             geocoder.coord2Address($("#position-lng").text(), $("#position-lat").text(), function(result,status){
+                      if (status === kakao.maps.services.Status.OK) {
+                        // var detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
+                        var detailAddr  = '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
+                        
+                        var content = '<div class="bAddr">' +
+                                        
+                                        detailAddr + 
+                                    '</div>';
+
+                       
+                        
+                        // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
+                        infowindow.setContent(content);
+                        infowindow.open(map, marker);
+                    }   
+
+
+             });
+
+
+
+           
+            kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+                searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
+                    if (status === kakao.maps.services.Status.OK) {
+                        // var detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
+                        var detailAddr  = '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
+                        
+                        var content = '<div class="bAddr">' +
+                                        
+                                        detailAddr + 
+                                    '</div>';
+
+                        // 마커를 클릭한 위치에 표시합니다 
+                        marker2.setPosition(mouseEvent.latLng);
+                         
+                        marker2.setMap(map);
+                        $("#position-lng").text(mouseEvent.latLng.getLng());
+                        $("#position-lat").text(mouseEvent.latLng.getLat());
+
+                        // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
+                        infowindow2.setContent(content);
+                        infowindow2.open(map, marker2);
+                    }   
+                });
+                    map.setDraggable(true);
+            });
+
+            function searchDetailAddrFromCoords(coords, callback) {
+                // 좌표로 법정동 상세 주소 정보를 요청합니다
+                geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+            }
 </script>
 <script>
     $(function(){

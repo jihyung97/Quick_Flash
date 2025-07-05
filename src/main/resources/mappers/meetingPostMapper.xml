@@ -18,8 +18,8 @@
         `title`,
         `location`,
 
-        ST_Y(locationpoint) AS `latitude`,
-        ST_X(locationpoint) AS `longitude`,
+        ST_Y(locationpoint) AS `longitude`,
+        ST_X(locationpoint) AS `latitude`,
         `restLocation`,
         `expiredAt`,
         `contentText`,
@@ -104,7 +104,7 @@
         #{userId},
         #{title},
         #{location},
-        ST_GeomFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')'), 4326),
+        ST_GeomFromText(CONCAT('POINT(', #{latitude}, ' ', #{longitude}, ')'), 4326),
         #{restLocation},
         #{expiredAt},
         #{contentText},
@@ -148,8 +148,8 @@
         `title`,
         `location`,
 
-        ST_Y(locationpoint) AS `latitude`,
-        ST_X(locationpoint) AS `longitude`,
+        ST_Y(locationpoint) AS `longitude`,
+        ST_X(locationpoint) AS `latitude`,
         `restLocation`,
         `expiredAt`,
         `contentText`,
@@ -202,7 +202,7 @@
         SET
         `title` = #{title},
         `location` = #{location},
-        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')'), 4326),
+        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{latitude}, ' ', #{longitude}, ')'), 4326),
         `restLocation` = #{restLocation},
         `expiredAt` = #{expiredAt},
         `contentText` = #{contentText},
@@ -229,7 +229,7 @@
         SET
         `title` = #{title},
         `location` = #{location},
-        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')'), 4326),
+        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{latitude}, ' ', #{longitude}, ')'), 4326),
         `restLocation` = #{restLocation},
         `expiredAt` = #{expiredAt},
         `contentText` = #{contentText},
@@ -257,7 +257,7 @@
         SET
 
         `location` = #{location},
-        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')'), 4326),
+        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{latitude}, ' ', #{longitude}, ')'), 4326),
         `restLocation` = #{restLocation},
 
         `afterMeetingContent` = #{afterMeetingContent},

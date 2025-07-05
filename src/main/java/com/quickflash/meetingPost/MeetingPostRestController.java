@@ -55,6 +55,8 @@ public class MeetingPostRestController {
             @RequestParam Boolean isMyFtpShown
 
     ) {
+        log.info("latitude of Meeting{}                   :                ", latitude);
+        log.info("longitude of Meeting{}    :                              ", longitude);
         Map<String, Object> result = new HashMap<>();
 
         Integer sessionId = (Integer) session.getAttribute("userId");
