@@ -18,7 +18,18 @@
         </foreach>
     </update>
 
+    <select id="selectTrustForOrderDtoMapByUserIdList"  parameterType="list" resultType="com.quickflash.trust.dto.TrustForOrderDto">
 
+        SELECT `userId`,`trustOfLeader`,`trustOfMember` FROM `trust`
+        WHERE `userId` IN
+        <foreach collection="userIdList" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+
+
+
+
+    </select>
 
 
 </mapper>

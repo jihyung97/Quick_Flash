@@ -4,6 +4,7 @@ import com.quickflash.meetingPost.service.Response;
 import com.quickflash.meeting_join.entity.MeetingJoinEntity;
 import com.quickflash.meeting_join.mapper.MeetingJoinMapper;
 import com.quickflash.meeting_join.repository.MeetingJoinRepository;
+import com.quickflash.trust.dto.TrustForOrderDto;
 import com.quickflash.trust.entity.TrustEntity;
 import com.quickflash.trust.mapper.TrustMapper;
 import com.quickflash.trust.repository.TrustRepository;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static groovyjarjarantlr4.v4.gui.Trees.save;
 
@@ -44,6 +46,10 @@ public class TrustBO {
 
        trustMapper.updateTrustOfMemberByBatch(trustMap);
        return true;
+    }
+    public Map<Integer, TrustForOrderDto> getTrustForOrderDtoByMeetingByUserIdList(List<Integer> userIdList){
+
+        return trustMapper.selectTrustForOrderDtoMapByUserIdList(userIdList) ;
     }
 }
 

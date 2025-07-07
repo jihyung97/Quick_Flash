@@ -35,6 +35,9 @@ public class AbilityBO {
         abilityRepository.save(abilityEntity);
         return true;
     }
+    public AbilityEntity getAbilityByUserId(int userId){
+        return abilityRepository.findById(userId).orElse(null);
+    }
 
 
 }

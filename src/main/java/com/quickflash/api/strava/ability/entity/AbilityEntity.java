@@ -19,8 +19,8 @@ public class AbilityEntity {
     @Id
 
     private int userId;
-    private double maxCyclingAvgPower;
-    private double maxRunningSpeed;
+    private Double maxCyclingAvgPower;
+    private Double maxRunningSpeed;
     private boolean isCycleConnectedToStrava;
         private boolean isRunConnectedToStrava;
     @CreationTimestamp

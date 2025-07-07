@@ -2,8 +2,8 @@ package com.quickflash.meetingPost.service;
 
 
 import com.quickflash.meetingPost.domain.MeetingPost;
+import com.quickflash.meetingPost.dto.MeetingPostForOrderDto;
 import com.quickflash.meetingPost.dto.ThumbnailDto;
-import com.quickflash.meetingPost.entity.MeetingPostEntity;
 import com.quickflash.meetingPost.mapper.MeetingPostMapper;
 import com.quickflash.meetingPost.repository.MeetingPostRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -196,5 +193,16 @@ public class MeetingPostBO {
 
 
     }
+    // bound-box 로 거리를 추린 게시글의 아이디를 가져온다.
+    public Map<Integer, MeetingPostForOrderDto> getPostIdsSelectedByBoundBox(Map<String, Double>minMaxLanLng){
+         return meetingPostMapper.selectMeetingPostForOrderDtoMapByBoundBox(minMaxLanLng);
+
+
+
+    }
+    public List<ThumbnailDto> getThumbnailDtoListByPostIds(List<Integer> postIds){
+        return meetingPostMapper.selectThumbnailDtoListByPostIds(postIds);
+    }
+
 
 }

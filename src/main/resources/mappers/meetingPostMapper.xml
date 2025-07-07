@@ -275,6 +275,65 @@
     </update>
 
 
+    <select id="selectMeetingPostForOrderDtoMapByBoundBox"  parameterType = "map" resultType="com.quickflash.meetingPost.dto.MeetingPostForOrderDto">
+    SELECT
+         `id`
+        ,`userId`
+        , ST_Y(`locationpoint`) AS `longitude`
+        , ST_X(`locationpoint`) AS `latitude`
+        ,`exerciseType`
+        ,`speed`
+        ,`power`
+        FROM
+            `meetingpost`
+        WHERE
+        MBRContains(
+            ST_GeomFromText(
+                CONCAT(
+                    'POLYGON((',
+                        #{minLat}, ' ', #{minLng}, ',',
+                        #{maxLat}, ' ', #{minLng}, ',',
+                        #{maxLat}, ' ', #{maxLng}, ',',
+                        #{minLat}, ' ', #{maxLng}, ',',
+                        #{minLat}, ' ', #{minLng},
+                    '))'
+                ),4326
+            ),
+            `locationpoint`
+        )
+    </select>
+
+    <select id="selectThumbnailDtoListByPostIds"
+            parameterType="list"
+            resultType="com.quickflash.meetingPost.dto.ThumbnailDto">
+
+        SELECT
+        `id`,
+        `title`,
+        `location`,
+        `expiredAt`,
+        `exerciseType`,
+        `distance`,
+        `speed`,
+        `power`,
+        `minHeadCount`,
+        `maxHeadCount`,
+        `isRestExist`,
+        `isAbandonOkay`,
+        `createdAt`
+        FROM
+        `meetingPost`
+        WHERE
+        `id` IN
+        <foreach collection="list" item="postId" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+        ORDER BY FIELD(`id`
+        <foreach collection="list" item="postId" separator=",">
+            #{postId}
+        </foreach>
+        )
+    </select>
 </mapper>
 
 
