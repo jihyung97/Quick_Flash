@@ -10,25 +10,30 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class ThumbnailDto {
-    int postId;
+    int id;
     String title;
     String location;
     LocalDateTime expiredAt;
-   String remainedTime;
     String exerciseType;
+
+
     double distance;
     double speed;
-   Integer speed_min;
-    Integer speed_sec;
+
     double power;
     int minHeadCount;
     int maxHeadCount;
-    boolean isAbandonOkay;
+
     boolean isRestExist;
-    double leaderPace;
-    double leaderFtp;
+    boolean isAbandonOkay;
     LocalDateTime createdAt;
+   Double leaderPace;
+    Double leaderFtp;
+
+    String remainedTime;
     String leaderName;
-    int currentHeadCount;
+    Integer currentHeadCount;
+    Integer speed_min;
+    Integer speed_sec;
 
 }

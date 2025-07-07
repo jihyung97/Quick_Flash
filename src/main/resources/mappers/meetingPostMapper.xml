@@ -325,14 +325,18 @@
         `meetingPost`
         WHERE
         `id` IN
-        <foreach collection="list" item="postId" open="(" separator="," close=")">
-            #{postId}
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
         </foreach>
-        ORDER BY FIELD(`id`
-        <foreach collection="list" item="postId" separator=",">
-            #{postId}
-        </foreach>
-        )
+
+        <if test="list != null and list.size() > 1">
+            ORDER BY FIELD(`id`
+            <foreach collection="list" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
+
     </select>
 </mapper>
 

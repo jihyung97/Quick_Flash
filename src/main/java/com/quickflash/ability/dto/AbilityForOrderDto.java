@@ -1,4 +1,4 @@
-package com.quickflash.api.strava.ability.dto;
+package com.quickflash.ability.dto;
 
 
 import lombok.Builder;

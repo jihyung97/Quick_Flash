@@ -46,14 +46,15 @@ public class MainPageController {
             Map<Integer, MeetingPostForOrderDto> meetingPostMap = meetingPostBO.getPostIdsSelectedByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, 10));
             log.info("meetingPostByBoundBox At MainPagecontroller {}", meetingPostMap);
             Set<Integer> keySet = meetingPostMap.keySet();
-            for (int key : keySet) {
-                MeetingPostForOrderDto meetingPost = meetingPostMap.get(key);
-                double distance = calculationService.calculateDistancesForMeetingPost(meetingPost.getLatitude(), meetingPost.getLongitude(), lat, lng);
-                log.info("distance Of meetingPost Id : {}  , {} 거리", key, distance);
-            }
-            log.info("CalculateScoreForMeetingPostOrder {}", meetingPostService.CalculateScoreForMeetingPostOrder(meetingPostMap, userId, lat, lng));
+//            for (int key : keySet) {
+//                MeetingPostForOrderDto meetingPost = meetingPostMap.get(key);
+//                double distance = calculationService.calculateDistancesForMeetingPost(meetingPost.getLatitude(), meetingPost.getLongitude(), lat, lng);
+//                log.info("distance Of meetingPost Id : {}  , {} 거리", key, distance);
+//            }
+//            log.info("CalculateScoreForMeetingPostOrder {}", meetingPostService.getPostIdsOrderByTotalScore(meetingPostMap, userId, lat, lng));
 
-            log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{}", calculationService.calculatePowerScore(200, 400));
+
+            model.addAttribute("meetingPostList", meetingPostDtoMaker.generateMeetingPostThumbnailDtoListByScore(lat,lng,userId));
         }
 
         //userId,userName,userLoginId
@@ -63,7 +64,7 @@ public class MainPageController {
             userInfo.put("userName", userName);
             userInfo.put("userLoginId", userLoginId);
             model.addAttribute("userInfo", userInfo);
-            model.addAttribute("meetingPostList", meetingPostDtoMaker.generateMeetingPostThumbnailDtoListForTest());
+
             //log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + meetingPostService.generateMeetingPostThumbnailDtoListForTest().get(0).getTitle());
         }
         return "main_page/beforeMeeting";

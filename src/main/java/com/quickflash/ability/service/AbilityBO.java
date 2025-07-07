@@ -1,17 +1,11 @@
-package com.quickflash.api.strava.ability.service;
+package com.quickflash.ability.service;
 
-import com.quickflash.api.strava.OAuthClient.StravaTokenEntity;
-import com.quickflash.api.strava.OAuthClient.StravaTokenResponse;
-import com.quickflash.api.strava.ability.entity.AbilityEntity;
-import com.quickflash.api.strava.ability.repository.AbilityRepository;
+import com.quickflash.ability.entity.AbilityEntity;
+import com.quickflash.ability.repository.AbilityRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @RequiredArgsConstructor
 @Service
@@ -29,7 +23,7 @@ public class AbilityBO {
         }
 
         if (maxSpeedOfRun != null && maxSpeedOfRun != 0.0) {
-            abilityEntity.setMaxRunningSpeed(maxSpeedOfRun);
+            abilityEntity.setMaxRunningAvgSpeed(maxSpeedOfRun);
         }
 
         abilityRepository.save(abilityEntity);

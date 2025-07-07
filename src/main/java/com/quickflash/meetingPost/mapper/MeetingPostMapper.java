@@ -27,6 +27,7 @@ public interface MeetingPostMapper {
     //bound-box 로 게시글들을 추려서 계산에 필요한 스키마들을 dto로 가져온다
     @MapKey("id")
    Map<Integer,MeetingPostForOrderDto> selectMeetingPostForOrderDtoMapByBoundBox(Map<String,Double> minMaxLatLng) ;
+
     List<ThumbnailDto> selectThumbnailDtoListByPostIds(List<Integer> postIds);
 
 

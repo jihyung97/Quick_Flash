@@ -1,7 +1,7 @@
 package com.quickflash.api.strava.StravaApi;
 
 import com.quickflash.api.strava.StravaApi.entity.DataForAbilityOfCycle;
-import com.quickflash.api.strava.ability.service.AbilityBO;
+import com.quickflash.ability.service.AbilityBO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

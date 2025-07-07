@@ -1,8 +1,8 @@
 package com.quickflash.meetingPost.service;
 
 
-import com.quickflash.api.strava.ability.entity.AbilityEntity;
-import com.quickflash.api.strava.ability.service.AbilityBO;
+import com.quickflash.ability.entity.AbilityEntity;
+import com.quickflash.ability.service.AbilityBO;
 import com.quickflash.comment.service.CommentBO;
 import com.quickflash.comment.service.CommentService;
 import com.quickflash.meetingPost.dto.MeetingPostForOrderDto;
@@ -127,52 +127,77 @@ public class MeetingPostService {
     }
 
     //power,speed, user와의 거리, trust 를 종합해서 점수를 계산하고 정렬 : bound-box 로 셀렉트된 Map<postId, Dto>
-    public List<Integer> CalculateScoreForMeetingPostOrder(Map<Integer, MeetingPostForOrderDto> meetingPostForOrderDtoMap, int userId, double standardLat,double standardLng){
+    public List<Integer> getPostIdsOrderByTotalScore(Map<Integer, MeetingPostForOrderDto> meetingPostForOrderDtoMapByBoundBox,Integer userId, double standardLat,double standardLng){
 
-        AbilityEntity abilityOfUser = abilityBO.getAbilityByUserId(userId);
-        Double powerOfUser = abilityOfUser.getMaxCyclingAvgPower();
-        Double speedOFUser = abilityOfUser.getMaxRunningSpeed();
+        Double powerOfUser = 0.0;
+        Double speedOfUser = 0.0;
+
+        if(userId != null){
+            AbilityEntity abilityOfUser = abilityBO.getAbilityByUserId(userId);
+            if(abilityOfUser != null){
+                powerOfUser = abilityOfUser.getMaxCyclingAvgPower();
+                speedOfUser = abilityOfUser.getMaxRunningAvgSpeed();
+
+            }
 
 
-        Set<Integer> postKeySet =  meetingPostForOrderDtoMap.keySet();
+
+        }
+
+        log.info("meetingPostForORderDtoMapByBoundBox {}", meetingPostForOrderDtoMapByBoundBox);
+
+        Set<Integer> postKeySet =  meetingPostForOrderDtoMapByBoundBox.keySet();
 
         List<Integer> userIdList = new ArrayList<>();
 
         //meetingPost userId의 keyset을 만든다
         for(int key :   postKeySet){
-            userIdList.add(meetingPostForOrderDtoMap.get(key).getUserId());
+            userIdList.add(meetingPostForOrderDtoMapByBoundBox.get(key).getUserId());
         }
 
         //keySet으로 trust의 정보를 가져온다 , Map<user, TrustForOrderDto
-        Map<Integer, TrustForOrderDto> trustForOrderDtoMap =  trustBO.getTrustForOrderDtoByMeetingByUserIdList(userIdList);
+        Map<Integer, TrustForOrderDto> trustForOrderDtoMap = new HashMap<>();
+    if(userIdList != null && !userIdList.isEmpty()){
+
+        trustBO.getTrustForOrderDtoByMeetingByUserIdList(userIdList);
+    }
 
         Map<Integer,Double> idToTotalScoreMap = new HashMap<>();
         //파워, 스피드에 대한
 
         for(int key : postKeySet){
-            MeetingPostForOrderDto meetingPostForOrderDto = meetingPostForOrderDtoMap.get(key);
+            MeetingPostForOrderDto meetingPostForOrderDto = meetingPostForOrderDtoMapByBoundBox.get(key);
             double distance = calculationService.calculateDistancesForMeetingPost(meetingPostForOrderDto.getLatitude(),meetingPostForOrderDto.getLongitude(),standardLat,standardLng);
-            double trustOfMember = trustForOrderDtoMap.get(meetingPostForOrderDto.getUserId()).getTrustOfMember();
-            Double powerOfMeetingPost =  meetingPostForOrderDto.getPower();
-            Double speedOfMeetingPost =  meetingPostForOrderDto.getSpeed();
+
+            double trustOfMember = 0.0;
             Double powerScore = 0.0;
             Double speedScore = 0.0;
+            TrustForOrderDto  trustForOrderDto = trustForOrderDtoMap.get(meetingPostForOrderDto.getUserId());
+            if(trustForOrderDto != null){
+                trustOfMember = trustForOrderDto .getTrustOfMember();
+
+            }
+
+            Double powerOfMeetingPost =  meetingPostForOrderDto.getPower();
+            Double speedOfMeetingPost =  meetingPostForOrderDto.getSpeed();
 
 
+
+            //운동 종류가 자전거이고 user의 파워 정보가 있을 때에만 점수를 낸다.
 
             double distanceScore = calculationService.calculateDistanceScore(distance);
-            if(ExerciseType.CYCLE.name().equals(meetingPostForOrderDto.getExerciseType()) && powerOfUser != 0.0 && powerOfUser != null){
+            if(ExerciseType.CYCLE.name().equals(meetingPostForOrderDto.getExerciseType()) && powerOfUser != 0.0  ){
                 if(powerOfUser > powerOfMeetingPost){
                    powerScore =  calculationService.calculatePowerScore(powerOfMeetingPost,powerOfUser);
                 }else{
                    powerScore =  calculationService.calculatePowerScore(powerOfUser,powerOfMeetingPost);
                 }
 
-            }else if(ExerciseType.RUNNING.name().equals(meetingPostForOrderDto.getExerciseType()) && speedOFUser != 0.0 && speedOFUser != null){
-                if(speedOFUser > speedOfMeetingPost){
-                    speedScore =  calculationService.calculateSpeedScore(speedOfMeetingPost,speedOFUser);
+            }else if(ExerciseType.RUNNING.name().equals(meetingPostForOrderDto.getExerciseType()) && speedOfUser != 0.0 ){
+                if(speedOfUser > speedOfMeetingPost){
+                    speedScore =  calculationService.calculateSpeedScore(speedOfMeetingPost,speedOfUser);
                 }else{
-                    speedScore =  calculationService.calculateSpeedScore(speedOFUser,speedOfMeetingPost);
+                    speedScore =  calculationService.calculateSpeedScore(speedOfUser,speedOfMeetingPost);
                 }
             }
 

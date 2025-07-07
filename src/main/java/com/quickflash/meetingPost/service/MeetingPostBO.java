@@ -201,7 +201,13 @@ public class MeetingPostBO {
 
     }
     public List<ThumbnailDto> getThumbnailDtoListByPostIds(List<Integer> postIds){
-        return meetingPostMapper.selectThumbnailDtoListByPostIds(postIds);
+        List<ThumbnailDto> thumbnailDtoList = new ArrayList<>();
+        if(postIds != null && !postIds.isEmpty()){
+           thumbnailDtoList =  meetingPostMapper.selectThumbnailDtoListByPostIds(postIds);
+
+        }
+        return thumbnailDtoList;
+
     }
 
 

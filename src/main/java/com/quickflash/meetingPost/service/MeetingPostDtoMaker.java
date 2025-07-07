@@ -4,10 +4,7 @@ import com.quickflash.comment.dto.CommentDto;
 import com.quickflash.comment.service.CommentBO;
 import com.quickflash.comment.service.CommentService;
 import com.quickflash.meetingPost.domain.MeetingPost;
-import com.quickflash.meetingPost.dto.BeforeMeetingDto;
-import com.quickflash.meetingPost.dto.FinalReportDto;
-import com.quickflash.meetingPost.dto.ReportMakingDto;
-import com.quickflash.meetingPost.dto.ThumbnailDto;
+import com.quickflash.meetingPost.dto.*;
 import com.quickflash.meeting_join.dto.MeetingJoinDto;
 import com.quickflash.meeting_join.service.MeetingJoinBO;
 import com.quickflash.meeting_join.service.MeetingJoinDtoMaker;
@@ -37,6 +34,7 @@ public class MeetingPostDtoMaker {
     private final MeetingJoinBO meetingJoinBO;
     private final TimeService timeService;
     private final CalculationService calculationService;
+    private final MeetingPostService meetingPostService;
 
 
 
@@ -68,7 +66,7 @@ public class MeetingPostDtoMaker {
                     .expiredAt((LocalDateTime)parametersOfMeetingPost.get("expiredAt"))
                     .maxHeadCount((int)parametersOfMeetingPost.get("maxHeadCount"))
                     .currentHeadCount(meetingJoinBO.countMember((int)parametersOfMeetingPost.get("id")) + 1)//리더까지 참여인원수에 포함
-                    .postId((int)parametersOfMeetingPost.get("id"))
+                    .id((int)parametersOfMeetingPost.get("id"))
                     .exerciseType((String)parametersOfMeetingPost.get("exerciseType"))
                     .remainedTime(timeService.show_remainedTime(LocalDateTime.now(),(LocalDateTime)parametersOfMeetingPost.get("expiredAt")))
                     .build();
@@ -208,6 +206,31 @@ public class MeetingPostDtoMaker {
 
         log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!generateBeforeMeetingDTo");
         return afterMeetingDto;
+
+    }
+
+    public List<ThumbnailDto> generateMeetingPostThumbnailDtoListByScore(double lat, double lng, int sessionId){
+
+        Map<Integer, MeetingPostForOrderDto> meetingPostMapByBoundBox = meetingPostBO.getPostIdsSelectedByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, 10));
+        List<Integer> postIds = meetingPostService.getPostIdsOrderByTotalScore(meetingPostMapByBoundBox,sessionId,lat,lng);
+        List<ThumbnailDto> thumbnailDtoList = meetingPostBO.getThumbnailDtoListByPostIds(postIds);
+
+        for(ThumbnailDto thumbnailDto : thumbnailDtoList){
+
+            //speed (km/h)를 페이스로 바꾼다 (min/kim)
+
+            Map<String,Integer> pace = calculationService.convertspeedTopace( thumbnailDto.getSpeed() );
+
+            thumbnailDto.setSpeed_min(pace.get("min"));
+            thumbnailDto.setSpeed_sec(pace.get("sec"));
+            thumbnailDto.setCurrentHeadCount(meetingJoinBO.countMember(thumbnailDto.getId()) + 1);
+            thumbnailDto.setRemainedTime(timeService.show_remainedTime(LocalDateTime.now(),(LocalDateTime)thumbnailDto.getExpiredAt()));
+
+            //여기에 thumbnailDto 에 다른  domain 의 정보를 추가
+            //thumbnailDto.setLeaderPace , setLeaderFtp, setLeaderName
+        }
+
+        return thumbnailDtoList;
 
     }
 

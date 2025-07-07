@@ -1,4 +1,4 @@
-package com.quickflash.api.strava.ability.entity;
+package com.quickflash.ability.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +20,7 @@ public class AbilityEntity {
 
     private int userId;
     private Double maxCyclingAvgPower;
-    private Double maxRunningSpeed;
+    private Double maxRunningAvgSpeed;
     private boolean isCycleConnectedToStrava;
         private boolean isRunConnectedToStrava;
     @CreationTimestamp
