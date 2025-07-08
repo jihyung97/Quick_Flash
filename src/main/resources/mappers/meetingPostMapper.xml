@@ -303,9 +303,25 @@
         )
     </select>
 
+    <resultMap id="thumbnailDtoMap" type="com.quickflash.meetingPost.dto.ThumbnailDto">
+        <result property="id" column="id" />
+        <result property="title" column="title" />
+        <result property="location" column="location" />
+        <result property="expiredAt" column="expiredAt" />
+        <result property="exerciseType" column="exerciseType" />
+        <result property="distance" column="distance" />
+        <result property="speed" column="speed" />
+        <result property="power" column="power" />
+        <result property="minHeadCount" column="minHeadCount" />
+        <result property="maxHeadCount" column="maxHeadCount" />
+        <result property="isRestExist" column="isRestExist" />
+        <result property="isAbandonOkay" column="isAbandonOkay" />
+        <result property="createdAt" column="createdAt" />
+    </resultMap>
+
     <select id="selectThumbnailDtoListByPostIds"
             parameterType="list"
-            resultType="com.quickflash.meetingPost.dto.ThumbnailDto">
+            resultMap="thumbnailDtoMap">
 
         SELECT
         `id`,
@@ -329,15 +345,21 @@
             #{id}
         </foreach>
 
-        <if test="list != null and list.size() > 1">
-            ORDER BY FIELD(`id`
-            <foreach collection="list" item="id" separator=",">
-                #{id}
-            </foreach>
-            )
-        </if>
+        ORDER BY FIELD(`id`,
+        <foreach collection="list" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+
+
 
     </select>
+
+    <select id="selectCurrentStatusForBatch"
+            parameterType="list"
+            resultMap="thumbnailDtoMap">
+
+
 </mapper>
 
 

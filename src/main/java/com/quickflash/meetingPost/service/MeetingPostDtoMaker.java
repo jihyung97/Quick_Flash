@@ -59,16 +59,16 @@ public class MeetingPostDtoMaker {
                     .location((String)parametersOfMeetingPost.get("location"))
                     .power((double)parametersOfMeetingPost.get("power"))
                     .speed((double)parametersOfMeetingPost.get("speed"))
-                    .speed_min(pace.get("min"))
-                    .speed_sec(pace.get("sec"))
+//                    .speed_min(pace.get("min"))
+//                    .speed_sec(pace.get("sec"))
                     .distance((double)parametersOfMeetingPost.get("distance"))
                     .createdAt((LocalDateTime) parametersOfMeetingPost.get("createdAt"))
                     .expiredAt((LocalDateTime)parametersOfMeetingPost.get("expiredAt"))
                     .maxHeadCount((int)parametersOfMeetingPost.get("maxHeadCount"))
-                    .currentHeadCount(meetingJoinBO.countMember((int)parametersOfMeetingPost.get("id")) + 1)//리더까지 참여인원수에 포함
+//                    .currentHeadCount(meetingJoinBO.countMember((int)parametersOfMeetingPost.get("id")) + 1)//리더까지 참여인원수에 포함
                     .id((int)parametersOfMeetingPost.get("id"))
                     .exerciseType((String)parametersOfMeetingPost.get("exerciseType"))
-                    .remainedTime(timeService.show_remainedTime(LocalDateTime.now(),(LocalDateTime)parametersOfMeetingPost.get("expiredAt")))
+//                    .remainedTime(timeService.show_remainedTime(LocalDateTime.now(),(LocalDateTime)parametersOfMeetingPost.get("expiredAt")))
                     .build();
             thumbnailDtoList.add(thumbnailDto);
             //여기에 thumbnailDto 에 다른  domain 의 정보를 추가

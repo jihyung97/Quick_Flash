@@ -147,4 +147,9 @@ public class CalculationService {
        }
        return totalScore;
     }
+    // postinfo 에는  게시글의 아이디, sst값, 시작 시간, 종료 시간, 획득 고도 가 들어있다
+    public List<Integer> sstOptimizeAlgorithm(List<Map<Integer,Double>> postInfoList) {
+
+
+    }
 }

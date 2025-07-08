@@ -1,7 +1,7 @@
 package com.quickflash.meetingPost.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import jakarta.persistence.Id;
+import lombok.*;
 import org.springframework.cglib.core.Local;
 
 import java.time.Duration;
@@ -9,7 +9,12 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ThumbnailDto {
+    @Id
     int id;
     String title;
     String location;
@@ -17,15 +22,15 @@ public class ThumbnailDto {
     String exerciseType;
 
 
-    double distance;
-    double speed;
+    Double distance;
+    Double speed;
 
-    double power;
-    int minHeadCount;
-    int maxHeadCount;
+    Double power;
+    Integer minHeadCount;
+    Integer maxHeadCount;
 
-    boolean isRestExist;
-    boolean isAbandonOkay;
+    Boolean isRestExist;
+    Boolean isAbandonOkay;
     LocalDateTime createdAt;
    Double leaderPace;
     Double leaderFtp;

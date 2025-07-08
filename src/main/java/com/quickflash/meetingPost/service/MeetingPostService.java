@@ -210,7 +210,7 @@ public class MeetingPostService {
 
         }
             //idToTOtalScoreMap에 있는 값을 totalScore 가 높은 순으로 정렬하고 반환
-
+        log.info("idToTotalScoreMap {}", idToTotalScoreMap);
 
         List<Integer> orderedMeetingPostList = idToTotalScoreMap.entrySet()
                 .stream()
