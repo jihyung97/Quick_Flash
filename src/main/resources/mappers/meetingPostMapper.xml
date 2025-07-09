@@ -355,9 +355,7 @@
 
     </select>
 
-    <select id="selectCurrentStatusForBatch"
-            parameterType="list"
-            resultMap="thumbnailDtoMap">
+
 
 
 </mapper>
