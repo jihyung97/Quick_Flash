@@ -1,6 +1,7 @@
 package com.quickflash.utility.calculation;
 
 import com.quickflash.meetingPost.dto.MeetingPostForOrderDto;
+import com.quickflash.meetingPost.dto.OneClickDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -145,32 +146,53 @@ public class CalculationService {
        return totalScore;
     }
 
-    public  List<Integer> optimizeOneClick(){
+
+    public OneClickDto calculateSstAndEndTime(double power, int duration, double ftp, int start_time){
+        //sst를 구한다. t*(Np/ftp)^2 * 100 /3600
+        double sst = duration * (power/ftp)*(power/ftp) * 100 / 3600;
+        //total_time 은  duration + 휴식시간 , 시간단위 이므로 Integer
+        int rest_time = (int)((double)(24 /  125) * sst);
+        log.info("rest_time {}", rest_time);
+
+        int total_time = (int)( duration / 3600) + rest_time;
+        int end_time = start_time + total_time;
+        Map<String,Object> result = new HashMap<>();
+         OneClickDto oneClickDto = new OneClickDto();
+        oneClickDto.setEnd_time(start_time);
+         oneClickDto.setEnd_time(end_time);
+         oneClickDto.setSst(sst);
+
+
+
+        return oneClickDto;
+
+    }
+    public  List<Integer> optimizeOneClick(List<OneClickDto> oneClickDtoList){
 
 
 
         //반드시 start 시간과 끝나는 시간은 달라야 함.
 
-
-        Random random = new Random();
-        List<Map<String, Object>> currentPostList = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++) {
-            double sst = Math.round((random.nextDouble() * 20) * 100.0) / 100.0; // 0.00 ~ 20.00
-            int start_time = random.nextInt(91); // 0 ~ 90
-            int end_time = start_time + random.nextInt(11) + 1; // start_time ~ start_time + 10
-            int height = random.nextInt(5); // 0 ~ 4
-            int postId = i + 1; // 1 ~ 20
-
-            Map<String, Object> post = new HashMap<>();
-            post.put("sst", sst);
-            post.put("start_time", start_time);
-            post.put("end_time", end_time);
-            post.put("height", height);
-            post.put("postId", postId);
-
-            currentPostList.add(post);
-        }
+//
+//        Random random = new Random();
+//        List<Map<String, Object>> currentPostList = new ArrayList<>();
+//
+//        for (int i = 0; i < 20; i++) {
+//            double sst = Math.round((random.nextDouble() * 20) * 100.0) / 100.0; // 0.00 ~ 20.00
+//            int start_time = random.nextInt(91); // 0 ~ 90
+//            int end_time = start_time + random.nextInt(11) + 1; // start_time ~ start_time + 10
+//            int height = random.nextInt(5); // 0 ~ 4
+//            int postId = i + 1; // 1 ~ 20
+//
+//            Map<String, Object> post = new HashMap<>();
+//            post.put("sst", sst);
+//            post.put("start_time", start_time);
+//            post.put("end_time", end_time);
+//            post.put("height", height);
+//            post.put("postId", postId);
+//
+//            currentPostList.add(post);
+//        }
 
 
 //        post.put("start_time", 2);
@@ -256,9 +278,9 @@ public class CalculationService {
 
 
 
-        log.info("currentPostList {}", currentPostList);
-        currentPostList.sort(Comparator.comparingInt(post1 -> (int) post1.get("end_time")));
-        log.info("currentPostList {}", currentPostList);
+        log.info("currentPostList {}", oneClickDtoList);
+        oneClickDtoList.sort(Comparator.comparingInt(oneClickDto -> oneClickDto.getEnd_time()));
+        log.info("currentPostList {}", oneClickDtoList);
 
 
 
@@ -281,14 +303,14 @@ public class CalculationService {
         int [][][] prev = new int[200][1200][3];
         int [][] getPostId = new int [200][1200];
 
-        for(Map<String, Object> post1: currentPostList) {
+        for(OneClickDto oneClickDto : oneClickDtoList) {
 
 
-            double sst = (double) post1.get("sst");
-            int start_time = (int) post1.get("start_time");
-            int end_time = (int) post1.get("end_time");
-            int height = (int) post1.get("height");
-            int postId = (int) post1.get("postId");
+            double sst = (double) oneClickDto.getSst();
+            int start_time = (int) oneClickDto.getStart_time();
+            int end_time = (int) oneClickDto.getEnd_time();
+            int height = (int) oneClickDto.getHeight();
+            int postId = (int) oneClickDto.getPost_id();
 
 
             for (int h = 0; h < height_set; h++) {

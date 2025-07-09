@@ -6,6 +6,7 @@ import com.quickflash.ability.service.AbilityBO;
 import com.quickflash.comment.service.CommentBO;
 import com.quickflash.comment.service.CommentService;
 import com.quickflash.meetingPost.dto.MeetingPostForOrderDto;
+import com.quickflash.meetingPost.dto.OneClickDto;
 import com.quickflash.meeting_join.service.MeetingJoinBO;
 import com.quickflash.meeting_join.service.MeetingJoinDtoMaker;
 import com.quickflash.trust.dto.TrustForOrderDto;
@@ -221,6 +222,17 @@ public class MeetingPostService {
         return orderedMeetingPostList;
 
     }
+
+    public List<OneClickDto> generateOneClickDtoList(Integer postId, int userId) {
+        if (postId != null) {
+            return Qualification.ERROR_GO_TO_MAIN;
+        }
+        return Qualification.OK;
+        //유저가 참가하거나 만든 미팅이 3개면 더이상 못만들게 하는 기능
+
+    }
+
+
 
 
 

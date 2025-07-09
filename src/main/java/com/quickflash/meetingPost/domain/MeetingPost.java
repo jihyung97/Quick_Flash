@@ -44,4 +44,7 @@ public class MeetingPost {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer duration;
+    private Integer height;
+
 }

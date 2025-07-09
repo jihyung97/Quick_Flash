@@ -356,6 +356,36 @@
     </select>
 
 
+    <select id="selectMeetingPostMapForOneClickByBoundBox"  parameterType = "map" resultType="map">
+        SELECT
+        `id`
+        ,`userId`
+        ,`power`
+        ,`duration`
+        ,`height`
+        FROM
+        `meetingpost`
+        WHERE
+        MBRContains(
+        ST_GeomFromText(
+        CONCAT(
+        'POLYGON((',
+        #{minLat}, ' ', #{minLng}, ',',
+        #{maxLat}, ' ', #{minLng}, ',',
+        #{maxLat}, ' ', #{maxLng}, ',',
+        #{minLat}, ' ', #{maxLng}, ',',
+        #{minLat}, ' ', #{minLng},
+        '))'
+        ),4326
+        ),
+        `locationpoint`
+        )
+    </select>
+
+
+
+
+
 
 
 </mapper>
