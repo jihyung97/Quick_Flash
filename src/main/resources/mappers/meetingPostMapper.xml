@@ -363,6 +363,7 @@
         ,`power`
         ,`duration`
         ,`height`
+        ,`expiredAt`
         FROM
         `meetingpost`
         WHERE

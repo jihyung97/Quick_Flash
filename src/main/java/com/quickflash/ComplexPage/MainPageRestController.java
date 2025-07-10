@@ -1,5 +1,8 @@
 package com.quickflash.ComplexPage;
 
+import com.quickflash.meetingPost.dto.OneClickDto;
+import com.quickflash.meetingPost.dto.ThumbnailDto;
+import com.quickflash.meetingPost.service.MeetingPostDtoMaker;
 import com.quickflash.meetingPost.service.Qualification;
 import com.quickflash.meetingPost.service.Response;
 import com.quickflash.meeting_join.service.MeetingJoinBO;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,7 +27,7 @@ import java.util.Map;
 public class MainPageRestController {
     private final MeetingJoinService meetingJoinService;
     private final MeetingJoinBO meetingJoinBO;
-
+    private final MeetingPostDtoMaker meetingPostDtoMaker;
     @PostMapping("/set-location")
     public Map<String,Object> setLocation(HttpSession session,
                                                 @RequestParam double lat,
@@ -40,6 +44,28 @@ public class MainPageRestController {
         }
         return result;
     }
+
+
+    @PostMapping("/activate-one-click")
+    public Map<String,Object> activateOneClick(HttpSession session,
+                                          @RequestParam double lat,
+                                          @RequestParam double lng,
+                                          @RequestParam double distance,
+                                          @RequestParam int user_ftp
+
+
+    ) {
+        List<OneClickDto> oneClickDtoList = meetingPostDtoMaker.generateOneCLickDtoList(lat,lng,distance,user_ftp);
+      List<ThumbnailDto> thumbnailDtoList = meetingPostDtoMaker.generateThumbNailListByOneClickDtoList(oneClickDtoList);
+
+      Map<String, Object> result = new HashMap<>();
+       result.put("thumbnailDtoList", thumbnailDtoList);
+       result.put("result", "success");
+
+
+        return result;
+    }
+
 
 
 

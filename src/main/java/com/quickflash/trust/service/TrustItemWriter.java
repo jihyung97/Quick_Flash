@@ -28,13 +28,12 @@ public class TrustItemWriter implements ItemWriter<Map<Integer, Double>> {
 
 
         }
-        log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!totalMap{}",totalMap);
+//        log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!totalMap{}",totalMap);
         if(totalMap != null && !totalMap.isEmpty()){
             trustBO.updateTrustByBatch(totalMap);
         }
-      //  trustBO.updateTrustByBatch(totalMap);
-//        trustBO.updateTrustByBatch(totalMap);
-//        //전체 list를 순회하며  batchsize에 도달할 때마다 update,  마지막 batchsize에 도달하지 못하는 건 나머지 갯수만큼 업데이트
+
+        //전체 list를 순회하며  batchsize에 도달할 때마다 update,  마지막 batchsize에 도달하지 못하는 건 나머지 갯수만큼 업데이트
 //        for (Map<Integer, Double> item : items) {
 //            totalMap.putAll(item);
 //

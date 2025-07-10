@@ -29,7 +29,7 @@ public interface MeetingPostMapper {
    Map<Integer,MeetingPostForOrderDto> selectMeetingPostForOrderDtoMapByBoundBox(Map<String,Double> minMaxLatLng) ;
 
     List<ThumbnailDto> selectThumbnailDtoListByPostIds(List<Integer> postIds);
-    List<Map<String,Object>>  selectMeetingPostMapForOneClickByBoundBox(Map<String,Double> minMaxLatLng);
+    List<Map<String,Object>>  selectMeetingPostMapForOneClickByBoundBox(Map<String,Double> minMaxLatLngAndDistance);
 
 
 

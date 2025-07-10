@@ -210,5 +210,10 @@ public class MeetingPostBO {
 
     }
 
+    public List<Map<String,Object>> getMapForOneClickByBoundBox(Map<String,Double>minMaxLanLng  ){
+        return  meetingPostMapper.selectMeetingPostMapForOneClickByBoundBox(minMaxLanLng );
+
+    }
+
 
 }

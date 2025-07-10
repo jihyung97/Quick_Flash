@@ -145,7 +145,23 @@
       <th:block th:replace="fragments/afterLogin :: afterLoginFragment"></th:block>
     </th:block>
 
-    <div id="one-click-planner-section"></div>
+    <div id="one-click-planner-section">
+      <div>
+        <input id="power-for-one-click" type="text">
+        <input id="distance-for-one-click" type="text">
+        <button id="btn-one-click"></button>
+      </div>
+
+      <div id="thumbnail-list-for-one-click-section">
+        <div class="thumbnail-for-one-click"> <!--th:each 로 oneclick에서 가져온 thumbnailList-->
+
+        </div>
+
+
+      </div>
+
+
+    </div>
 
 
   </div>
@@ -238,6 +254,37 @@
         }
        $.ajax({
             url: "/main-page/set-location",
+            type: "POST",
+            data: {
+                lat: lat,
+                lng: lng
+            },
+            success: function (data) {
+                if (data.result === "success") {
+                   alert("위치 설정 성공하였습니다")
+                } else {
+                    alert(data.error_message);
+                }
+            },
+            error: function (e) {
+                alert("위치 설정 실패하였습니다");
+            }
+       });
+    });
+
+    $("#btn-one-click").on("click",function(){
+
+
+        let  lat = $("#position-lat").text().trim();
+        let lng = $("#position-lng").text().trim();
+
+         
+         if(!lat || !lng){
+            alert("주소에서 위치를 클릭해주세요");
+            return false;
+        }
+       $.ajax({
+            url: "/main-page/activate-one-click",
             type: "POST",
             data: {
                 lat: lat,

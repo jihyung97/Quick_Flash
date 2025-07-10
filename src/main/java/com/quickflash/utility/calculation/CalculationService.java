@@ -149,13 +149,13 @@ public class CalculationService {
 
     public OneClickDto calculateSstAndEndTime(double power, int duration, double ftp, int start_time){
         //sst를 구한다. t*(Np/ftp)^2 * 100 /3600
-        double sst = duration * (power/ftp)*(power/ftp) * 100 / 3600;
+        double sst = duration * (power/ftp)*(power/ftp) * 100 / 3600; //duration 은 초단위
         //total_time 은  duration + 휴식시간 , 시간단위 이므로 Integer
-        int rest_time = (int)((double)(24 /  125) * sst);
+        int rest_time = (int)((double)(24 /  125) * sst) * 60 / 10; // 10분단위
         log.info("rest_time {}", rest_time);
 
-        int total_time = (int)( duration / 3600) + rest_time;
-        int end_time = start_time + total_time;
+        int total_time = (int)( duration / (60 * 10)) + rest_time; // 10분단위
+        int end_time = start_time + total_time; // 10분단위
         Map<String,Object> result = new HashMap<>();
          OneClickDto oneClickDto = new OneClickDto();
         oneClickDto.setEnd_time(start_time);
@@ -167,118 +167,69 @@ public class CalculationService {
         return oneClickDto;
 
     }
-    public  List<Integer> optimizeOneClick(List<OneClickDto> oneClickDtoList){
+    public  List<Integer> optimizeOneClick(List<OneClickDto> oneClickDtoList ){
 
 
 
-        //반드시 start 시간과 끝나는 시간은 달라야 함.
+//        List<OneClickDto> oneClickDtoList = List.of(
+//                OneClickDto.builder().id(7).start_time(4).end_time(5).height(1).sst(7.88).build(),
+//                OneClickDto.builder().id(5).start_time(5).end_time(9).height(1).sst(3.43).build(),
+//                OneClickDto.builder().id(15).start_time(11).end_time(16).height(2).sst(17.47).build(),
+//                OneClickDto.builder().id(16).start_time(8).end_time(18).height(0).sst(17.88).build(),
+//                OneClickDto.builder().id(12).start_time(15).end_time(20).height(2).sst(16.54).build(),
+//                OneClickDto.builder().id(6).start_time(18).end_time(23).height(3).sst(6.99).build(),
+//                OneClickDto.builder().id(11).start_time(21).end_time(24).height(1).sst(5.28).build(),
+//                OneClickDto.builder().id(4).start_time(24).end_time(26).height(0).sst(3.69).build(),
+//                OneClickDto.builder().id(18).start_time(25).end_time(30).height(3).sst(4.96).build(),
+//                OneClickDto.builder().id(10).start_time(29).end_time(36).height(1).sst(8.16).build(),
+//                OneClickDto.builder().id(1).start_time(36).end_time(38).height(2).sst(1.62).build(),
+//                OneClickDto.builder().id(20).start_time(28).end_time(39).height(0).sst(11.79).build(),
+//                OneClickDto.builder().id(14).start_time(40).end_time(48).height(3).sst(6.02).build(),
+//                OneClickDto.builder().id(8).start_time(45).end_time(50).height(1).sst(11.92).build(),
+//                OneClickDto.builder().id(17).start_time(48).end_time(59).height(1).sst(2.75).build(),
+//                OneClickDto.builder().id(13).start_time(59).end_time(70).height(4).sst(9.73).build(),
+//                OneClickDto.builder().id(2).start_time(72).end_time(79).height(3).sst(4.75).build(),
+//                OneClickDto.builder().id(19).start_time(80).end_time(83).height(2).sst(5.8).build(),
+//                OneClickDto.builder().id(9).start_time(88).end_time(95).height(4).sst(6.94).build(),
+//                OneClickDto.builder().id(3).start_time(90).end_time(98).height(3).sst(18.36).build()
+//        );
+
+        Random random = new Random();
+
+
 
 //
-//        Random random = new Random();
-//        List<Map<String, Object>> currentPostList = new ArrayList<>();
-//
-//        for (int i = 0; i < 20; i++) {
-//            double sst = Math.round((random.nextDouble() * 20) * 100.0) / 100.0; // 0.00 ~ 20.00
-//            int start_time = random.nextInt(91); // 0 ~ 90
-//            int end_time = start_time + random.nextInt(11) + 1; // start_time ~ start_time + 10
-//            int height = random.nextInt(5); // 0 ~ 4
+//        List<OneClickDto> oneClickDtoList = new ArrayList<>();
+//        for (int i = 0; i < 100; i++) {
+//            double sst = Math.round((random.nextDouble() * 400) * 100.0) / 100.0; // 0.00 ~ 20.00
+//            int start_time = random.nextInt(1000); // 0 ~ 90
+//            int end_time = start_time + random.nextInt(400) + 1; // start_time ~ start_time + 10
+//            int height = random.nextInt(150); // 0 ~ 4
 //            int postId = i + 1; // 1 ~ 20
 //
-//            Map<String, Object> post = new HashMap<>();
+//            OneClickDto oneClickDto = OneClickDto.builder()
+//                    .start_time(start_time)
+//                    .end_time(end_time)
+//                    .height(height)
+//                    .id(postId)
+//                    .sst(sst)
+//
+//                    .build();
 //            post.put("sst", sst);
 //            post.put("start_time", start_time);
 //            post.put("end_time", end_time);
 //            post.put("height", height);
 //            post.put("postId", postId);
-//
+
 //            currentPostList.add(post);
+//            oneClickDtoList.add(oneClickDto  );
 //        }
 
 
-//        post.put("start_time", 2);
-//        post.put("end_time", 7);
-//        post.put("postId", 1);
-//        post.put("sst", 3.0);
-//        post.put("height", 4);
-//        currentPostList.add(post);
-//
-//        post = new HashMap<>();
-//        post.put("start_time", 3);
-//        post.put("end_time", 8);
-//        post.put("postId", 2);
-//        post.put("sst", 3.0);
-//        post.put("height", 2);
-//        currentPostList.add(post);
-//
-//        post = new HashMap<>();
-//        post.put("start_time", 2);
-//        post.put("end_time", 9);
-//        post.put("postId", 3);
-//        post.put("sst", 5.0);
-//        post.put("height", 5);
-//        currentPostList.add(post);
-//
-//        post = new HashMap<>();
-//        post.put("start_time", 8);
-//        post.put("end_time", 12);
-//        post.put("postId", 4);
-//        post.put("sst", 3.0);
-//        post.put("height", 2);
-//        currentPostList.add(post);
-//
-//        post = new HashMap<>();
-//        post.put("start_time", 10);
-//        post.put("end_time", 14);
-//        post.put("postId", 5);
-//        post.put("sst", 4.0);
-//        post.put("height", 3);
-//        currentPostList.add(post);
-//
-//        post = new HashMap<>();
-//        post.put("start_time", 9);
-//        post.put("end_time", 15);
-//        post.put("postId", 6);
-//        post.put("sst", 5.0);
-//        post.put("height", 4);
-//        currentPostList.add(post);
-//
-//        post = new HashMap<>();
-//        post.put("start_time", 14);
-//        post.put("end_time", 16);
-//        post.put("postId", 7);
-//        post.put("sst", 2.0);
-//        post.put("height", 3);
-//        currentPostList.add(post);
-//
-//        post = new HashMap<>();
-//        post.put("start_time", 15);
-//        post.put("end_time", 18);
-//        post.put("postId", 8);
-//        post.put("sst", 3.0);
-//        post.put("height", 2);
-//        currentPostList.add(post);
-//
-//        post = new HashMap<>();
-//        post.put("start_time", 17);
-//        post.put("end_time", 20);
-//        post.put("postId", 9);
-//        post.put("sst", 2.0);
-//        post.put("height", 2);
-//        currentPostList.add(post);
-//
-//        post = new HashMap<>();
-//        post.put("start_time", 18);
-//        post.put("end_time", 20);
-//        post.put("postId", 10);
-//        post.put("sst", 2.0);
-//        post.put("height", 3);
 
 
 
-
-
-
-        log.info("currentPostList {}", oneClickDtoList);
+      //  log.info("currentPostList {}", oneClickDtoList);
         oneClickDtoList.sort(Comparator.comparingInt(oneClickDto -> oneClickDto.getEnd_time()));
         log.info("currentPostList {}", oneClickDtoList);
 
@@ -294,14 +245,14 @@ public class CalculationService {
 
 
 
-        final int height_set = 10;
+        final int height_set = 1000;
         List<TreeSet<Integer>> treeOfEndTimeInSameHeight = new ArrayList<>();
         for (int i = 0; i <= height_set; i++) {
             treeOfEndTimeInSameHeight.add(new TreeSet<>());
         }
-        double [][] dp = new double[200][1200];
-        int [][][] prev = new int[200][1200][3];
-        int [][] getPostId = new int [200][1200];
+        double [][] dp = new double[2000][1200];
+        int [][][] prev = new int[2000][1200][3];
+        int [][] getPostId = new int [2000][1200];
 
         for(OneClickDto oneClickDto : oneClickDtoList) {
 
@@ -310,10 +261,10 @@ public class CalculationService {
             int start_time = (int) oneClickDto.getStart_time();
             int end_time = (int) oneClickDto.getEnd_time();
             int height = (int) oneClickDto.getHeight();
-            int postId = (int) oneClickDto.getPost_id();
+            int postId = (int) oneClickDto.getId();
 
 
-            for (int h = 0; h < height_set; h++) {
+            for (int h = 0; h <= height_set; h++) {
                 TreeSet<Integer> treesetOfPrevHeight = treeOfEndTimeInSameHeight.get(h);
                 Integer index1 = 0;
                 Integer index2 = 0;
@@ -354,13 +305,13 @@ public class CalculationService {
 
                 //기존의 dp[end_time][total_height] 보다 커야 업데이트
                 if ((caclulated > dp[index2][total_height]) && (caclulated > dp[end_time][total_height])) {
-                    log.info("\n postId {}",postId);
-                    log.info(" index1 {}", index1);
-                    log.info(" h : {}",h);
-                    log.info("total_height {}",total_height);
-                    log.info("end_time {}",end_time);
+                //    log.info("\n postId {}",postId);
+                //    log.info(" index1 {}", index1);
+                 //   log.info(" h : {}",h);
+                 //   log.info("total_height {}",total_height);
+                 //   log.info("end_time {}",end_time);
                     dp[end_time][total_height] = dp[index1][h] + sst;
-                    log.info("sst  {}" ,  dp[end_time][total_height]);
+                //    log.info("sst  {}" ,  dp[end_time][total_height]);
                     getPostId[end_time][total_height] = postId;
 
 
@@ -369,23 +320,23 @@ public class CalculationService {
 
                     prev[end_time][total_height][0] = index1;
                     prev[end_time][total_height][1] = h;
-                    log.info("prev[end_time][total_height][0]  {} {}" ,end_time, prev[end_time][total_height][0]);
-                    log.info("prev[end_time][total_height][1] {} {}" ,total_height, prev[end_time][total_height][1]);
+               //     log.info("prev[end_time][total_height][0]  {} {}" ,end_time, prev[end_time][total_height][0]);
+             //       log.info("prev[end_time][total_height][1] {} {}" ,total_height, prev[end_time][total_height][1]);
                     treeOfEndTimeInSameHeight.get(total_height).add(end_time);
                 }
             }
         }
         //treeSetWhensameHeight.get(1000) 에서 가장 끝에 있는 end_time 가져온다.
         int end = treeOfEndTimeInSameHeight.get(height_set).last();
-        log.info("end {}", end);
+      //  log.info("end {}", end);
         List<Integer> postList = new ArrayList<>();
         int h = height_set;
 
         while(true){
             postList.add(getPostId[end][h]);
-            log.info("postList {}" , postList);
-            log.info("prev[end][h][0] {}" , prev[end][h][0]);
-            log.info("prev[end][h][1] {}" , prev[end][h][1]);
+//            log.info("postList {}" , postList);
+//            log.info("prev[end][h][0] {}" , prev[end][h][0]);
+//            log.info("prev[end][h][1] {}" , prev[end][h][1]);
             if(prev[end][h][0]  == 0  ) {
                 break;
             }
@@ -393,11 +344,13 @@ public class CalculationService {
             int h_before = h;
             end = prev[end_before][h_before][0];
             h = prev[end_before][h_before][1];
-            log.info("end, h {}{}" , end, h);
+//            log.info("end, h {}{}" , end, h);
 
 
         }
 
+
+        Collections.reverse(postList);
         log.info("postList {}", postList);
         return postList;
     }

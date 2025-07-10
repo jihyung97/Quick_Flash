@@ -13,6 +13,7 @@ import com.quickflash.utility.calculation.CalculationService;
 import com.quickflash.utility.time.TimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -233,7 +234,38 @@ public class MeetingPostDtoMaker {
         return thumbnailDtoList;
 
     }
+    public List<OneClickDto> generateOneCLickDtoList(double lat, double lng , double distance,int user_ftp){ // oneclick 설정에서 내 ftp설정할 수 있게한다. (ability테이블에서 안가져와도 된다)
 
+        List<OneClickDto> oneClickDtoList = new ArrayList<>();
+        List<Map<String,Object>> mapForOneClickList = meetingPostBO .getMapForOneClickByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, distance));
+       for(Map<String,Object> mapForOneClick : mapForOneClickList){
+          int id = (Integer)mapForOneClick.get("id");
+           int userId  = (Integer)mapForOneClick.get("userId");
+           Double power  = (Double)mapForOneClick.get("power");
+           Integer duration  = (Integer) mapForOneClick.get("duration"); // duration :
+           Integer height  =(Integer) mapForOneClick.get("height");  // 고도 : 10m 단위
+           LocalDateTime expiredAt = (LocalDateTime) mapForOneClick.get("expiredAt");
+           long start_time = Duration.between(LocalDateTime.now(), expiredAt).toMinutes() / 10; //10분단위
+
+
+           // duration : 초단위, start_time : 10분단위
+            OneClickDto oneClickDto = calculationService. calculateSstAndEndTime(power,duration,user_ftp,(int)start_time);
+            oneClickDto.setId(id);
+            oneClickDto.setHeight(height);
+            oneClickDtoList.add(oneClickDto);
+       }
+
+       return oneClickDtoList;
+
+
+    }
+
+    public List<ThumbnailDto> generateThumbNailListByOneClickDtoList(List<OneClickDto> oneClickDtoList){
+        List<Integer> postIds = calculationService.optimizeOneClick(oneClickDtoList);
+
+      return   meetingPostBO.getThumbnailDtoListByPostIds(postIds);
+
+    }
 
 
 }

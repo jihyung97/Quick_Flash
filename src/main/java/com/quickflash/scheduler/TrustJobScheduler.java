@@ -19,6 +19,8 @@ public class TrustJobScheduler {
     private final JobLauncher jobLauncher;
     private final Job trustJob;
 
+//    @Scheduled(fixedRate = 20000)
+
     @Scheduled(cron = "0 0 * * * *")// 정각마다
     public void runTrustJob() {
         try {

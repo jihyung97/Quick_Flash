@@ -27,7 +27,7 @@ public class MeetingPost {
 
     private String exerciseType;
     private Double distance;
-    private Double speed;
+    private Double speed; // 단위 km/h
     private Double power;
 
     private Integer minHeadCount;
@@ -44,7 +44,7 @@ public class MeetingPost {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Integer duration;
-    private Integer height;
+    private Integer duration;  //duration 은 초 단위
+    private Integer height;  // 단위 : 10m
 
 }

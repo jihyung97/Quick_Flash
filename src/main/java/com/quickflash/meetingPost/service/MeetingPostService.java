@@ -223,14 +223,7 @@ public class MeetingPostService {
 
     }
 
-    public List<OneClickDto> generateOneClickDtoList(Integer postId, int userId) {
-        if (postId != null) {
-            return Qualification.ERROR_GO_TO_MAIN;
-        }
-        return Qualification.OK;
-        //유저가 참가하거나 만든 미팅이 3개면 더이상 못만들게 하는 기능
 
-    }
 
 
 
