@@ -158,7 +158,7 @@ public class CalculationService {
         int end_time = start_time + total_time; // 10분단위
         Map<String,Object> result = new HashMap<>();
          OneClickDto oneClickDto = new OneClickDto();
-        oneClickDto.setEnd_time(start_time);
+        oneClickDto.setStart_time(start_time);
          oneClickDto.setEnd_time(end_time);
          oneClickDto.setSst(sst);
 
@@ -327,6 +327,11 @@ public class CalculationService {
             }
         }
         //treeSetWhensameHeight.get(1000) 에서 가장 끝에 있는 end_time 가져온다.
+
+        //목표한 고도에 도달하는 경우가 없으면 빈 list 반환
+        if(treeOfEndTimeInSameHeight.get(height_set) == null || treeOfEndTimeInSameHeight.get(height_set).isEmpty()){
+            return new ArrayList<>();
+        }
         int end = treeOfEndTimeInSameHeight.get(height_set).last();
       //  log.info("end {}", end);
         List<Integer> postList = new ArrayList<>();

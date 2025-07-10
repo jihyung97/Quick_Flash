@@ -95,7 +95,9 @@
         `isMyFtpShown`,
         `currentStatus`,
         `createdAt`,
-        `updatedAt`
+        `updatedAt`,
+        `duration`,
+        `height`
         )
 
 
@@ -124,7 +126,9 @@
         #{isMyFtpShown},
         #{currentStatus},
         NOW(),
-        NOW()
+        NOW(),
+        #{duration},
+        #{height}
 
         )
     </insert>
@@ -364,6 +368,7 @@
         ,`duration`
         ,`height`
         ,`expiredAt`
+        ,`exerciseType`
         FROM
         `meetingpost`
         WHERE

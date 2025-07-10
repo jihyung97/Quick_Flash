@@ -210,7 +210,7 @@ public class MeetingPostDtoMaker {
 
     }
 
-    public List<ThumbnailDto> generateMeetingPostThumbnailDtoListByScore(double lat, double lng, int sessionId){
+    public List<ThumbnailDto> generateMeetingPostThumbnailDtoListByScore(double lat, double lng, Integer sessionId){
 
         Map<Integer, MeetingPostForOrderDto> meetingPostMapByBoundBox = meetingPostBO.getPostIdsSelectedByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, 10));
         List<Integer> postIds = meetingPostService.getPostIdsOrderByTotalScore(meetingPostMapByBoundBox,sessionId,lat,lng);
@@ -242,11 +242,24 @@ public class MeetingPostDtoMaker {
           int id = (Integer)mapForOneClick.get("id");
            int userId  = (Integer)mapForOneClick.get("userId");
            Double power  = (Double)mapForOneClick.get("power");
+           if(power == null || power == 0 || !ExerciseType.CYCLE.name().equals((String)mapForOneClick.get("exerciseType"))){ //파워가 없거나 0이면 oneClick 대상에 포함되지 않는다.
+               continue;
+           }
            Integer duration  = (Integer) mapForOneClick.get("duration"); // duration :
+           if(duration == null || duration == 0){ //지속시간이 0이면 oneClick 대상에 포함되지 않는다.
+               continue;
+           }
            Integer height  =(Integer) mapForOneClick.get("height");  // 고도 : 10m 단위
+           if(height == null  ){ // 고도가 없으면 0으로 치고 계산
+              height = 0;
+           }
            LocalDateTime expiredAt = (LocalDateTime) mapForOneClick.get("expiredAt");
+           if(  expiredAt.isBefore(LocalDateTime.now()) ){ // 시작시간이 이미 지났으면  oneClick 대상 포함x
+              continue;
+           }
            long start_time = Duration.between(LocalDateTime.now(), expiredAt).toMinutes() / 10; //10분단위
 
+            //파워가 있고 지속시간이 0이 아니며 고도는 default가 0이고 시작시간이 아직 안지났을 때 oneClickList에 추가
 
            // duration : 초단위, start_time : 10분단위
             OneClickDto oneClickDto = calculationService. calculateSstAndEndTime(power,duration,user_ftp,(int)start_time);

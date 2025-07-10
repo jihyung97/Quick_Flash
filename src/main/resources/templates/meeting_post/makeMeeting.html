@@ -97,6 +97,14 @@
                         <div><h4>거리</h4></div>
                         <div><input type="text" id="distance"></div>
                     </div>
+                    <div class="d-flex">
+                        <div><h4>운동시간</h4></div>
+                        <div><input type="text" id="duration"></div>
+                    </div>
+                    <div class="d-flex">
+                        <div><h4>운동 고도</h4></div>
+                        <div><input type="text" id="height"></div>
+                    </div>
                     <div>
                         <div class="d-flex">
                             <div><h3>내 페이스 보이기</h3></div>
@@ -222,6 +230,8 @@
                             let exerciseType = $("#exerciseType").val().trim();
                             let minHeadCount =($("#minHeadCount").val().trim()) ;
                             let maxHeadCount =  ($("#maxHeadCount").val().trim());
+                            let duration =  ($("#duration").val().trim());
+                            let height =  ($("#height").val().trim());
                              let distance =  ($("#distance").val());
                              let power =  ($("#power").val());
 
@@ -241,6 +251,14 @@
                         }
 
                         if (minHeadCount === "") {
+                            alert("최소 인원을 입력해주세요.");
+                            return false;
+                        }
+                        if (duration === "") {
+                            alert("최소 인원을 입력해주세요.");
+                            return false;
+                        }
+                        if (height === "") {
                             alert("최소 인원을 입력해주세요.");
                             return false;
                         }
@@ -267,6 +285,16 @@
                         // 숫자 유효성 검사
                         if (isNaN(distance) || distance === "") {
                             alert("거리(distance)는 숫자로 입력해주세요.");
+                            return false;
+                        }
+
+                        if (isNaN(duration) || duration === "") {
+                            alert("운동시간은 숫자로 입력해주세요.");
+                            return false;
+                        }
+
+                        if (isNaN(height) || height === "") {
+                            alert("고도는 숫자로 입력해주세요.");
                             return false;
                         }
 
@@ -303,6 +331,8 @@
                              maxHeadCount =  Number($("#maxHeadCount").val().trim());
                               distance =  Number($("#distance").val());
                              power =  Number($("#power").val());
+                            duration =  Number($("#duration").val());
+                             height =  Number($("#height").val());
                        
                          $.ajax({
                                 url: "/meeting-post/create",
@@ -321,6 +351,8 @@
                                     power: power,
                                     minHeadCount: minHeadCount,
                                     maxHeadCount: maxHeadCount,
+                                    duration:duration,
+                                    height:height,
                                    
                                     isAbandonOkay: $("#isAbandonOkay").prop("checked"),
                                    

@@ -81,7 +81,7 @@ public class MainPageController {
 
 
 
-        calculationService.optimizeOneClick();
+
         return "main_page/beforeMeeting";
 
 

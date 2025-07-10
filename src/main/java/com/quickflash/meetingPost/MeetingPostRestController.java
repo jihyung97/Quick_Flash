@@ -44,6 +44,8 @@ public class MeetingPostRestController {
             @RequestParam Double distance,
             @RequestParam(required = false) Double speed,
             @RequestParam(required = false) Double power,
+            @RequestParam(required = false) Integer duration,
+            @RequestParam(required = false) Integer height,
             @RequestParam Integer minHeadCount,
             @RequestParam Integer maxHeadCount,
             @RequestParam (required = false) Boolean isRestExist,
@@ -104,7 +106,8 @@ public class MeetingPostRestController {
                     .isAfterPartyExist(isAfterPartyExist != null ? isAfterPartyExist : false)
                     .isLocationConnectedToKakao(isLocationConnectedToKakao != null ? isLocationConnectedToKakao : false)
                     .isUserAbilityConnectedToStrava(isUserAbilityConnectedToStrava != null ? isUserAbilityConnectedToStrava : false)
-
+                    .duration(duration)
+                    .height(height)
                     .isMyPaceShown(isMyPaceShown != null ? isMyPaceShown : false)
                     .isMyFtpShown(isMyFtpShown != null ? isMyFtpShown : false)
                     .currentStatus(Status.BEFORE_MEETING.name())

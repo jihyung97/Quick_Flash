@@ -147,9 +147,16 @@
 
     <div id="one-click-planner-section">
       <div>
-        <input id="power-for-one-click" type="text">
-        <input id="distance-for-one-click" type="text">
-        <button id="btn-one-click"></button>
+        <div class="d-flex">
+          <span>파워입력</span>
+          <input id="power-for-one-click" type="text">
+        </div>
+        <div class="d-flex">
+          <span>거리 입력</span>
+          <input id="distance-for-one-click" type="text">
+         
+       </div>
+       <button id="btn-one-click">oneclick planner 실행</button>
       </div>
 
       <div id="thumbnail-list-for-one-click-section">
@@ -272,41 +279,70 @@
        });
     });
 
-    $("#btn-one-click").on("click",function(){
-
-
-        let  lat = $("#position-lat").text().trim();
+    $("#btn-one-click").on("click", function () {
+        let lat = $("#position-lat").text().trim();
         let lng = $("#position-lng").text().trim();
+        let userFtp = $("#power-for-one-click").val().trim();
+        let distance = $("#distance-for-one-click").val().trim();
 
-         
-         if(!lat || !lng){
+        if (!lat || !lng) {
             alert("주소에서 위치를 클릭해주세요");
             return false;
         }
-       $.ajax({
+
+        if (!userFtp || !distance) {
+            alert("FTP와 거리 값을 입력해주세요.");
+            return false;
+        }
+
+        $.ajax({
             url: "/main-page/activate-one-click",
             type: "POST",
             data: {
                 lat: lat,
-                lng: lng
+                lng: lng,
+                user_ftp: userFtp,
+                distance: distance
             },
             success: function (data) {
                 if (data.result === "success") {
-                   alert("위치 설정 성공하였습니다")
+                    alert("리스트를  가져왔습니다.");
+
+                  
+                    let container = $("#thumbnail-list-for-one-click-section .thumbnail-for-one-click");
+                    container.empty(); // 기존 내용 비우기
+
+                    data.thumbnailDtoList.forEach(function (thumb) {
+                        let html = `
+                            <div class="thumbnail-card">
+                                <h3>${thumb.title}</h3>
+                                <p><strong>장소:</strong> ${thumb.location}</p>
+                                <p><strong>종류:</strong> ${thumb.exerciseType}</p>
+                                <p><strong>운동 거리:</strong> ${thumb.distance} km</p>
+                                <p><strong>파워:</strong> ${thumb.power} km/h</p>
+                              
+                               
+                            
+                                <p><strong>마감 시간:</strong> ${thumb.expiredAt}</p>
+                               
+                            </div>
+                        `;
+                         $("#thumbnail-list-for-one-click-section .thumbnail-for-one-click").append(html);
+                      });
+
                 } else {
-                    alert(data.error_message);
+                    alert(data.error_message || "오류가 발생했습니다.");
                 }
             },
-            error: function (e) {
-                alert("위치 설정 실패하였습니다");
+            error: function () {
+                alert("작동 오류");
             }
-       });
-    });
+        });
+     });
 
 
 
-
-});
+  });
 
  </script>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dd189a1a763710dd5dc72319d26d4284&libraries=services"></script>
