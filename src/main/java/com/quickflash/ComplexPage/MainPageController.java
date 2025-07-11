@@ -41,9 +41,9 @@ public class MainPageController {
         log.info("lng {}", lng);
 
         if (lat != null && lng != null) {
-            Map<Integer, MeetingPostForOrderDto> meetingPostMap = meetingPostBO.getPostIdsSelectedByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, 10));
-            log.info("meetingPostByBoundBox At MainPagecontroller {}", meetingPostMap);
-            Set<Integer> keySet = meetingPostMap.keySet();
+//            Map<Integer, MeetingPostForOrderDto> meetingPostMap = meetingPostBO.getPostIdsSelectedByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, 10));
+//            log.info("meetingPostByBoundBox At MainPagecontroller {}", meetingPostMap);
+//            Set<Integer> keySet = meetingPostMap.keySet();
 //            for (int key : keySet) {
 //                MeetingPostForOrderDto meetingPost = meetingPostMap.get(key);
 //                double distance = calculationService.calculateDistancesForMeetingPost(meetingPost.getLatitude(), meetingPost.getLongitude(), lat, lng);

@@ -1,10 +1,14 @@
 package com.quickflash.meetingPost.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor // 기본 생성자 추가
+@AllArgsConstructor //
 public class MeetingPostForOrderDto {
     private int id;
     private Integer userId;

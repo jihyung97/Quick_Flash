@@ -8,6 +8,7 @@ import com.quickflash.meetingPost.mapper.MeetingPostMapper;
 import com.quickflash.meetingPost.repository.MeetingPostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -42,7 +43,7 @@ public class MeetingPostBO {
     public Map<String, Object> getExpiredAtAndStatusOfMeetingById(int id){
         return meetingPostMapper.selectExpiredAtAndStatusById(id);
     }
-
+    @Cacheable(value = "instantCache", key = "#id")
     public MeetingPost getMeetingPostById(int id){
         return meetingPostMapper.selectMeetingPostById(id);
     }
@@ -194,12 +195,14 @@ public class MeetingPostBO {
 
     }
     // bound-box 로 거리를 추린 게시글의 아이디를 가져온다.
+    @Cacheable(value = "shortCache", key = "'bbox:' + #minMaxLanLng['minLat'] + ':' + #minMaxLanLng['maxLat'] + ':' + #minMaxLanLng['minLng'] + ':' + #minMaxLanLng['maxLng']")
     public Map<Integer, MeetingPostForOrderDto> getPostIdsSelectedByBoundBox(Map<String, Double>minMaxLanLng){
          return meetingPostMapper.selectMeetingPostForOrderDtoMapByBoundBox(minMaxLanLng);
 
 
 
     }
+
     public List<ThumbnailDto> getThumbnailDtoListByPostIds(List<Integer> postIds){
         List<ThumbnailDto> thumbnailDtoList = new ArrayList<>();
         if(postIds != null && !postIds.isEmpty()){
@@ -209,7 +212,7 @@ public class MeetingPostBO {
         return thumbnailDtoList;
 
     }
-
+    @Cacheable(value = "shortCache", key = "'bbox:' + #minMaxLanLng['minLat'] + ':' + #minMaxLanLng['maxLat'] + ':' + #minMaxLanLng['minLng'] + ':' + #minMaxLanLng['maxLng']")
     public List<Map<String,Object>> getMapForOneClickByBoundBox(Map<String,Double>minMaxLanLng  ){
         return  meetingPostMapper.selectMeetingPostMapForOneClickByBoundBox(minMaxLanLng );
 

@@ -13,6 +13,7 @@ import com.quickflash.utility.calculation.CalculationService;
 import com.quickflash.utility.time.TimeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
@@ -209,7 +210,7 @@ public class MeetingPostDtoMaker {
         return afterMeetingDto;
 
     }
-
+    @Cacheable(value = "shortCache", key = "'keyString:' + #sessionId + ':' + #lat + ':' + #lng")
     public List<ThumbnailDto> generateMeetingPostThumbnailDtoListByScore(double lat, double lng, Integer sessionId){
 
         Map<Integer, MeetingPostForOrderDto> meetingPostMapByBoundBox = meetingPostBO.getPostIdsSelectedByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, 10));
