@@ -173,7 +173,9 @@
         `isMyFtpShown`,
         `currentStatus`,
         `createdAt`,
-        `updatedAt`
+        `updatedAt`,
+        `duration`,
+        `height`
         FROM
         `meetingPost`
         WHERE

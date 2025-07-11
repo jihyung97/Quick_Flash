@@ -152,10 +152,17 @@
           <input id="power-for-one-click" type="text">
         </div>
         <div class="d-flex">
-          <span>거리 입력</span>
+          <span> 최대 탐색 거리 입력</span>
           <input id="distance-for-one-click" type="text">
          
        </div>
+
+       <div class="d-flex">
+        <span> 고도</span>
+        <input id="height-for-one-click" type="text">
+       
+      </div>
+
        <button id="btn-one-click">oneclick planner 실행</button>
       </div>
 
@@ -284,6 +291,7 @@
         let lng = $("#position-lng").text().trim();
         let userFtp = $("#power-for-one-click").val().trim();
         let distance = $("#distance-for-one-click").val().trim();
+        let height = $("#height-for-one-click").val().trim();
 
         if (!lat || !lng) {
             alert("주소에서 위치를 클릭해주세요");
@@ -295,6 +303,11 @@
             return false;
         }
 
+        if (!height) {
+            alert("고도 값을 입력해주세요.");
+            return false;
+        }
+
         $.ajax({
             url: "/main-page/activate-one-click",
             type: "POST",
@@ -302,7 +315,8 @@
                 lat: lat,
                 lng: lng,
                 user_ftp: userFtp,
-                distance: distance
+                distance: distance,
+                height: height
             },
             success: function (data) {
                 if (data.result === "success") {

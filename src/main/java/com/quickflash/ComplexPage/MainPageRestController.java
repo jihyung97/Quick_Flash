@@ -50,13 +50,16 @@ public class MainPageRestController {
     public Map<String,Object> activateOneClick(HttpSession session,
                                           @RequestParam double lat,
                                           @RequestParam double lng,
-                                          @RequestParam double distance,
-                                          @RequestParam int user_ftp
+                                          @RequestParam Integer distance,
+                                          @RequestParam int user_ftp,
+                                          @RequestParam Integer height
 
 
     ) {
+        log.info("height in activate-one-click{}", height);
+        log.info("distance in activate-one-click{}", distance);
         List<OneClickDto> oneClickDtoList = meetingPostDtoMaker.generateOneCLickDtoList(lat,lng,distance,user_ftp);
-      List<ThumbnailDto> thumbnailDtoList = meetingPostDtoMaker.generateThumbNailListByOneClickDtoList(oneClickDtoList);
+      List<ThumbnailDto> thumbnailDtoList = meetingPostDtoMaker.generateThumbNailListByOneClickDtoList(oneClickDtoList, height);
 
       Map<String, Object> result = new HashMap<>();
        result.put("thumbnailDtoList", thumbnailDtoList);

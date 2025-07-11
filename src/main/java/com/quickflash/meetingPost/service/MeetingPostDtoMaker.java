@@ -238,6 +238,7 @@ public class MeetingPostDtoMaker {
 
         List<OneClickDto> oneClickDtoList = new ArrayList<>();
         List<Map<String,Object>> mapForOneClickList = meetingPostBO .getMapForOneClickByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, distance));
+        log.info("mapForOneClickList selected from getmapforoneclickbyboundbox {}", mapForOneClickList);
        for(Map<String,Object> mapForOneClick : mapForOneClickList){
           int id = (Integer)mapForOneClick.get("id");
            int userId  = (Integer)mapForOneClick.get("userId");
@@ -254,15 +255,19 @@ public class MeetingPostDtoMaker {
               height = 0;
            }
            LocalDateTime expiredAt = (LocalDateTime) mapForOneClick.get("expiredAt");
-           if(  expiredAt.isBefore(LocalDateTime.now()) ){ // 시작시간이 이미 지났으면  oneClick 대상 포함x
+           if(  expiredAt.isBefore(LocalDateTime.now())  ){ // 시작시간이 이미 지났으면  oneClick 대상 포함x
               continue;
            }
            long start_time = Duration.between(LocalDateTime.now(), expiredAt).toMinutes() / 10; //10분단위
+
 
             //파워가 있고 지속시간이 0이 아니며 고도는 default가 0이고 시작시간이 아직 안지났을 때 oneClickList에 추가
 
            // duration : 초단위, start_time : 10분단위
             OneClickDto oneClickDto = calculationService. calculateSstAndEndTime(power,duration,user_ftp,(int)start_time);
+            if(oneClickDto.getEnd_time() >= 1000){
+                continue;
+            }
             oneClickDto.setId(id);
             oneClickDto.setHeight(height);
             oneClickDtoList.add(oneClickDto);
@@ -273,8 +278,8 @@ public class MeetingPostDtoMaker {
 
     }
 
-    public List<ThumbnailDto> generateThumbNailListByOneClickDtoList(List<OneClickDto> oneClickDtoList){
-        List<Integer> postIds = calculationService.optimizeOneClick(oneClickDtoList);
+    public List<ThumbnailDto> generateThumbNailListByOneClickDtoList(List<OneClickDto> oneClickDtoList, int goal_height){
+        List<Integer> postIds = calculationService.optimizeOneClick(oneClickDtoList, goal_height);
 
       return   meetingPostBO.getThumbnailDtoListByPostIds(postIds);
 

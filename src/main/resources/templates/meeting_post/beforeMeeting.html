@@ -15,8 +15,8 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
-<div class="container bg-color large-page">
-    <div class="d-flex justify-content-end" id="before-meeting" th:data-post-id="${meetingPost.postId}">
+<div class="container bg-color">
+    <div class="d-flex justify-content-end" id="before-meeting" th:data-post-id="${meetingPost.postId}" th:data-userId="${meetingPost.userId}">
         <div>
             <div class="d-flex">
                 <div><h4>남은시간:</h4></div>
@@ -37,8 +37,8 @@
                 <div><h2>모이는 위치</h2></div>
                 <div><span th:text="${meetingPost.location}"></span></div>
                 <div>
-
-                    <div id="map" style="width:400px;height:200px;"></div>
+                    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=dd189a1a763710dd5dc72319d26d4284&autoload=false"></script>
+                    <div id="map" style="width:500px; height:400px;">맵</div>
 
                 </div>
             </div>
@@ -117,6 +117,13 @@
                 <div class="d-flex comment-dto">
                     <div><span th:text="${comment.userName}">나는 쉬지롱</span></div>
                     <div class="ml-2"><span th:text="${comment.content}">어우 고생들 많으십니다^^</span></div>
+                    
+                    <button id="btn-delete-comment"
+                        th:if="${meetingPost.userId == comment.userId}"
+                        th:data-userId="${comment.userId}"
+                        th:data-commentId="${comment.id}">
+                        삭제
+                    </button>
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -144,110 +151,53 @@
             </div>
 
             <div class="d-flex mt-3">
-                <div class="d-flex">
-                    <div><span>모든 사고 책임은 개인에게 있음을 동의합니다</span></div>
-                    <div><input type="checkbox" name="agreePolicy" id="isSafetyAgree"></div>
-                </div>
-                <div class="ml-3">
-                    <button id="btn-join">참가</button>
-                </div>
+
+                <th:block th:if="${userType == 'none'}">
+          
+       
+                    <div class="d-flex">
+                        <div><span>모든 사고 책임은 개인에게 있음을 동의합니다</span></div>
+                        <div><input type="checkbox" name="agreePolicy" id="isSafetyAgree"></div>
+                    </div>
+                    <div class="ml-3">
+                        <button id="btn-join">참가</button>
+                    </div>
+                </th:block>
             </div>
+            
         </div>
     </div>
-    <span>latitude</span><span th:text="${meetingPost.latitude}" id="position-lat"></span>
-    <span>longitude</span><span th:text="${meetingPost.longitude}" id="position-lng"></span>
+
     <div class="d-flex justify-content-end mt-4">
-        <button>닫기</button>
-        <button>수정하기</button>
-        <button>모임취소</button>
+
+        <a href="/main-page/before-meeting">
+            <button>닫기</button>
+        </a>
+
+        <!-- userType이 leader일 때: 수정하기 버튼만 표시 -->
+        <th:block th:if="${userType == 'leader'}">
+            <button>수정하기</button>
+        </th:block>
+
+        <!-- userType이 member일 때: 모임취소 버튼만 표시 -->
+        <th:block th:if="${userType == 'member'}">
+            <button>모임취소</button>
+        </th:block>
+
+        <!-- userType이 none일 때: 모임참가 버튼만 표시 -->
+        
     </div>
 </div>
- 
 
-  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dd189a1a763710dd5dc72319d26d4284&libraries=services"></script>
-        <script>
-            var container = document.getElementById('map');
-            var options = {
-                center: new kakao.maps.LatLng($("#position-lat").text(), $("#position-lng").text()),
-                level: 3
-            };
-
-            var map = new kakao.maps.Map(container, options);
-
-
-            var infowindow = new kakao.maps.InfoWindow({zIndex:1});
-              var infowindow2 = new kakao.maps.InfoWindow({zIndex:1});
-
-
-
-
- 
-
-            var marker = new kakao.maps.Marker({
-                // 지도 중심좌표에 마커를 생성합니다
-                
-                 position: new kakao.maps.LatLng($("#position-lat").text(), $("#position-lng").text())
-              //  clickable: true
-              });
-            // 지도에 마커를 표시합니다
-            marker.setMap(map);
-
-            //클릭할 때의 마커 객체를 하나 더 생성
-            var marker2 = new kakao.maps.Marker({});
-            var geocoder = new kakao.maps.services.Geocoder();
-             geocoder.coord2Address($("#position-lng").text(), $("#position-lat").text(), function(result,status){
-                      if (status === kakao.maps.services.Status.OK) {
-                        // var detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
-                        var detailAddr  = '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
-                        
-                        var content = '<div class="bAddr">' +
-                                        
-                                        detailAddr + 
-                                    '</div>';
-
-                       
-                        
-                        // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
-                        infowindow.setContent(content);
-                        infowindow.open(map, marker);
-                    }   
-
-
-             });
-
-
-
-           
-            kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-                searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
-                    if (status === kakao.maps.services.Status.OK) {
-                        // var detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
-                        var detailAddr  = '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
-                        
-                        var content = '<div class="bAddr">' +
-                                        
-                                        detailAddr + 
-                                    '</div>';
-
-                        // 마커를 클릭한 위치에 표시합니다 
-                        marker2.setPosition(mouseEvent.latLng);
-                         
-                        marker2.setMap(map);
-                        $("#position-lng").text(mouseEvent.latLng.getLng());
-                        $("#position-lat").text(mouseEvent.latLng.getLat());
-
-                        // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
-                        infowindow2.setContent(content);
-                        infowindow2.open(map, marker2);
-                    }   
-                });
-                    map.setDraggable(true);
-            });
-
-            function searchDetailAddrFromCoords(coords, callback) {
-                // 좌표로 법정동 상세 주소 정보를 요청합니다
-                geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
-            }
+<script>
+    kakao.maps.load(function () {
+        var mapContainer = document.getElementById('map');
+        var mapOption = {
+            center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울시청 좌표
+            level: 3
+        };
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+    });s
 </script>
 <script>
     $(function(){
@@ -307,6 +257,5 @@
 });
         
 </script>
-
 </body>
 </html>

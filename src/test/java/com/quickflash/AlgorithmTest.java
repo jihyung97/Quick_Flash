@@ -1,175 +1,14 @@
-package com.quickflash.utility.calculation;
+package com.quickflash;
 
-import com.quickflash.meetingPost.dto.MeetingPostForOrderDto;
 import com.quickflash.meetingPost.dto.OneClickDto;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-@RequiredArgsConstructor
-@Service
 @Slf4j
-public class CalculationService {
-    public Map<String, Integer> convertspeedTopace(double speed) {
-        Map<String, Integer> speedMap = new HashMap<>();
-        if (speed == 0) {
-            speedMap.put("min", 0);
-            speedMap.put("sec", 0);
-            return speedMap;
-        }
-        double pace = 60 / speed;
-        int min = (int) pace;
-        int sec = (int) ((pace - min) * 60);
-        speedMap.put("min", min);
-        speedMap.put("sec", sec);
-        return speedMap;
+public class AlgorithmTest {
 
-    }
+    public List<Integer> 원클릭(List<OneClickDto> oneClickDtoList  , int height_goal ){
 
-    public double convertPaceToSpeed(int pace_min, int pace_sec) {
-
-        if (!(pace_min == 0 && pace_sec == 0)) {
-            return 3600 / (pace_min * 60 + pace_sec);
-        }
-        return 0;
-
-    }
-
-    public Map<String, Double> getLatLngForBoundBox(double standard_lat, double standard_lng, double distance) {
-        final double earthRadius = 6371.0; // 지구 반지름
-
-        // 위도 각도 차이 계산
-        double deltaLat = Math.toDegrees(distance / earthRadius);
-
-        // 경도 각도 차이 계산 (위도 보정 포함)
-        double deltaLng = Math.toDegrees(distance / (earthRadius * Math.cos(Math.toRadians(standard_lat))));
-
-        double minLat = standard_lat - deltaLat;
-        double maxLat = standard_lat + deltaLat;
-        double minLng = standard_lng - deltaLng;
-        double maxLng = standard_lng + deltaLng;
-
-        Map<String, Double> bounds = new HashMap<>();
-        bounds.put("minLat", minLat);
-        bounds.put("maxLat", maxLat);
-        bounds.put("minLng", minLng);
-        bounds.put("maxLng", maxLng);
-
-        return bounds;
-    }
-
-    // boundbox 쿼리로     meetingPost의  위도, 경도 데이터만 가져오게 되면... 나중에 점수계산할때 또 meetingPost에서 파워 속도 운동종류데이터를 가져와야 한다.(불필요한 쿼리) .
-    //따라서 쿼리로 dto를 통째로 가져오고 거리계산할때도 dto를 통째로 넣는다(거리계산을 위해 따로 dto에서 위도,경도를 분리하게 되면 메모리, 시간 낭비..)
-    public Double calculateDistancesForMeetingPost(double lat, double lng, double standard_lat, double standard_lng) {
-
-
-        final int EARTH_RADIUS_KM = 6371; // 지구 반지름 (킬로미터)
-
-
-        double dLat = Math.toRadians(lat - standard_lat);
-        double dLng = Math.toRadians(lng - standard_lng);
-
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(Math.toRadians(lat)) * Math.cos(Math.toRadians(standard_lat)) *
-                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        double distance = EARTH_RADIUS_KM * c;
-
-        log.info(" Distance +++{}  ", distance);
-        return distance;
-    }
-
-
-    public double calculatePowerScore(double Wa, double Wb) {
-        double alpha = 10.0;
-
-        // 끄는 사람 Wb 에 따른 드래프팅 절약율 (지수 회귀 기반)
-        double powerRatio = 0.4572 * Math.exp(-0.00541 * Wb) + 0.4759;
-
-        // 분자: 1 + e^(-alpha * (1 - savingRate))
-        double numerator = 1 + Math.exp(-alpha * (1 - powerRatio));
-
-        // 분모: 1 + e^(-alpha * (Wpost / Wmine - savingRate))
-        double denominator = 1 + Math.exp(-alpha * ((Wa / Wb) - powerRatio));
-
-        log.info("calculatePowerScore {}", numerator / denominator);
-
-        return numerator / denominator;
-    }
-
-
-    public double calculateSpeedScore(double Sa, double Sb) {
-        double alpha = 10.0;
-
-        // 대략 달리기는 공기저항의 영향이 거의 없으므로, 페이스의 15퍼센트 정도를 한계치로 잡는다.
-        double speedRatio = 0.85;
-
-        // 분자: 1 + e^(-alpha * (1 - savingRate))
-        double numerator = 1 + Math.exp(-alpha * (1 - speedRatio));
-
-        // 분모: 1 + e^(-alpha * (Wpost / Wmine - savingRate))
-        double denominator = 1 + Math.exp(-alpha * ((Sa / Sb) - speedRatio));
-
-        log.info("calculateSpeedScore {}", numerator/denominator);
-        // 전체 Score
-        return numerator / denominator;
-
-
-    }
-
-    public double calculateDistanceScore(double distance) {
-        final double alpha = 5.0;
-        final double default_distance = 5.0;
-
-        double numerator = 1 + Math.exp(-default_distance * alpha);
-        double denominator = 1 + Math.exp(alpha * (distance - default_distance));
-        return numerator / denominator;
-    }
-
-    public double calculateTotalScore(Double powerScore,Double speedScore,Double distanceScore, Double trustOfMember) {
-        double totalScore;
-
-        log.info("total Score 에서의 power,speed,distance,trust {} {} {} {}",powerScore,speedScore,distanceScore,trustOfMember);
-        //power값, speed 값 없을 때 거리와 신뢰도로만 구한다.
-       if((powerScore == null || powerScore == 0.0) && (speedScore == null || speedScore == 0.0)){
-           totalScore = 0.7 * distanceScore + 0.3 * trustOfMember;
-       }
-       else if(powerScore != null && powerScore > 0){
-           totalScore = 0.3 * powerScore + 0.4 * distanceScore + 0.3 * trustOfMember;
-       }else{
-           totalScore = 0.3 * speedScore + 0.4 * distanceScore + 0.3 * trustOfMember;
-       }
-       return totalScore;
-    }
-
-
-    public OneClickDto calculateSstAndEndTime(double power, int duration, double ftp, int start_time){
-        //sst를 구한다. t*(Np/ftp)^2 * 100 /3600
-        double sst = duration * (power/ftp)*(power/ftp) * 100 / 3600; //duration 은 초단위
-        //total_time 은  duration + 휴식시간 , 시간단위 이므로 Integer
-        int rest_time = (int)((double)(24 /  125) * sst) * 60 / 10; // 10분단위
-        log.info("rest_time {}", rest_time);
-
-        int total_time = (int)( duration / (60 * 10)) + rest_time; // 10분단위
-        int end_time = start_time + total_time; // 10분단위
-        Map<String,Object> result = new HashMap<>();
-         OneClickDto oneClickDto = new OneClickDto();
-        oneClickDto.setStart_time(start_time);
-         oneClickDto.setEnd_time(end_time);
-         oneClickDto.setSst(sst);
-
-
-
-        return oneClickDto;
-
-    }
-    public  List<Integer> optimizeOneClick(List<OneClickDto> oneClickDtoList  , int height_goal ){
-
-        log.info("height_goal {}" , height_goal);
 
 
 //        List<OneClickDto> oneClickDtoList = List.of(
@@ -230,7 +69,7 @@ public class CalculationService {
 
 
 
-      //  log.info("currentPostList {}", oneClickDtoList);
+        //  log.info("currentPostList {}", oneClickDtoList);
         oneClickDtoList.sort(Comparator.comparingInt(oneClickDto -> oneClickDto.getEnd_time()));
         log.info("currentPostList {}", oneClickDtoList);
 
@@ -269,7 +108,7 @@ public class CalculationService {
                 TreeSet<Integer> treesetOfPrevHeight = treeOfEndTimeInSameHeight.get(h);
                 Integer index1 = 0;
                 Integer index2 = 0;
-                  log.info("treesetOfPrevHeight {}", treesetOfPrevHeight);
+                //  log.info("treesetOfPrevHeight {}", treesetOfPrevHeight);
 
                 //treesetSsameHeight 에서 start_time 과 가장 근접한 종료시각을 가져온다. index1에 설정
                 if (treesetOfPrevHeight != null && !treesetOfPrevHeight.isEmpty()) {
@@ -306,13 +145,13 @@ public class CalculationService {
 
                 //기존의 dp[end_time][total_height] 보다 커야 업데이트
                 if ((caclulated > dp[index2][total_height]) && (caclulated > dp[end_time][total_height])) {
-                    log.info("\n postId {}",postId);
-                   log.info(" index1 {}", index1);
-                    log.info(" h : {}",h);
-                    log.info("total_height {}",total_height);
-                    log.info("end_time {}",end_time);
+                    //    log.info("\n postId {}",postId);
+                    //    log.info(" index1 {}", index1);
+                    //   log.info(" h : {}",h);
+                    //   log.info("total_height {}",total_height);
+                    //   log.info("end_time {}",end_time);
                     dp[end_time][total_height] = dp[index1][h] + sst;
-                    log.info("sst  {}" ,  dp[end_time][total_height]);
+                    //    log.info("sst  {}" ,  dp[end_time][total_height]);
                     getPostId[end_time][total_height] = postId;
 
 
@@ -321,8 +160,8 @@ public class CalculationService {
 
                     prev[end_time][total_height][0] = index1;
                     prev[end_time][total_height][1] = h;
-               //     log.info("prev[end_time][total_height][0]  {} {}" ,end_time, prev[end_time][total_height][0]);
-             //       log.info("prev[end_time][total_height][1] {} {}" ,total_height, prev[end_time][total_height][1]);
+                    //     log.info("prev[end_time][total_height][0]  {} {}" ,end_time, prev[end_time][total_height][0]);
+                    //       log.info("prev[end_time][total_height][1] {} {}" ,total_height, prev[end_time][total_height][1]);
                     treeOfEndTimeInSameHeight.get(total_height).add(end_time);
                 }
             }
@@ -334,12 +173,12 @@ public class CalculationService {
             return new ArrayList<>();
         }
         int end = treeOfEndTimeInSameHeight.get(height_set).last();
-      //  log.info("end {}", end);
+        //  log.info("end {}", end);
         List<Integer> postList = new ArrayList<>();
         int h = height_set;
 
 
-        log.info("treeSet{}", treeOfEndTimeInSameHeight);
+        log.info("treeSet", treeOfEndTimeInSameHeight);
         while(true){
             postList.add(getPostId[end][h]);
 //            log.info("postList {}" , postList);
@@ -362,5 +201,4 @@ public class CalculationService {
         log.info("postList {}", postList);
         return postList;
     }
-
 }
