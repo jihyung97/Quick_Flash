@@ -1,6 +1,11 @@
 package com.quickflash.meetingPost.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.quickflash.ability.entity.AbilityEntity;
 import com.quickflash.ability.service.AbilityBO;
 import com.quickflash.comment.service.CommentBO;
@@ -16,6 +21,7 @@ import com.quickflash.trust.service.TrustBO;
 import com.quickflash.user.service.UserBO;
 import com.quickflash.utility.calculation.CalculationService;
 import com.quickflash.utility.validation.ValidationService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
@@ -138,10 +144,11 @@ public class MeetingPostService {
 //            key = "#userId + ':' + T(java.lang.Math).round(#standardLat * 10000) + ':' + T(java.lang.Math).round(#standardLng * 10000) + ':' + #range"
 //    )
 
-    public List<IdAndScoreDto> getIdAndScoreOrderedByScore( Integer userId, double standardLat,double standardLng , double range , LocalDateTime updatedAt){
 
-        Double powerOfUser = 0.0;
-        Double speedOfUser = 0.0;
+
+    //standardlat,standardlng,range,updatedAt으로 updatedAt이후의 거리가 lat,lng기준 range이하의 게시글을 가져온다.
+    public Map<Integer, MeetingPostForOrderDto> getDtoForOrderMapByBoundBoxAndUpdatedAt(double standardLat,double standardLng,double range, LocalDateTime updatedAt){
+
 
         // 기준을 udpatedAt이 없으면 일주일전, 있으면 updatedAT으로 잡아 boundbox를 가져옴
         Integer standardId;
@@ -159,20 +166,27 @@ public class MeetingPostService {
 
         Map<String,Object> latLngAndIdMap = calculationService.getLatLngForBoundBox(standardLat,standardLng,range);
         latLngAndIdMap.put("id", standardId);
-
         Map<Integer, MeetingPostForOrderDto> meetingPostMapByBoundBox = meetingPostBO.getPostIdsSelectedByBoundBoxAndIdForDate(latLngAndIdMap);   //updatedAt이 null이면 updatedAt을 일주일 전으로 설정, 있으면 이거보다 최근의 걸 가져온다
+        return meetingPostMapByBoundBox;
+    }
+
+
+
+
+    public List<IdAndScoreDto> getIdAndScoreOrderedByScore( Integer userId, double standardLat,double standardLng , double range , LocalDateTime updatedAt){
+
+        Double powerOfUser = 0.0;
+        Double speedOfUser = 0.0;
+
         if(userId != null){
             AbilityEntity abilityOfUser = abilityBO.getAbilityByUserId(userId);
             if(abilityOfUser != null){
                 powerOfUser = abilityOfUser.getMaxCyclingAvgPower();
                 speedOfUser = abilityOfUser.getMaxRunningAvgSpeed();
-
             }
-
-
-
         }
 
+        Map<Integer,MeetingPostForOrderDto> meetingPostMapByBoundBox =  getDtoForOrderMapByBoundBoxAndUpdatedAt(standardLat,standardLng,range,updatedAt);
         log.info("meetingPostForORderDtoMapByBoundBox {}", meetingPostMapByBoundBox);
 
         Set<Integer> postKeySet =  meetingPostMapByBoundBox.keySet();
@@ -251,6 +265,10 @@ public class MeetingPostService {
                 .collect(Collectors.toList());
 
         return orderedIdAndScoreDtoList;
+
+
+    }
+
 
 
     }

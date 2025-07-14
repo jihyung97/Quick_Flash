@@ -1,5 +1,10 @@
 package com.quickflash.meetingPost.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.quickflash.comment.dto.CommentDto;
 import com.quickflash.comment.service.CommentBO;
 import com.quickflash.comment.service.CommentService;
@@ -11,6 +16,7 @@ import com.quickflash.meeting_join.service.MeetingJoinDtoMaker;
 import com.quickflash.user.service.UserBO;
 import com.quickflash.utility.calculation.CalculationService;
 import com.quickflash.utility.time.TimeService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,9 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -302,7 +306,16 @@ public class MeetingPostDtoMaker {
     }
 
 
-    public List<ThumbnailDto> renewThumbnailDtoListByScore(List<ThumbnailDto> oldList, List<ThumbnailDto> newList) {
+    // 시간복잡도 : O(new log (new) + (old + new))
+    public List<ThumbnailDto> mergeThumbnailDtoListByScore(List<ThumbnailDto> oldList, List<ThumbnailDto> newList) {
+
+        if (oldList == null) {
+            oldList = Collections.emptyList();  // 빈 리스트로 초기화
+        }
+        if (newList == null) {
+            newList = Collections.emptyList();  // null 대비
+        }
+
         // 1. newList 정렬 (내림차순)
         newList.sort((a, b) -> Double.compare(b.getScore(), a.getScore()));
 
@@ -328,6 +341,68 @@ public class MeetingPostDtoMaker {
 
         return result;
     }
+
+
+    public List<ThumbnailDto> generateUpdatedThumbnailDto(
+            Double lat,
+            Double lng,
+            LocalDateTime updatedAtOfthumbnailList,
+             int sessionId,
+            String oldThumbnailListjson
+
+
+    ){
+        Map<String,Object> result = new HashMap<>();
+        List<ThumbnailDto > mergedThumbnailDtos = new ArrayList<>();
+
+
+        final double range = 10.0; // 추후에 동적으로 설정할 수도 있음
+
+
+
+
+        if(lat!= null && lng != null){
+            //updatedAt 보다 최근의 걸 boundbox로 추려서 점수로 내어 postList로 가져옴.
+            List<IdAndScoreDto> idAndScoreDtos =  meetingPostService. getIdAndScoreOrderedByScore(sessionId,lat,lng,range,updatedAtOfthumbnailList);
+            List<ThumbnailDto> newThumbnailList=  generateThumbnailDtoListByIdAndScoreDtos(idAndScoreDtos);
+            //oldthumbnailjson을 dtolist로 만든다
+
+            List<ThumbnailDto> oldThumbnailList = new ArrayList<>();
+
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
+                objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+                if(oldThumbnailListjson != null  && !oldThumbnailListjson.trim().isEmpty()){
+
+                    oldThumbnailList = objectMapper.readValue(
+                            oldThumbnailListjson,
+                            new TypeReference<List<ThumbnailDto>>() {}
+                    );
+                }
+
+
+                // 이후 로직...
+
+            } catch (JsonProcessingException e) {
+                // 예외 처리: 로그 출력, 에러 응답 반환 등
+                e.printStackTrace();
+            }
+
+
+            // dtolist를 점수 내림차순으로 다시 정렬
+            mergedThumbnailDtos =  mergeThumbnailDtoListByScore(oldThumbnailList, newThumbnailList);
+            //result에 dtolist를 넣고 js에서 콜백
+
+
+        }else{
+
+        }// 세션에 저장된 좌표가 없으면 기존의 dtoList도 없앤다
+
+        return mergedThumbnailDtos;
+
+    }
+
 
 
 

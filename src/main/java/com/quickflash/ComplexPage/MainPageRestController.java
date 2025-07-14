@@ -41,8 +41,8 @@ public class MainPageRestController {
             double roundedLat = Math.round(lat * 100000.0) / 100000.0;
             double roundedLng = Math.round(lng * 100000.0) / 100000.0;
 
-            session.setAttribute("lat", roundedLat);
-            session.setAttribute("lng", roundedLng);
+            session.setAttribute("lat", String.valueOf(lat));
+            session.setAttribute("lng", String.valueOf(lng));
             result.put("result", "success");
         } catch (Exception e) {
             result.put("result", "fail");
