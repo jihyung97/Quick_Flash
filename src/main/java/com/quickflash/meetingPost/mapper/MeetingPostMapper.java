@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +26,14 @@ public interface MeetingPostMapper {
     int selectMaxCountById(int id);
 
     //bound-box 로 게시글들을 추려서 계산에 필요한 스키마들을 dto로 가져온다
-    @MapKey("id")
-   Map<Integer,MeetingPostForOrderDto> selectMeetingPostForOrderDtoMapByBoundBox(Map<String,Double> minMaxLatLng) ;
+//    @MapKey("id")
+//   Map<Integer,MeetingPostForOrderDto> selectMeetingPostForOrderDtoMapByBoundBox(Map<String,Double> minMaxLatLng) ;
 
     List<ThumbnailDto> selectThumbnailDtoListByPostIds(List<Integer> postIds);
-    List<Map<String,Object>>  selectMeetingPostMapForOneClickByBoundBox(Map<String,Double> minMaxLatLngAndDistance);
+    List<Map<String,Object>>  selectMeetingPostMapForOneClickByBoundBox(Map<String,Object> minMaxLatLngAndDistance);
+    Integer selectPostIdForDateStandard(LocalDateTime date);
+    @MapKey("id")
+   Map<Integer,MeetingPostForOrderDto>   selectMeetingPostForOrderDtoMapByBoundBoxAndIdForDate(Map<String,Object> minMaxLatLngAndId);
 
 
 

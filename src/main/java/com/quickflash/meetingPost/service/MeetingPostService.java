@@ -5,8 +5,10 @@ import com.quickflash.ability.entity.AbilityEntity;
 import com.quickflash.ability.service.AbilityBO;
 import com.quickflash.comment.service.CommentBO;
 import com.quickflash.comment.service.CommentService;
+import com.quickflash.meetingPost.dto.IdAndScoreDto;
 import com.quickflash.meetingPost.dto.MeetingPostForOrderDto;
 import com.quickflash.meetingPost.dto.OneClickDto;
+import com.quickflash.meetingPost.dto.ThumbnailDto;
 import com.quickflash.meeting_join.service.MeetingJoinBO;
 import com.quickflash.meeting_join.service.MeetingJoinDtoMaker;
 import com.quickflash.trust.dto.TrustForOrderDto;
@@ -16,6 +18,8 @@ import com.quickflash.utility.calculation.CalculationService;
 import com.quickflash.utility.validation.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -128,11 +132,35 @@ public class MeetingPostService {
     }
 
     //power,speed, user와의 거리, trust 를 종합해서 점수를 계산하고 정렬 : bound-box 로 셀렉트된 Map<postId, Dto>
-    public List<Integer> getPostIdsOrderByTotalScore(Map<Integer, MeetingPostForOrderDto> meetingPostForOrderDtoMapByBoundBox,Integer userId, double standardLat,double standardLng){
+
+    //cacheable로 저장 (key:userId,standardLat,standardLng,range) , double은 부동소수점이므로 반올림하여 안전하게 저장
+//    @Cacheable(
+//            key = "#userId + ':' + T(java.lang.Math).round(#standardLat * 10000) + ':' + T(java.lang.Math).round(#standardLng * 10000) + ':' + #range"
+//    )
+
+    public List<IdAndScoreDto> getIdAndScoreOrderedByScore( Integer userId, double standardLat,double standardLng , double range , LocalDateTime updatedAt){
 
         Double powerOfUser = 0.0;
         Double speedOfUser = 0.0;
 
+        // 기준을 udpatedAt이 없으면 일주일전, 있으면 updatedAT으로 잡아 boundbox를 가져옴
+        Integer standardId;
+        if(updatedAt == null){
+            standardId    = meetingPostBO.getPostIdForDateStandard( LocalDateTime.now().minusWeeks(1));
+        }else{
+            standardId = meetingPostBO.getPostIdForDateStandard(updatedAt);
+        }
+
+        //혹시 모를 NPE 방어
+        if(standardId == null){
+            standardId = 0;
+        }
+
+
+        Map<String,Object> latLngAndIdMap = calculationService.getLatLngForBoundBox(standardLat,standardLng,range);
+        latLngAndIdMap.put("id", standardId);
+
+        Map<Integer, MeetingPostForOrderDto> meetingPostMapByBoundBox = meetingPostBO.getPostIdsSelectedByBoundBoxAndIdForDate(latLngAndIdMap);   //updatedAt이 null이면 updatedAt을 일주일 전으로 설정, 있으면 이거보다 최근의 걸 가져온다
         if(userId != null){
             AbilityEntity abilityOfUser = abilityBO.getAbilityByUserId(userId);
             if(abilityOfUser != null){
@@ -145,15 +173,15 @@ public class MeetingPostService {
 
         }
 
-        log.info("meetingPostForORderDtoMapByBoundBox {}", meetingPostForOrderDtoMapByBoundBox);
+        log.info("meetingPostForORderDtoMapByBoundBox {}", meetingPostMapByBoundBox);
 
-        Set<Integer> postKeySet =  meetingPostForOrderDtoMapByBoundBox.keySet();
+        Set<Integer> postKeySet =  meetingPostMapByBoundBox.keySet();
 
         List<Integer> userIdList = new ArrayList<>();
 
         //meetingPost userId의 keyset을 만든다
         for(int key :   postKeySet){
-            userIdList.add(meetingPostForOrderDtoMapByBoundBox.get(key).getUserId());
+            userIdList.add(meetingPostMapByBoundBox.get(key).getUserId());
         }
 
         //keySet으로 trust의 정보를 가져온다 , Map<user, TrustForOrderDto
@@ -163,11 +191,13 @@ public class MeetingPostService {
         trustBO.getTrustForOrderDtoByMeetingByUserIdList(userIdList);
     }
 
-        Map<Integer,Double> idToTotalScoreMap = new HashMap<>();
+      //  Map<Integer,Double> idToTotalScoreMap = new HashMap<>();
         //파워, 스피드에 대한
 
+        List<IdAndScoreDto> idAndScoreDtoList = new ArrayList<>();
+
         for(int key : postKeySet){
-            MeetingPostForOrderDto meetingPostForOrderDto = meetingPostForOrderDtoMapByBoundBox.get(key);
+            MeetingPostForOrderDto meetingPostForOrderDto = meetingPostMapByBoundBox.get(key);
             double distance = calculationService.calculateDistancesForMeetingPost(meetingPostForOrderDto.getLatitude(),meetingPostForOrderDto.getLongitude(),standardLat,standardLng);
 
             double trustOfMember = 0.0;
@@ -204,24 +234,28 @@ public class MeetingPostService {
 
             double totalScore = calculationService.calculateTotalScore(powerScore,speedScore,distanceScore,trustOfMember);
 
-            idToTotalScoreMap.put(key, totalScore);
+            IdAndScoreDto idAndScoreDto = IdAndScoreDto.builder()
+                    .id(key)
+                    .score(totalScore)
+                    .build();
 
 
             //powerOfUser, speedOfUser 은 이미 가져옴
-
+            idAndScoreDtoList.add(idAndScoreDto);
         }
             //idToTOtalScoreMap에 있는 값을 totalScore 가 높은 순으로 정렬하고 반환
-        log.info("idToTotalScoreMap {}", idToTotalScoreMap);
+        log.info("idAndScoreDtoList {}", idAndScoreDtoList);
 
-        List<Integer> orderedMeetingPostList = idToTotalScoreMap.entrySet()
-                .stream()
-                .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue())) // 내림차순 정렬
-                .map(Map.Entry::getKey) // key (MeetingPost ID)만 추출
+        List<IdAndScoreDto> orderedIdAndScoreDtoList = idAndScoreDtoList.stream()
+                .sorted((a, b) -> Double.compare(b.getScore(), a.getScore()))
                 .collect(Collectors.toList());
 
-        return orderedMeetingPostList;
+        return orderedIdAndScoreDtoList;
+
 
     }
+
+
 
 
 

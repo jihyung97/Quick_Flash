@@ -26,6 +26,15 @@
       <h1>Quick</h1>
       <h1>Flash</h1>
     </div>
+    <div id="search-post-section">
+      <span>게시글 검색</span>
+      <input type="text" id="search-post">
+      <button id="btn-search-post">검색</button>
+      <div id="search-result"></div>
+      
+
+
+    </div>
     <div class="h-50">
       <nav class="nav flex-column bg-dark p-3 rounded shadow h-100" style="width: 220px;">
         <a class="nav-link text-white fw-semibold mt-4" href="#">🏃 모임게시판</a>
@@ -181,6 +190,67 @@
   </div>
 
 </div>
+
+<script>
+  $(function () {
+  const container = $('#meeting-post-section');
+  let observer = null;
+  let page = 1;
+  let isLoading = false;
+  let noMoreData = false;
+
+  function loadMorePosts() {
+    if (isLoading || noMoreData) return;
+    isLoading = true;
+    page++;
+
+    $.ajax({
+      url: `/api/meeting-posts?page=${page}`,
+      method: 'GET',
+      success: function (data) {
+        // data는 HTML 문자열로 게시글 <a> 요소들 반환한다고 가정
+        if (!data.trim()) {
+          noMoreData = true;
+          observer.disconnect();
+          return;
+        }
+
+        container.append(data);
+        observeLastPost();
+      },
+      error: function () {
+        console.error('게시글 불러오기 실패');
+      },
+      complete: function () {
+        isLoading = false;
+      },
+    });
+  }
+
+  function observeLastPost() {
+    if (observer) observer.disconnect();
+
+    const posts = container.find('a');
+    const lastPost = posts.last()[0];
+    if (!lastPost) return;
+
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadMorePosts();
+        }
+      });
+    });
+
+    observer.observe(lastPost);
+  }
+
+  observeLastPost();
+});
+
+
+
+</script>
  <script>
    $(function(){
     $("#btn-login").on("click",function(){
@@ -353,6 +423,73 @@
             }
         });
      });
+
+      $("#btn-search-post").click(function () {
+            const keyword = $("#search-post").val();
+
+            $.ajax({
+              url: "/meeting-post/search",
+              type: "POST",
+              data: { keyword: keyword },
+              success: function (response) {
+                const $container = $("#search-result");
+                $container.empty();
+
+                if (response.result === "success") {
+                  const list = response.searchList;
+
+                  if (list.length === 0) {
+                    $container.html("<p>검색 결과가 없습니다.</p>");
+                    return;
+                  }
+
+                  list.forEach(function (post) {
+                    const html = `
+                      <div class="search-item">
+                        <h4>${post.title}</h4>
+                        <p>${post.exerciseType}</p>
+                        <p>${post.location}</p>
+                        <p>${post.speed || ""}</p>
+                        <p>${post.power || ""}</p>
+                        <p>${post.height || ""}</p>
+                        <p><small>${post.createdAt || ""}</small></p>
+                        <hr/>
+                      </div>
+                    `;
+                    $container.append(html);
+                  });
+                } else {
+                  $container.html("<p>검색 실패</p>");
+                }
+              },
+              error: function () {
+                $("#search-result").html("<p>서버 오류</p>");
+              }
+            });
+        });
+
+        $(document).ready(function() {
+          $.ajax({
+            url: '/meeting-post/meeting-post-list',  // thumbnailDtoList를 가져오는 api. 만약 이미  local storage에 dtolist가 있으면 updatedAt보다 최근의 dtolist를 서버에서 가져와서 storage에 추가
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+              // 서버에서 받은 데이터를 localStorage에 저장
+              localStorage.setItem('meetingPostList', JSON.stringify(data.result));
+              
+              // 받은 데이터로 화면 렌더링 등 추가 작업 가능
+              renderMeetingPosts(data);
+            },
+            error: function(xhr, status, error) {
+              console.error('데이터 로드 실패:', error);
+              // 실패 시 localStorage에 저장된 데이터가 있으면 활용 가능
+              const cachedData = localStorage.getItem('meetingPostList');
+              if (cachedData) {
+                renderMeetingPosts(JSON.parse(cachedData));
+              }
+            }
+          });
+        });
 
 
 

@@ -37,7 +37,7 @@ public class CalculationService {
 
     }
 
-    public Map<String, Double> getLatLngForBoundBox(double standard_lat, double standard_lng, double distance) {
+    public Map<String, Object> getLatLngForBoundBox(double standard_lat, double standard_lng, double distance) {
         final double earthRadius = 6371.0; // 지구 반지름
 
         // 위도 각도 차이 계산
@@ -51,7 +51,7 @@ public class CalculationService {
         double minLng = standard_lng - deltaLng;
         double maxLng = standard_lng + deltaLng;
 
-        Map<String, Double> bounds = new HashMap<>();
+        Map<String, Object> bounds = new HashMap<>();
         bounds.put("minLat", minLat);
         bounds.put("maxLat", maxLat);
         bounds.put("minLng", minLng);

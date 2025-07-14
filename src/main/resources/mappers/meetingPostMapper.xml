@@ -281,7 +281,7 @@
     </update>
 
 
-    <select id="selectMeetingPostForOrderDtoMapByBoundBox"  parameterType = "map" resultType="com.quickflash.meetingPost.dto.MeetingPostForOrderDto">
+    <select id="selectMeetingPostForOrderDtoMapByBoundBoxAndIdForDate"  parameterType = "map" resultType="com.quickflash.meetingPost.dto.MeetingPostForOrderDto">
     SELECT
          `id`
         ,`userId`
@@ -307,6 +307,7 @@
             ),
             `locationpoint`
         )
+        and `id` >= #{id}
     </select>
 
     <resultMap id="thumbnailDtoMap" type="com.quickflash.meetingPost.dto.ThumbnailDto">
@@ -390,6 +391,15 @@
         )
     </select>
 
+
+    <select id="selectPostIdForDateStandard" parameterType="java.time.LocalDateTime" resultType="int">
+        SELECT `id`
+        FROM `meetingpost`
+        WHERE `createdAt` >= #{date}
+        ORDER BY `createdAt` ASC
+        LIMIT 1
+
+    </select>
 
 
 

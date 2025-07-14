@@ -22,6 +22,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -211,10 +213,19 @@ public class MeetingPostDtoMaker {
 
     }
     @Cacheable(value = "shortCache", key = "'keyString:' + #sessionId + ':' + #lat + ':' + #lng")
-    public List<ThumbnailDto> generateMeetingPostThumbnailDtoListByScore(double lat, double lng, Integer sessionId){
+    public List<ThumbnailDto> generateThumbnailDtoListByIdAndScoreDtos(List<IdAndScoreDto> idAndScoreDtoList){
 
-        Map<Integer, MeetingPostForOrderDto> meetingPostMapByBoundBox = meetingPostBO.getPostIdsSelectedByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, 10));
-        List<Integer> postIds = meetingPostService.getPostIdsOrderByTotalScore(meetingPostMapByBoundBox,sessionId,lat,lng);
+        List<Integer> postIds = idAndScoreDtoList.stream()
+                .map(IdAndScoreDto::getId)
+                .collect(Collectors.toList());
+
+        Map<Integer, Double> idToScoreMap = idAndScoreDtoList.stream()
+                .collect(Collectors.toMap(
+                        IdAndScoreDto::getId,     // key: id
+                        IdAndScoreDto::getScore   // value: score
+                ));
+
+
         List<ThumbnailDto> thumbnailDtoList = meetingPostBO.getThumbnailDtoListByPostIds(postIds);
 
         for(ThumbnailDto thumbnailDto : thumbnailDtoList){
@@ -228,8 +239,12 @@ public class MeetingPostDtoMaker {
             thumbnailDto.setCurrentHeadCount(meetingJoinBO.countMember(thumbnailDto.getId()) + 1);
             thumbnailDto.setRemainedTime(timeService.show_remainedTime(LocalDateTime.now(),(LocalDateTime)thumbnailDto.getExpiredAt()));
 
-            //여기에 thumbnailDto 에 다른  domain 의 정보를 추가
-            //thumbnailDto.setLeaderPace , setLeaderFtp, setLeaderName
+
+            Double score = idToScoreMap.get(thumbnailDto.getId());
+            thumbnailDto.setScore(score != null ? score : 0.0);
+
+
+
         }
 
         return thumbnailDtoList;
@@ -285,6 +300,35 @@ public class MeetingPostDtoMaker {
       return   meetingPostBO.getThumbnailDtoListByPostIds(postIds);
 
     }
+
+
+    public List<ThumbnailDto> renewThumbnailDtoListByScore(List<ThumbnailDto> oldList, List<ThumbnailDto> newList) {
+        // 1. newList 정렬 (내림차순)
+        newList.sort((a, b) -> Double.compare(b.getScore(), a.getScore()));
+
+        // 2. 병합 작업
+        List<ThumbnailDto> result = new ArrayList<>(oldList.size() + newList.size());
+
+        int i = 0, j = 0;
+        while (i < oldList.size() && j < newList.size()) {
+            if (oldList.get(i).getScore() >= newList.get(j).getScore()) {
+                result.add(oldList.get(i++));
+            } else {
+                result.add(newList.get(j++));
+            }
+        }
+
+        while (i < oldList.size()) {
+            result.add(oldList.get(i++));
+        }
+
+        while (j < newList.size()) {
+            result.add(newList.get(j++));
+        }
+
+        return result;
+    }
+
 
 
 }

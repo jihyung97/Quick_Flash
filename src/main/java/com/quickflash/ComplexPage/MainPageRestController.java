@@ -28,20 +28,26 @@ public class MainPageRestController {
     private final MeetingJoinService meetingJoinService;
     private final MeetingJoinBO meetingJoinBO;
     private final MeetingPostDtoMaker meetingPostDtoMaker;
+
+
     @PostMapping("/set-location")
-    public Map<String,Object> setLocation(HttpSession session,
-                                                @RequestParam double lat,
-                                                @RequestParam double lng
-    ) {
+    public Map<String, Object> setLocation(HttpSession session,
+                                           @RequestParam double lat,
+                                           @RequestParam double lng) {
 
         Map<String, Object> result = new HashMap<>();
         try {
-            session.setAttribute("lat", lat);
-            session.setAttribute("lng", lng);
+            // 소수점 5자리로 반올림 : double은 부동소숫점이므로
+            double roundedLat = Math.round(lat * 100000.0) / 100000.0;
+            double roundedLng = Math.round(lng * 100000.0) / 100000.0;
+
+            session.setAttribute("lat", roundedLat);
+            session.setAttribute("lng", roundedLng);
             result.put("result", "success");
         } catch (Exception e) {
             result.put("result", "fail");
         }
+
         return result;
     }
 

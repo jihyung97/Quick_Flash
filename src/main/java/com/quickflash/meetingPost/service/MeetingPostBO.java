@@ -196,8 +196,8 @@ public class MeetingPostBO {
     }
     // bound-box 로 거리를 추린 게시글의 아이디를 가져온다.
     @Cacheable(value = "shortCache", key = "'bbox:' + #minMaxLanLng['minLat'] + ':' + #minMaxLanLng['maxLat'] + ':' + #minMaxLanLng['minLng'] + ':' + #minMaxLanLng['maxLng']")
-    public Map<Integer, MeetingPostForOrderDto> getPostIdsSelectedByBoundBox(Map<String, Double>minMaxLanLng){
-         return meetingPostMapper.selectMeetingPostForOrderDtoMapByBoundBox(minMaxLanLng);
+    public Map<Integer, MeetingPostForOrderDto> getPostIdsSelectedByBoundBoxAndIdForDate(Map<String, Object>minMaxLanLngAndId){
+         return meetingPostMapper.selectMeetingPostForOrderDtoMapByBoundBoxAndIdForDate(minMaxLanLngAndId);
 
 
 
@@ -213,9 +213,13 @@ public class MeetingPostBO {
 
     }
     @Cacheable(value = "shortCache", key = "'bbox:' + #minMaxLanLng['minLat'] + ':' + #minMaxLanLng['maxLat'] + ':' + #minMaxLanLng['minLng'] + ':' + #minMaxLanLng['maxLng']")
-    public List<Map<String,Object>> getMapForOneClickByBoundBox(Map<String,Double>minMaxLanLng  ){
+    public List<Map<String,Object>> getMapForOneClickByBoundBox(Map<String,Object>minMaxLanLng  ){
         return  meetingPostMapper.selectMeetingPostMapForOneClickByBoundBox(minMaxLanLng );
 
+    }
+
+    public Integer getPostIdForDateStandard(LocalDateTime date){
+        return meetingPostMapper.selectPostIdForDateStandard(date);
     }
 
 

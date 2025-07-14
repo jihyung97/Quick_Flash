@@ -18,93 +18,127 @@
 
     <body>
         <div class="container bg-color">
-            <div><input type="text" id="title"></div>
+            <div class="d-flex">
+                <div><h3>게시글 제목</h3></div>
+                   <div> <input type="text" id="title" style="width: 300px; height: 35px;"></div>
+
+            </div>
+         
             <!--지도-->
-            <div class="d-flex h-25 justify-content-start">
-                <div><h2>모이는 위치</h2></div>
-                <div>lng좌표<span id="position-lng"></div>
-                <div>lat좌표<span id="position-lat"></div>
-                 <div><input type="text" id="location"></div>
-                <div class="d-flex">
+            <div class="d-flex justify-content-between">
+                <div class=" ">
+
+                    <div><h2>모이는 위치</h2></div>
                     <div>
-                        <input type="text" id="keyword" placeholder="장소나 주소 입력">
-                        <button onclick="searchLocation()">검색</button>
-                        <div><h3>지도</h3></div>
-                        <div>
-                            <div id="map" style="width:300px;height:250px;"></div>
+                        <div id="map" style="width:300px;height:250px;"></div>
+                    </div>
+                  
+                        
+                    <input type="text" id="keyword" placeholder="장소나 주소 입력">
+            
+                    <button onclick="searchLocation()">검색</button>
+                    <div>
+                        <div>상세 주소</div>
+                        <div><input type="text" id="location" placeholder="상세 주소를 입력하세요" style="width: 300px; height: 45px;"></div>
+                    </div>
+               </div>         
+               <div>
+                    <div class="d-flex justify-content-center">
+                        <button id="btn-run" class="form-control" style="width:80px; ">러닝</button>
+                        <button id="btn-cycle"  class="form-control ml-3" style="width:80px; ">자전거</button>
+                    </div>
+                    <div id="running-fields">
+                        <div class="d-flex mt-2" >
+                            <div class="d-flex " style="width:80px;">예상페이스:</div>
+                            <div><input type="text" class="form-control" id="speed-run"></div>
+                            <div class="d-flex">min/km</div>
                         </div>
                     </div>
-                    <div>
+                    <div class="d-none" id="cycle-fields">
+                        <div class="d-flex mt-2">
+                            <div class="d-flex " style="width:80px;">예상파워:</div>
+                            <div><input type="text" class="form-control" id="power"></div>
+                            <div class="d-flex">W</div>
+                        </div>
+                        <div class="d-flex mt-2">
+                            <div class="d-flex " style="width:80px;">예상속도:</div>
+                            <div><input type="text" class="form-control" id="speed-cycle"></div>
+                            <div class="d-flex">km/h</div>
+                        </div>
 
-                            <button>카카오맵 연동하기</button>
-
-
-                            <button class="d-none">연동 완료</button>
-
-                        
-                        
-                        
+                     </div>
+                    <div class="d-flex mt-2">
+                        <div style="width:80px;"> 거리 </div>
+                        <div><input type="text" id="distance" class="form-control"></div>
+                    </div>
+                    <div class="d-flex mt-2">
+                        <div style="width:80px;"> 운동시간 </div>
+                        <div><input type="text" id="duration"  class="form-control"></div>
+                    </div>
+                    <div class="d-flex mt-2">
+                        <div style="width:80px;"> 운동 고도 </div>
+                        <div><input type="text" id="height"  class="form-control"></div>
                     </div>
 
-                </div>
+               </div>  
+               <div>
+                    <div class="d-flex">
+                         <div><h3>중간보급</h3></div>
+                         <div><input type="text" class="form-control" id="restLocation"></div>
+
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex">
+                             <div><h4>최소인원수</h4></div>
+                            <div><input type="text" id="minHeadCount">  </div>
+                        </div>
+                        <div class="d-flex">
+                            <div><h4>최대인원수</h4></div>
+                            <div><input type="text" id="maxHeadCount">  </div>
+                        </div>
+
+                    </div>
+                    <div class="d-flex">
+
+                          <div>
+                            <h4>모임 시간 설정하기</h4>
+                         </div>
+                         <div>
+                            <input type="datetime-local" name="expiredAt"  id= "expiredAt" class="form-control">
+                        </div>
+                    </div>
+
+               </div> 
+
+            </div>
+            
+                <div class="d-flex">
+                      
+
+             
+
+
+
+            </div>
+               
+                        
+                        
+                    
             </div>
             <!--예상 페이스-->
-            <div class="d-flex">
-                <div id="running-fields">
-                    <div class="d-flex" >
-                        <div class="d-flex">예상페이스:</div>
-                        <div><input type="text" class="form-control" id="speed-run"></div>
-                        <div class="d-flex">min/km</div>
-                    </div>
-                </div>
-
-                <div class="d-none" id="cycle-fields">
-                    <div class="d-flex">
-                        <div class="d-flex ">예상파워:</div>
-                        <div><input type="text" class="form-control" id="power"></div>
-                        <div class="d-flex">W</div>
-                    </div>
-                    <div class="d-flex">
-                        <div class="d-flex ">예상속도:</div>
-                        <div><input type="text" class="form-control" id="speed-cycle"></div>
-                        <div class="d-flex">km/h</div>
-                    </div>
-
-                </div>
-
-
-
-            </div>
+          
             <!--중간보급, 내 ability 보이기 -->
             <div class="d-flex justify-content-between">
+               
                 <div class="d-flex">
-                    <div><h3>중간보급</h3></div>
-                    <div><input type="text" class="form-control" id="restLocation"></div>
-
-                </div>
-                <div class="d-flex">
-                    <div class="d-flex">
-                        <button id="btn-run">러닝</button>
-                        <button id="btn-cycle">자전거</button>
-                    </div>
+                  
                     <div>
                         <h4>모임 시간 설정하기</h4>
                     </div>
                     <div>
                         <input type="datetime-local" name="expiredAt"  id= "expiredAt" class="form-control">
                     </div>
-                    <div class="d-flex">
-                        <div><h4>거리</h4></div>
-                        <div><input type="text" id="distance"></div>
-                    </div>
-                    <div class="d-flex">
-                        <div><h4>운동시간</h4></div>
-                        <div><input type="text" id="duration"></div>
-                    </div>
-                    <div class="d-flex">
-                        <div><h4>운동 고도</h4></div>
-                        <div><input type="text" id="height"></div>
-                    </div>
+                   
                     <div>
                         <div class="d-flex">
                             <div><h3>내 페이스 보이기</h3></div>
@@ -128,14 +162,7 @@
                     <div>흐르면 버리는지 여부 체크</div>
                     <input type="checkbox" id="isAbandonOkay">
                 </div>
-                <div class="d-flex">
-                    <div><h4>최소인원수</h4></div>
-                    <div><input type="text" id="minHeadCount">  </div>
-                </div>
-                 <div class="d-flex">
-                    <div><h4>최대인원수</h4></div>
-                    <div><input type="text" id="maxHeadCount">  </div>
-                </div>
+              
 
             </div>
             <div>

@@ -40,5 +40,6 @@ public class ThumbnailDto {
     Integer currentHeadCount;
     Integer speed_min;
     Integer speed_sec;
+    Double score;
 
 }
