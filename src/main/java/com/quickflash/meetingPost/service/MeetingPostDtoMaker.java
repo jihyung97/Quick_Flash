@@ -216,7 +216,7 @@ public class MeetingPostDtoMaker {
         return afterMeetingDto;
 
     }
-    @Cacheable(value = "shortCache", key = "'keyString:' + #sessionId + ':' + #lat + ':' + #lng")
+  //  @Cacheable(value = "shortCache", key = "'keyString:' + #sessionId + ':' + #lat + ':' + #lng")
     public List<ThumbnailDto> generateThumbnailDtoListByIdAndScoreDtos(List<IdAndScoreDto> idAndScoreDtoList){
 
         List<Integer> postIds = idAndScoreDtoList.stream()
@@ -309,6 +309,9 @@ public class MeetingPostDtoMaker {
     // 시간복잡도 : O(new log (new) + (old + new))
     public List<ThumbnailDto> mergeThumbnailDtoListByScore(List<ThumbnailDto> oldList, List<ThumbnailDto> newList) {
 
+
+        // 최대 1000개까지만
+        final int merged_size = 1000;
         if (oldList == null) {
             oldList = Collections.emptyList();  // 빈 리스트로 초기화
         }
@@ -317,27 +320,39 @@ public class MeetingPostDtoMaker {
         }
 
         // 1. newList 정렬 (내림차순)
+        // 처음에 newList가 정렬되면 다음에 부를때는 oldList로 오므로, oldList는 정렬할 필요 없다
         newList.sort((a, b) -> Double.compare(b.getScore(), a.getScore()));
 
         // 2. 병합 작업
         List<ThumbnailDto> result = new ArrayList<>(oldList.size() + newList.size());
 
         int i = 0, j = 0;
-        while (i < oldList.size() && j < newList.size()) {
+        int cnt = 0;
+        while (i < oldList.size() && j < newList.size() && cnt < merged_size) {
             if (oldList.get(i).getScore() >= newList.get(j).getScore()) {
                 result.add(oldList.get(i++));
             } else {
                 result.add(newList.get(j++));
             }
+            cnt++;
         }
 
-        while (i < oldList.size()) {
+        while (i < oldList.size() && cnt < merged_size) {
             result.add(oldList.get(i++));
+            cnt++;
         }
 
-        while (j < newList.size()) {
+        while (j < newList.size() && cnt < merged_size) {
             result.add(newList.get(j++));
+            cnt++;
         }
+
+
+        log.info("oldList postIds: {}", oldList.stream().map(ThumbnailDto::getId).collect(Collectors.toList()));
+        log.info("newList postIds: {}", newList.stream().map(ThumbnailDto::getId).collect(Collectors.toList()));
+
+        log.info("mergedList postIds: {}", result.stream().map(ThumbnailDto::getId).collect(Collectors.toList()));
+
 
         return result;
     }
@@ -347,7 +362,7 @@ public class MeetingPostDtoMaker {
             Double lat,
             Double lng,
             LocalDateTime updatedAtOfthumbnailList,
-             int sessionId,
+           Integer sessionId,
             String oldThumbnailListjson
 
 
@@ -355,14 +370,20 @@ public class MeetingPostDtoMaker {
         Map<String,Object> result = new HashMap<>();
         List<ThumbnailDto > mergedThumbnailDtos = new ArrayList<>();
 
+        final int default_days = 7 ;
 
         final double range = 10.0; // 추후에 동적으로 설정할 수도 있음
 
-
+        log.info("updatedAt!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{}",updatedAtOfthumbnailList);
 
 
         if(lat!= null && lng != null){
             //updatedAt 보다 최근의 걸 boundbox로 추려서 점수로 내어 postList로 가져옴.
+
+            //기존의 oldList가 없을 경우 newList는 일주일 이전부터의 데이터를 가져온다.
+            if(oldThumbnailListjson == null){
+                updatedAtOfthumbnailList = LocalDateTime.now().minusDays(default_days);
+            }
             List<IdAndScoreDto> idAndScoreDtos =  meetingPostService. getIdAndScoreOrderedByScore(sessionId,lat,lng,range,updatedAtOfthumbnailList);
             List<ThumbnailDto> newThumbnailList=  generateThumbnailDtoListByIdAndScoreDtos(idAndScoreDtos);
             //oldthumbnailjson을 dtolist로 만든다
@@ -381,6 +402,13 @@ public class MeetingPostDtoMaker {
                     );
                 }
 
+                //thumbnailList를 돌며 이미 모임시간이 지난 리스트들을 제거
+                oldThumbnailList.removeIf(thumbnailDto ->
+                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now())
+                );
+                newThumbnailList.removeIf(thumbnailDto ->
+                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now())
+                );
 
                 // 이후 로직...
 
@@ -393,6 +421,9 @@ public class MeetingPostDtoMaker {
             // dtolist를 점수 내림차순으로 다시 정렬
             mergedThumbnailDtos =  mergeThumbnailDtoListByScore(oldThumbnailList, newThumbnailList);
             //result에 dtolist를 넣고 js에서 콜백
+
+
+            //local storage 용량을 고려해 점수순으로 1000개정도까지만 저장
 
 
         }else{

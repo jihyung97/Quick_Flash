@@ -181,8 +181,107 @@
   </div>
 
 </div>
- <script>
-   $(function(){
+
+
+
+
+<script>
+ function updateThumbnails() {
+       let oldThumbnailListjson = localStorage.getItem('oldThumbnailList');
+        let updatedAtOfthumbnailList = localStorage.getItem('updatedAtOfthumbnailList');
+          const latAtStorage = localStorage.getItem('latAtStorage');
+          const lngAtStorage = localStorage.getItem('lngAtStorage');
+          const idAtStorage = localStorage.getItem('idAtStorage');
+
+              if (!oldThumbnailListjson) {
+                oldThumbnailListjson = JSON.stringify([]);  // 빈 리스트
+              }
+             
+
+          console.log("updateThumbnails 호출됨");
+
+          $.ajax({
+            url: '/meeting-post/thumbnail/update',
+            method: 'POST',
+            data: {
+              oldThumbnailListjson,
+              updatedAtOfthumbnailList,
+              latAtStorage,
+              lngAtStorage,
+              idAtStorage
+            },
+            dataType: 'json',
+            success: function(response) {
+              console.log("성공 응답:", response);
+
+              localStorage.setItem('oldThumbnailList', JSON.stringify(response.thumbnailDtoList)); 
+              localStorage.setItem('updatedAtOfthumbnailList', response.updatedAtOfthumbnailList);
+              localStorage.setItem('latAtStorage', response.latAtStorage);
+              localStorage.setItem('lngAtStorage', response.lngAtStorage);
+              localStorage.setItem('idAtStorage', response.idAtStorage);
+              
+
+              const container = $('#meeting-post-section');
+              container.empty();
+
+              const posts = response.thumbnailDtoList;
+              posts.forEach(post => {
+                const isRunning = post.exerciseType === 'RUNNING';
+                const postHtml = `
+                  <a href="/meeting-post/before-meeting?postId=${post.id}" class="text-dark text-decoration-none">
+                    <div class="m-3 meeting-post d-flex justify-content-between bg-color" style="cursor: pointer;">
+                      <div id="image-thumbnail-section" class="bg-warning">
+                        <img alt="썸네일" src="${post.thumbnailUrl || ''}" />
+                      </div>
+                      <div>
+                        <div><span>${post.title}</span></div>
+                        ${isRunning ? `
+                          <div>예상 페이스: km당 <span>${post.speed_min}</span>분 <span>${post.speed_sec}</span>초</div>
+                        ` : `
+                          <div>예상 파워: <span>${post.power}</span>W</div>
+                          <div>예상 속도: <span>${post.speed}</span>km/h</div>
+                        `}
+                        <div>모임 장소: <span>${post.location}</span></div>
+                      </div>
+                      <div>
+                        <div>남은 시간: <span>${post.remainedTime}</span></div>
+                        <div><span>${post.currentHeadCount}</span> / <span>${post.maxHeadCount}</span></div>
+                      </div>
+                    </div>
+                  </a>`;
+                container.append(postHtml);
+              });
+
+              container.append(`
+                <a href="/connect/strava">스트라바 연동하기</a>
+                <button id="btn-connect-cycle">자전거 연동하기</button>
+              `);
+            },
+            error: function(xhr, status, error) {
+              console.error('API 호출 실패:', error);
+            }
+          });
+        }
+
+</script>
+
+
+
+
+
+    <script>
+       
+      $(function(){
+     
+      
+
+      // 페이지 로드 완료 후 자동 실행
+   
+
+      // 필요하면 버튼 클릭 시에도 실행 가능
+      
+    
+   
     $("#btn-login").on("click",function(){
 
 
@@ -320,7 +419,7 @@
             },
             success: function (data) {
                 if (data.result === "success") {
-                    alert("리스트를  가져왔습니다.");
+                   
 
                   
                     let container = $("#thumbnail-list-for-one-click-section .thumbnail-for-one-click");
@@ -354,9 +453,19 @@
         });
      });
 
+    
+   
 
 
   });
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DOMContentLoaded 발생");
+            updateThumbnails(); // 여기서 호출!
+          });
+      
+        
+             
+
 
  </script>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dd189a1a763710dd5dc72319d26d4284&libraries=services"></script>
@@ -503,45 +612,6 @@
       </script>
 
 
-
-    <script>
-      function updateThumbnails() {
-        const oldThumbnailListjson = localStorage.getItem('oldThumbnailList');
-        const updatedAtOfthumbnailList = localStorage.getItem('updatedAtOfthumbnailList');
-
-        if (!oldThumbnailListjson || !updatedAtOfthumbnailList) {
-          console.log('localStorage에 필요한 데이터가 없습니다.');
-          return;
-        }
-
-        $.ajax({
-          url: '/thumbnail/update',
-          method: 'GET',
-          data: {
-            oldThumbnailListjson: oldThumbnailListjson,
-            updatedAtOfthumbnailList: updatedAtOfthumbnailList
-          },
-          dataType: 'json',
-          success: function(response) {
-           localStorage.setItem('oldThumbnailList', response.thumbnailDtoList);
-           localStorage.setItem('updatedAtOfthumbnailList', response.updatedAtOfthumbnailList);
-           //html에 response.thumbnailDtoList 뿌리기
-
-          },
-          error: function(xhr, status, error) {
-            console.error('API 호출 실패:', error);
-          }
-        });
-      }
-
-      // 페이지 로드 완료 후 자동 실행
-      $(document).ready(function() {
-        updateThumbnails();
-      });
-
-      // 필요하면 버튼 클릭 시에도 실행 가능
-      $('#updateBtn').on('click', updateThumbnails);
-    </script>
 
 </body>
 </html>

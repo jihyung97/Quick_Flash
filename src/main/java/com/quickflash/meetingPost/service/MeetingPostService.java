@@ -158,15 +158,15 @@ public class MeetingPostService {
             standardId = meetingPostBO.getPostIdForDateStandard(updatedAt);
         }
 
-        //혹시 모를 NPE 방어
-        if(standardId == null){
-            standardId = 0;
-        }
-
 
         Map<String,Object> latLngAndIdMap = calculationService.getLatLngForBoundBox(standardLat,standardLng,range);
-        latLngAndIdMap.put("id", standardId);
-        Map<Integer, MeetingPostForOrderDto> meetingPostMapByBoundBox = meetingPostBO.getPostIdsSelectedByBoundBoxAndIdForDate(latLngAndIdMap);   //updatedAt이 null이면 updatedAt을 일주일 전으로 설정, 있으면 이거보다 최근의 걸 가져온다
+
+        Map<Integer, MeetingPostForOrderDto> meetingPostMapByBoundBox = new HashMap<>();
+        if(standardId != null){
+            latLngAndIdMap.put("id", standardId);
+          meetingPostMapByBoundBox =  meetingPostBO.getPostIdsSelectedByBoundBoxAndIdForDate(latLngAndIdMap);
+        }
+                 //updatedAt이 null이면 updatedAt을 일주일 전으로 설정, 있으면 이거보다 최근의 걸 가져온다
         return meetingPostMapByBoundBox;
     }
 
@@ -282,7 +282,6 @@ public class MeetingPostService {
 
 
 
-}
 
 
 

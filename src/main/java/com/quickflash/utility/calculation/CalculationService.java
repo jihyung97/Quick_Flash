@@ -156,6 +156,10 @@ public class CalculationService {
 
         int total_time = (int)( duration / (60 * 10)) + rest_time; // 10분단위
         int end_time = start_time + total_time; // 10분단위
+        //end_time 과 start_time은 절대 같아선 안되므로 만약 같을 경우 다르게 한다.
+        if(end_time == start_time){
+            end_time += 1;
+        }
         Map<String,Object> result = new HashMap<>();
          OneClickDto oneClickDto = new OneClickDto();
         oneClickDto.setStart_time(start_time);
@@ -168,6 +172,9 @@ public class CalculationService {
 
     }
     public  List<Integer> optimizeOneClick(List<OneClickDto> oneClickDtoList  , int height_goal ){
+        log.info("Max Heap Memory: {}" ,(Runtime.getRuntime().maxMemory() / (1024 * 1024))  );
+        log.info("Total Heap Memory: {}", (Runtime.getRuntime().totalMemory() / (1024 * 1024))  );
+        log.info("Free Heap Memory: {}" , (Runtime.getRuntime().freeMemory() / (1024 * 1024)) );
 
         log.info("height_goal {}" , height_goal);
 
@@ -335,7 +342,7 @@ public class CalculationService {
         }
         int end = treeOfEndTimeInSameHeight.get(height_set).last();
       //  log.info("end {}", end);
-        List<Integer> postList = new ArrayList<>();
+        List<Integer> postList = new ArrayList<>(100);
         int h = height_set;
 
 

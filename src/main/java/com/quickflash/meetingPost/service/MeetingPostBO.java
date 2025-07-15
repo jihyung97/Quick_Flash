@@ -195,9 +195,16 @@ public class MeetingPostBO {
 
     }
     // bound-box 로 거리를 추린 게시글의 아이디를 가져온다.
-    @Cacheable(value = "shortCache", key = "'bbox:' + #minMaxLanLng['minLat'] + ':' + #minMaxLanLng['maxLat'] + ':' + #minMaxLanLng['minLng'] + ':' + #minMaxLanLng['maxLng']")
+  //  @Cacheable(value = "shortCache", key = "'bbox:' + #minMaxLanLng['minLat'] + ':' + #minMaxLanLng['maxLat'] + ':' + #minMaxLanLng['minLng'] + ':' + #minMaxLanLng['maxLng']")
     public Map<Integer, MeetingPostForOrderDto> getPostIdsSelectedByBoundBoxAndIdForDate(Map<String, Object>minMaxLanLngAndId){
-         return meetingPostMapper.selectMeetingPostForOrderDtoMapByBoundBoxAndIdForDate(minMaxLanLngAndId);
+
+        log.info("boundbox찾을 때 들어가는 id 값 {}", minMaxLanLngAndId.get("id"));
+        Map<Integer,MeetingPostForOrderDto> meetingPostForOrderDtoMap =  meetingPostMapper.selectMeetingPostForOrderDtoMapByBoundBoxAndIdForDate(minMaxLanLngAndId);
+
+        Set<Integer> keySet = meetingPostForOrderDtoMap.keySet();
+        log.info("BoundBox로 가져온 key값{}", keySet);
+         return  meetingPostForOrderDtoMap;
+
 
 
 

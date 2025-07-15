@@ -34,13 +34,12 @@ public class MainPageController {
         Integer userId = (Integer) session.getAttribute("userId");
         String userName = (String) session.getAttribute("userName");
         String userLoginId = (String) session.getAttribute("userLoginId");
-        Double lat = (Double) session.getAttribute("lat");
-        Double lng = (Double) session.getAttribute("lng");
+//        Double lat = (Double) session.getAttribute("lat");
+//        Double lng = (Double) session.getAttribute("lng");
 
-        log.info("lat {}", lat);
-        log.info("lng {}", lng);
 
-        if (lat != null && lng != null) {
+
+
 //            Map<Integer, MeetingPostForOrderDto> meetingPostMap = meetingPostBO.getPostIdsSelectedByBoundBox(calculationService.getLatLngForBoundBox(lat, lng, 10));
 //            log.info("meetingPostByBoundBox At MainPagecontroller {}", meetingPostMap);
 //            Set<Integer> keySet = meetingPostMap.keySet();
@@ -52,8 +51,8 @@ public class MainPageController {
 //            log.info("CalculateScoreForMeetingPostOrder {}", meetingPostService.getPostIdsOrderByTotalScore(meetingPostMap, userId, lat, lng));
 
 
-            model.addAttribute("meetingPostList", meetingPostDtoMaker.generateMeetingPostThumbnailDtoListByScore(lat,lng,userId));
-        }
+//            model.addAttribute("meetingPostList", meetingPostDtoMaker.generateMeetingPostThumbnailDtoListByScore(lat,lng,userId));
+
 
         //userId,userName,userLoginId
         if (userId != null && userName != null && userLoginId != null) {

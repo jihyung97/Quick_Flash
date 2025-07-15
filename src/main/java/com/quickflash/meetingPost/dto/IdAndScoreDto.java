@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 
@@ -16,4 +18,5 @@ import lombok.NoArgsConstructor;
 public class IdAndScoreDto {
     private int id;
     private Double score;
+    private LocalDateTime expiredAt;
 }

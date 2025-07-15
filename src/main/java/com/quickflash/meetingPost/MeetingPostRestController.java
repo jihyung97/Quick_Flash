@@ -16,6 +16,7 @@ import com.quickflash.meetingPost.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -271,16 +272,22 @@ public class MeetingPostRestController {
 
     }
 
-    @GetMapping("/thumbnail/update")
+    @PostMapping("/thumbnail/update")
     public Map<String, Object> updateThumbnailDtoList(
             HttpSession session,
-            LocalDateTime updatedAtOfthumbnailList, //local storage에서 가져옴
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  LocalDateTime updatedAtOfthumbnailList ,//local storage에서 가져옴
             String oldThumbnailListjson   // local storage에서 가져옴
             , String latAtStorage
             , String lngAtStorage
+            ,String idAtStorage
 
 
     ) {
+        log.info("idAtStorage{}", idAtStorage);
+
+            //새로고침 할때마다 page_meeting을  초기화 한다
+        session.setAttribute("page_meeting", 0);
+        List<ThumbnailDto> thumbnailDtoList = new ArrayList<>();
         Map<String, Object> result = new HashMap<>();
         Integer sessionId = (Integer) session.getAttribute("userId");
         Double lat = null;
@@ -289,21 +296,100 @@ public class MeetingPostRestController {
         String lngStr = (String) session.getAttribute("lng");
 
         //session에 등록된 좌표 (사용자 설정) 이 storage에 저장된 좌표(이전의 thumbnail update를 위해 가져왔던 좌표 ) 와 다르면 기존의 thumbnaildto 초기화
-        if (!Objects.equals(latStr, latAtStorage) || !Objects.equals(lngStr, lngAtStorage)) {
+        log.info("latStr{}", latStr);
+        log.info("latAtStorage{}", latAtStorage);
+        log.info("lngStr{}", lngStr);
+        log.info("lngAtStorage{}", lngAtStorage);
+        String sessionIdStr = sessionId == null ? "null" : sessionId.toString();  // local storage에서 들어올때 문자열ㄹ "null"이 들어온다
+        log.info("sessionId{}", sessionIdStr);
+        log.info("is sessionId equals idAtSTorage {}",Objects.equals(sessionIdStr  , idAtStorage));
+        if (!Objects.equals(latStr, latAtStorage) || !Objects.equals(lngStr, lngAtStorage) || !Objects.equals(sessionIdStr  , idAtStorage)) {
+            log.info("이전의 좌표와 지금 설정한 좌표가 다름!! 또는 다른 사용자");
             oldThumbnailListjson = null;
         }
-        if (latStr != null && lngStr != null) {
-            lat = Double.parseDouble(latStr);
-            lng = Double.parseDouble(lngStr);
+        try {
+            if (latStr != null) lat = Double.parseDouble(latStr);
+            if (lngStr != null) lng = Double.parseDouble(lngStr);
+        } catch (NumberFormatException e) {
+            result.put("thumbnailDtoList", thumbnailDtoList);
+            result.put("updatedAtOfthumbnailList",LocalDateTime.now());
+            return result;
+
+        }
+        if(lat == null || lng == null){
+            result.put("thumbnailDtoList", thumbnailDtoList);
+            result.put("updatedAtOfthumbnailList",LocalDateTime.now());
+            return result;
         }
 
 
-        List<ThumbnailDto> thumbnailDtoList = meetingPostDtoMaker.generateUpdatedThumbnailDto(lat, lng, updatedAtOfthumbnailList, sessionId, oldThumbnailListjson);
-
+        thumbnailDtoList = meetingPostDtoMaker.generateUpdatedThumbnailDto(lat, lng, updatedAtOfthumbnailList, sessionId, oldThumbnailListjson);
+        log.info("thumbnailDto 리스트 {}",thumbnailDtoList);
         result.put("thumbnailDtoList", thumbnailDtoList);
         result.put("updatedAtOfthumbnailList",LocalDateTime.now());
+        result.put("latAtStorage", lat);
+        result.put("lngAtStorage", lng);
+        result.put("idAtStorage", sessionId);
         return result;
 
     }
+
+
+    @PostMapping("/thumbnail/select")
+    public Map<String, Object> selectThumbnailByPage(
+            HttpSession session,
+
+            String oldThumbnailListjson   // local storage에서 가져옴
+
+            ,String idAtStorage
+
+
+
+    ) {
+
+        Map<String, Object> result = new HashMap<>();
+        Integer page_meeting = (Integer) session.getAttribute("page_meeting");
+
+        if (page_meeting == null) {
+            page_meeting = 0;
+        }
+
+
+        final int amount_per_page = 10;
+        List<ThumbnailDto> oldThumbnailList = new ArrayList<>();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+            if (oldThumbnailListjson != null && !oldThumbnailListjson.trim().isEmpty()) {
+
+                oldThumbnailList = objectMapper.readValue(
+                        oldThumbnailListjson,
+                        new TypeReference<List<ThumbnailDto>>() {
+                        }
+                );
+            }
+
+            int fromIndex = amount_per_page * page_meeting;
+            int toIndex = Math.min(amount_per_page * (page_meeting + 1), oldThumbnailList.size());
+
+            List<ThumbnailDto> currentThumbnailDtos;
+            if (fromIndex >= oldThumbnailList.size()) {
+                currentThumbnailDtos = new ArrayList<>();
+            } else {
+                currentThumbnailDtos = oldThumbnailList.subList(fromIndex, toIndex);
+            }
+            result.put("result", currentThumbnailDtos);
+
+            session.setAttribute("page_meeting", page_meeting + 1);
+
+
+        } catch (JsonProcessingException e) {
+            // 예외 처리: 로그 출력, 에러 응답 반환 등
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 }
 
