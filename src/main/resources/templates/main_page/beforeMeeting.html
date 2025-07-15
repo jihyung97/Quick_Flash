@@ -267,9 +267,89 @@
 
 
 
+<script>
+  let currentPage = 0;
+  const itemsPerPage = 10;
+  let isLoading = false;
+  let finished = false;
 
+  // Intersection Observer 세팅
+  const observedTarget = document.createElement('div');
+  observedTarget.id = "observer-target";
+  document.getElementById("meeting-post-section").appendChild(observedTarget); //동적으로 target생성
 
-    <script>
+  const observer = new IntersectionObserver(handleIntersect, {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.1
+  }); //intersectionObserver의 기능으로 observedTarget에서 0.1만큼 겹칠때 handleIntersect 작동
+  observer.observe(observedTarget); //observedTarget에서 0.1만큼 겹칠때
+
+  function handleIntersect(entries) {
+    if (entries[0].isIntersecting && !isLoading && !finished) {
+      loadMorePosts();
+    }
+  }
+
+  function loadMorePosts() {
+    isLoading = true;
+
+    const oldThumbnailListJson = localStorage.getItem("oldThumbnailList") || "[]";
+    const oldThumbnailList = JSON.parse(oldThumbnailListJson);
+
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    const pageItems = oldThumbnailList.slice(startIndex, endIndex);
+    currentPage++;
+
+    if (pageItems.length === 0) {
+      finished = true;
+      observer.unobserve(document.getElementById("observer-target"));
+      return;
+    }
+
+    appendMeetingPosts(pageItems);
+    isLoading = false;
+  }
+
+  function appendMeetingPosts(thumbnailList) {
+    const container = document.getElementById("meeting-post-section");
+    for (const post of thumbnailList) {
+      const a = document.createElement("a");
+      a.href = `/meeting-post/before-meeting?postId=${post.id}`;
+      a.className = "text-dark text-decoration-none";
+
+      const div = document.createElement("div");
+      div.className = "m-3 meeting-post d-flex justify-content-between bg-color";
+      div.style.cursor = "pointer";
+
+      div.innerHTML = `
+        <div id="image-thumbnail-section" class="bg-warning">
+          <img src="${post.thumbnailUrl || ''}" alt="썸네일" />
+        </div>
+        <div>
+          <div><span>${post.title}</span></div>
+          ${
+            post.exerciseType === 'RUNNING'
+              ? `<div><span>예상 페이스: km 당</span> <span>${post.speed_min}</span>분 <span>${post.speed_sec}</span>초</div>`
+              : `<div>예상 파워: <span>${post.power}</span> W</div>
+                 <div>예상 속도: <span>${post.speed}</span> km/h</div>`
+          }
+          <div>모임 장소: <span>${post.location}</span></div>
+        </div>
+        <div>
+          <div><span>남은 시간: </span><span>${post.remainedTime}</span></div>
+          <div><span>${post.currentHeadCount}</span> / <span>${post.maxHeadCount}</span></div>
+        </div>
+      `;
+
+      a.appendChild(div);
+      container.insertBefore(a, document.getElementById("observer-target"));
+    }
+  }
+</script>
+<script>
        
       $(function(){
      
