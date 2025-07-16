@@ -34,6 +34,7 @@ create table `meetingPost`(
 
 
 CREATE TABLE `mileage` (
+ 
     `userId` INT NOT NULL,
     `mileageOfCycle` DOUBLE,
     `mileageOfRunning` DOUBLE,
