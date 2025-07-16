@@ -7,6 +7,7 @@ import com.quickflash.meeting_join.MeetingJoinRestController;
 import com.quickflash.meeting_join.MeetingJoinStatus;
 import com.quickflash.meeting_join.entity.MeetingJoinEntity;
 import com.quickflash.meeting_join.repository.MeetingJoinRepository;
+import com.quickflash.mileage.service.MileageBO;
 import com.quickflash.user.service.UserBO;
 import com.quickflash.utility.validation.ValidationService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -28,6 +30,7 @@ public class MeetingJoinService {
     private final MeetingJoinBO meetingJoinBO;
     private final UserBO userBO;
     private final MeetingJoinRepository meetingJoinRepository;
+    private final MileageBO mileageBO;
 
     //기능상으론 BO이지만 userBO를 userName을 가져오기 위해 참조해야 하므로 service에 둔다
     @Transactional
@@ -127,6 +130,8 @@ public class MeetingJoinService {
         }
 
     }
+
+
 
 
 }

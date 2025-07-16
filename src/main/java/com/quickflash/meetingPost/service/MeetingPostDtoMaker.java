@@ -404,10 +404,10 @@ public class MeetingPostDtoMaker {
 
                 //thumbnailList를 돌며 이미 모임시간이 지난 리스트들을 제거
                 oldThumbnailList.removeIf(thumbnailDto ->
-                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now())
+                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now().minusHours(2))
                 );
                 newThumbnailList.removeIf(thumbnailDto ->
-                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now())
+                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now().minusHours(2))
                 );
 
                 // 이후 로직...

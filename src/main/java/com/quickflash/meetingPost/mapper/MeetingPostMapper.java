@@ -34,6 +34,7 @@ public interface MeetingPostMapper {
     Integer selectPostIdForDateStandard(LocalDateTime date);
     @MapKey("id")
    Map<Integer,MeetingPostForOrderDto>   selectMeetingPostForOrderDtoMapByBoundBoxAndIdForDate(Map<String,Object> minMaxLatLngAndId);
+    Double selectDistanceById(int id);
 
 
 

@@ -403,6 +403,16 @@
 
 
 
+    <select id="selectDistanceById" parameterType="int" resultType="double">
+        SELECT `distance`
+        FROM `meetingpost`
+        WHERE `id` = #{id}
+
+
+    </select>
+
+
+
 
 
 

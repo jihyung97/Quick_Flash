@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,6 +16,6 @@ public class Mileage {
     private int userId;
   private Double mileageOfCycle;
   private Double mileageOfRunning;
-  private Localdate  createdAt; //
+  private LocalDate createdAt; //
 
 }

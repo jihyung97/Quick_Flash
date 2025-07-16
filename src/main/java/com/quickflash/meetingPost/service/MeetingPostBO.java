@@ -229,5 +229,8 @@ public class MeetingPostBO {
         return meetingPostMapper.selectPostIdForDateStandard(date);
     }
 
+    public Double getDistanceById(int id){
+        return meetingPostMapper.selectDistanceById(id);
+    }
 
 }

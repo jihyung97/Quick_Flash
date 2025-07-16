@@ -43,7 +43,12 @@
         }
 
 #meeting-post-section {
-  height: 500px;       /* 원하는 고정 높이 */
+  height: 400px;       /* 원하는 고정 높이 */
   overflow-y: auto;    /* 높이 넘으면 스크롤 */
   border: 1px solid #ccc; /* 영역 구분용 */
+}
+
+#observed-target {
+  height: 10px;
+  background: lightgray;
 }

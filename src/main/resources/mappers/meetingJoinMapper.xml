@@ -13,6 +13,15 @@
         WHERE postId = #{postId}
     </select>
 
+
+    <select id="selectUserIdByPostId"  parameterType="int" resultType="int">
+        SELECT
+        `userId`
+
+        FROM `meeting_join`
+        WHERE postId = #{postId}
+    </select>
+
     <update id="updateMeetingJoinList">
         UPDATE `meeting_join`
         SET `joinStatus` = CASE `userId`

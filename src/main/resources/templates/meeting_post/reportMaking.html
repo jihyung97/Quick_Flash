@@ -147,8 +147,8 @@
                     alert("거리를 다시 입력하세요");
                     return false;
                 }
-                distance = Number(distance);
-
+               
+                      distance = parseFloat(distance);
                 let radioList = document.querySelectorAll('.status-radio');
                 let userIdToJoinStatus = {};
 
@@ -196,9 +196,10 @@
                     });
 
                       formData = new FormData();
+                        formData.append("distance", distance);
                     formData.append("postId", postId);
                     formData.append("userIdToJoinStatus", JSON.stringify(userIdToJoinStatus));  // { "1": "approved", "2": "rejected" } 같은 형태
-
+                     formData.append("exerciseType", exerciseType);
                     $.ajax({
                         url: "/meeting-join/update",
                         type: "POST",
@@ -210,6 +211,22 @@
                         },
                         error: function (data) {
                             console.error(data);
+                            alert("제출 중 오류가 발생했습니다.");
+                        }
+                    });
+
+                     $.ajax({
+                        url: "/mileage/update"  , 
+                        type: "POST",
+                        data: formData,
+                        contentType: false, // FormData 사용 시 false
+                        processData: false, // FormData 사용 시 false
+                        success: function (data) {
+                            alert("운동 리포트가 성공적으로 제출되었습니다.");
+                            // 필요 시 페이지 이동 또는 폼 초기화
+                        },
+                        error: function (data) {
+                            console.error(error);
                             alert("제출 중 오류가 발생했습니다.");
                         }
                     });

@@ -19,5 +19,5 @@ public interface MeetingJoinMapper {
                                   @Param("userIdToJoinStatus") Map<Integer, String> userIdToJoinStatus);
     List<MeetingJoinDtoForBatch> selectMeetingJoinForTrustBatch(@Param("userIdList")List<Integer> userIdList , @Param("standardId") int standardId) ;;
    int selectIdForDateStandard(LocalDateTime oneMonthAgo);
-
+    List<Integer> selectUserIdByPostId(int postId);
 }
