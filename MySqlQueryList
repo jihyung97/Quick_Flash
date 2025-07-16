@@ -33,6 +33,18 @@ create table `meetingPost`(
 
 
 
+CREATE TABLE mileage (
+    user_id INT NOT NULL,
+    mileage_of_cycle DOUBLE,
+    mileage_of_running DOUBLE,
+    created_at DATE,
+    PRIMARY KEY (user_id, created_at)
+);
+
+
+
+
+
 create table `ability`(
 	`id`    int not null auto_increment primary key
 	,`userId` int
