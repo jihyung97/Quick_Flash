@@ -27,4 +27,28 @@
     </select>
 
 
+    <select id="selectMileageForBatch"  parameterType = "map" resultType="com.quickflash.mileage.domain.Mileage" >
+        SELECT *
+        FROM mileage
+        WHERE id >= #{startId}
+        ORDER BY id asc
+        LIMIT  #{batchSize}
+
+    </select>
+
+
+    <select id="selectMileageIdForDateStandard" parameterType="java.time.LocalDateTime" resultType="int">
+        SELECT `id`
+        FROM `mileage`
+        WHERE `createdAt` >= #{date}
+        ORDER BY `createdAt` ASC
+        LIMIT 1
+
+    </select>
+
+
+
+
+
+
 </mapper>

@@ -7,9 +7,11 @@ import com.quickflash.mileage.domain.Mileage;
 import com.quickflash.mileage.mapper.MileageMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -55,6 +57,18 @@ public class MileageBO {
 
     }
 
+
+
+
+    public List<Mileage> getMileageForTrustBatch(int startId , int batchSize) {
+        log.info("");
+        List<Mileage> batchList = mileageMapper.selectMileageForBatch( startId, batchSize);
+        log.info("{}",batchList);
+        return batchList;
+    }
+    public Integer getMileageIdForDateStandard(LocalDate date){
+        return mileageMapper.selectMileageIdForDateStandard(date);
+    }
     ;
 }
 

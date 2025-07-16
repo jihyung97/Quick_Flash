@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Mileage {
+
     private int userId;
   private Double mileageOfCycle;
   private Double mileageOfRunning;
