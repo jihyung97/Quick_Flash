@@ -33,14 +33,13 @@ create table `meetingPost`(
 
 
 
-CREATE TABLE mileage (
-    user_id INT NOT NULL,
-    mileage_of_cycle DOUBLE,
-    mileage_of_running DOUBLE,
-    created_at DATE,
-    PRIMARY KEY (user_id, created_at)
+CREATE TABLE `mileage` (
+    `userId` INT NOT NULL,
+    `mileageOfCycle` DOUBLE,
+    `mileageOfRunning` DOUBLE,
+    `createdAt` DATE,
+    PRIMARY KEY (`userId`, `createdAt`)
 );
-
 
 
 
