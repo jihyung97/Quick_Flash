@@ -21,23 +21,23 @@ public class MileageBO {
     private final MeetingPostRepository meetingPostRepository;
     private final MileageMapper mileageMapper;
     public void addOrUpdateMileage(int userId, Double mileageOfCycle, Double mileageOfRunning){
-
+        log.info("여기까지 들어온거 확인");
 
         mileageOfCycle = mileageOfCycle == null ? 0.0 : mileageOfCycle;
         mileageOfRunning = mileageOfRunning == null ? 0.0 : mileageOfRunning;
-        Mileage mileage = mileageMapper.selectMileageByUserIdAndCreatedAt(userId, LocalDate.now());
-
-        double previousCycle = 0.0;
-        double previousRunning = 0.0;
-
-        if(mileage != null){
-            previousCycle =  mileage.getMileageOfCycle() == null ? 0.0 : mileage.getMileageOfCycle();
-            previousRunning =  mileage.getMileageOfRunning() == null ? 0.0 : mileage.getMileageOfRunning();
-
+        Mileage mileage = mileageMapper.selectLatestMileageByUserId(userId );
+        log.info("mileageMapper 갔다옴");
+        boolean isTodayMileageExist ;
+        if(mileage == null){
+            isTodayMileageExist = false;
+        }else{
+            if(LocalDate.now().equals(mileage.getCreatedAt())) isTodayMileageExist = true;
+            else isTodayMileageExist = false;
         }
+    log.info("isTodayMileageExist : {}", isTodayMileageExist);
 
-
-
+        double previousCycle = isTodayMileageExist ? mileage.getMileageOfCycle() : 0.0;
+        double previousRunning = isTodayMileageExist ? mileage.getMileageOfRunning() : 0.0;
           double  updatedCycle = previousCycle + mileageOfCycle;
            double updatedRunning = previousRunning + mileageOfRunning;
 
@@ -47,7 +47,8 @@ public class MileageBO {
                 .mileageOfCycle(updatedCycle)
                 .createdAt(LocalDate.now())
                 .build();
-        if(mileage != null){
+        log.info("newMileage : {}", newMileage);
+        if(isTodayMileageExist){
             mileageMapper.updateMileage(newMileage);
         }else{
             mileageMapper.insertMileage(newMileage);

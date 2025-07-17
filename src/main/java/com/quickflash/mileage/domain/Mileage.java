@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Mileage {
 
+    private int Id;
     private int userId;
   private Double mileageOfCycle;
   private Double mileageOfRunning;

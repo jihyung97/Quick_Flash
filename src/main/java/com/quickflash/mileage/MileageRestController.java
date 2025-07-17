@@ -40,10 +40,13 @@ public class MileageRestController {
 
     ){
 
+            Double distanceDouble = 0.0;
+            if (distance != null) distanceDouble = Double.parseDouble(distance);
 
             Map<String,Object> result = new HashMap<>();
 
             Integer sessionId = (Integer) session.getAttribute("userId");
+
 
             // 게시글 작성하기 전에 로그인 됬는지, 이미 작성된 글인지 확인.
             if(sessionId == null) {
@@ -51,7 +54,7 @@ public class MileageRestController {
                 return result;
             }
             try{
-                mileageService.updateMileage(postId,userIdToJoinStatusJson,distance,sessionId,exerciseType);
+                mileageService.updateMileage(postId,userIdToJoinStatusJson,distanceDouble,sessionId,exerciseType);
                 result.put("result","success");
                 return result;
             } catch (Exception e) {

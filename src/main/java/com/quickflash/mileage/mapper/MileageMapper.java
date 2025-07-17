@@ -11,7 +11,7 @@ import java.util.List;
 public interface MileageMapper {
     Mileage updateMileage(Mileage mileage);
     Mileage insertMileage(Mileage mileage);
-    Mileage selectMileageByUserIdAndCreatedAt(@Param("userId") int userId, @Param("createdAt") LocalDate createdAt);
+    Mileage selectLatestMileageByUserId(@Param("userId") int userId );
 
     List<Mileage> selectMileageForBatch(@Param("startId") int startId, @Param("batchSize") int batchSize );
      Integer selectMileageIdForDateStandard(LocalDate date);

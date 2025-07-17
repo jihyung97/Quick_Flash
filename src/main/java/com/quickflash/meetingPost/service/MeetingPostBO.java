@@ -233,4 +233,39 @@ public class MeetingPostBO {
         return meetingPostMapper.selectDistanceById(id);
     }
 
+    public Map<String,Object> getFinalReportListForScroll(Integer  start_id, int  batch_size){
+        Map<String,Object> result = new HashMap<>();
+        List<ThumbnailDto> finalReportListByQuery = new ArrayList<>();
+        if(start_id == null){
+            start_id = getLatestPostId();
+            if(start_id == null) {
+                result.put("thumbnailDtoList", Collections.emptyList());
+                return result;
+            }
+        }
+        int count_size = 0;
+        List<ThumbnailDto> finalReportListTotal = new ArrayList<>();
+        while(true){
+            finalReportListByQuery = meetingPostMapper.selectFinalReportForScroll(start_id,batch_size - count_size);
+            if(finalReportListByQuery == null || finalReportListByQuery.isEmpty()){
+                break;
+            }
+            finalReportListTotal.addAll(finalReportListByQuery);
+            count_size += finalReportListByQuery.size();
+            start_id = finalReportListByQuery.get( finalReportListByQuery.size() - 1).getId() - 1;
+            if(start_id < 1) break;
+            if (count_size >= batch_size) break;
+
+        }
+
+        result.put("start_id",start_id);
+        result.put("thumbnailDtoList", finalReportListTotal);
+      return result;
+
+
+    }
+    public Integer getLatestPostId(){
+        return  meetingPostMapper. selectLatestPostId();
+    }
+
 }

@@ -1,47 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.quickflash.comment.mapper.CommentMapper">
+<mapper namespace="com.quickflash.mileage.mapper.MileageMapper">
 
     <update id="updateMileage" parameterType="com.quickflash.mileage.domain.Mileage">
-        UPDATE mileage
-        SET mileageOfCycle = #{mileageOfCycle},
-        mileageOfRunning = #{mileageOfRunning}
-        WHERE userId = #{userId}
-        AND createdAt = #{createdAt}
+        UPDATE `mileage`
+        SET `mileageOfCycle` = #{mileageOfCycle},
+        `mileageOfRunning` = #{mileageOfRunning}
+        WHERE `userId` = #{userId}
+        AND `createdAt` = #{createdAt}
     </update>
 
     <insert id="insertMileage" parameterType="com.quickflash.mileage.domain.Mileage">
         INSERT INTO mileage (userId, mileageOfCycle, mileageOfRunning, createdAt)
         VALUES (#{userId}, #{mileageOfCycle}, #{mileageOfRunning}, #{createdAt})
     </insert>
-    <select id="selectMileageByUserIdAndCreatedAt" parameterType="map" resultType="com.quickflash.mileage.domain.Mileage">
+    <select id="selectLatestMileageByUserId" parameterType="int" resultType="com.quickflash.mileage.domain.Mileage">
         SELECT
-        userId AS userId,
-        mileageOfCycle AS mileageOfCycle,
-        mileageOfRunning AS mileageOfRunning,
-        createdAt AS createdAt
-        FROM mileage
-        WHERE userId = #{userId}
-        AND createdAt = #{createdAt}
+            *
+        FROM `mileage`
+        WHERE `userId` = #{userId}
+        ORDER BY `id` desc
+        LIMIT 1
     </select>
 
 
     <select id="selectMileageForBatch"  parameterType = "map" resultType="com.quickflash.mileage.domain.Mileage" >
         SELECT *
-        FROM mileage
-        WHERE id >= #{startId}
-        ORDER BY id asc
+        FROM `mileage`
+        WHERE `id` >= #{startId}
+        ORDER BY `id` asc
         LIMIT  #{batchSize}
 
     </select>
 
 
-    <select id="selectMileageIdForDateStandard" parameterType="java.time.LocalDateTime" resultType="int">
+    <select id="selectMileageIdForDateStandard" parameterType="java.time.LocalDate" resultType="int">
         SELECT `id`
         FROM `mileage`
         WHERE `createdAt` >= #{date}
-        ORDER BY `createdAt` ASC
+        ORDER BY `id` ASC
         LIMIT 1
 
     </select>

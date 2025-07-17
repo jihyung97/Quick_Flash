@@ -396,7 +396,7 @@
         SELECT `id`
         FROM `meetingpost`
         WHERE `createdAt` >= #{date}
-        ORDER BY `createdAt` ASC
+        ORDER BY `id` ASC
         LIMIT 1
 
     </select>
@@ -410,6 +410,41 @@
 
 
     </select>
+
+
+
+
+    <select id="selectFinalReportForScroll" parameterType="map" resultType="thumbnailDtoMap">
+        SELECT
+        `id`,
+        `title`,
+        `location`,
+        `expiredAt`,
+        `exerciseType`,
+        `distance`,
+        `speed`,
+        `power`,
+        `minHeadCount`,
+        `maxHeadCount`,
+        `isRestExist`,
+        `isAbandonOkay`,
+        `createdAt`
+        FROM `meetingpost`
+        WHERE   `id` &lt; #{startId} AND `currentStatus` = 'FINAL_REPORT'
+        ORDER BY `id` DESC
+        LIMIT #{batchSize}
+
+    </select>
+
+    <select id="selectLatestPostId"   resultType="int">
+        SELECT `id`
+        FROM `meetingpost`
+       ORDER BY `id` DESC
+        LIMIT 1
+
+
+    </select>
+
 
 
 

@@ -275,17 +275,17 @@ public class MeetingPostRestController {
     @PostMapping("/thumbnail/update")
     public Map<String, Object> updateThumbnailDtoList(
             HttpSession session,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)  LocalDateTime updatedAtOfthumbnailList ,//local storage에서 가져옴
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime updatedAtOfthumbnailList,//local storage에서 가져옴
             String oldThumbnailListjson   // local storage에서 가져옴
             , String latAtStorage
             , String lngAtStorage
-            ,String idAtStorage
+            , String idAtStorage
 
 
     ) {
         log.info("idAtStorage{}", idAtStorage);
 
-            //새로고침 할때마다 page_meeting을  초기화 한다
+        //새로고침 할때마다 page_meeting을  초기화 한다
         session.setAttribute("page_meeting", 0);
         List<ThumbnailDto> thumbnailDtoList = new ArrayList<>();
         Map<String, Object> result = new HashMap<>();
@@ -302,8 +302,8 @@ public class MeetingPostRestController {
         log.info("lngAtStorage{}", lngAtStorage);
         String sessionIdStr = sessionId == null ? "null" : sessionId.toString();  // local storage에서 들어올때 문자열ㄹ "null"이 들어온다
         log.info("sessionId{}", sessionIdStr);
-        log.info("is sessionId equals idAtSTorage {}",Objects.equals(sessionIdStr  , idAtStorage));
-        if (!Objects.equals(latStr, latAtStorage) || !Objects.equals(lngStr, lngAtStorage) || !Objects.equals(sessionIdStr  , idAtStorage)) {
+        log.info("is sessionId equals idAtSTorage {}", Objects.equals(sessionIdStr, idAtStorage));
+        if (!Objects.equals(latStr, latAtStorage) || !Objects.equals(lngStr, lngAtStorage) || !Objects.equals(sessionIdStr, idAtStorage)) {
             log.info("이전의 좌표와 지금 설정한 좌표가 다름!! 또는 다른 사용자");
             oldThumbnailListjson = null;
         }
@@ -312,21 +312,21 @@ public class MeetingPostRestController {
             if (lngStr != null) lng = Double.parseDouble(lngStr);
         } catch (NumberFormatException e) {
             result.put("thumbnailDtoList", thumbnailDtoList);
-            result.put("updatedAtOfthumbnailList",LocalDateTime.now());
+            result.put("updatedAtOfthumbnailList", LocalDateTime.now());
             return result;
 
         }
-        if(lat == null || lng == null){
+        if (lat == null || lng == null) {
             result.put("thumbnailDtoList", thumbnailDtoList);
-            result.put("updatedAtOfthumbnailList",LocalDateTime.now());
+            result.put("updatedAtOfthumbnailList", LocalDateTime.now());
             return result;
         }
 
 
         thumbnailDtoList = meetingPostDtoMaker.generateUpdatedThumbnailDto(lat, lng, updatedAtOfthumbnailList, sessionId, oldThumbnailListjson);
-        log.info("thumbnailDto 리스트 {}",thumbnailDtoList);
+        log.info("thumbnailDto 리스트 {}", thumbnailDtoList);
         result.put("thumbnailDtoList", thumbnailDtoList);
-        result.put("updatedAtOfthumbnailList",LocalDateTime.now());
+        result.put("updatedAtOfthumbnailList", LocalDateTime.now());
         result.put("latAtStorage", lat);
         result.put("lngAtStorage", lng);
         result.put("idAtStorage", sessionId);
@@ -341,8 +341,7 @@ public class MeetingPostRestController {
 
             String oldThumbnailListjson   // local storage에서 가져옴
 
-            ,String idAtStorage
-
+            , String idAtStorage
 
 
     ) {
@@ -391,5 +390,26 @@ public class MeetingPostRestController {
         return result;
     }
 
+
+    @PostMapping("/final-report/select")
+    public Map<String, Object> selectThumbnailByPage(
+            HttpSession session,
+
+            String startId
+    ) {
+
+        Map<String, Object> result = new HashMap<>();
+        Integer startIdOfFinalReport = (Integer) session.getAttribute("startIdOfFinalReport");
+
+        final int batch_size = 5;
+
+        Map<String, Object> finalReportData = meetingPostBO.getFinalReportListForScroll(startIdOfFinalReport, batch_size);
+        session.setAttribute("startIdOfFinalReport", finalReportData.get("start_id"));
+        result.put("result", finalReportData.get("thumbnailDtoList"));
+
+        return finalReportData;
+
+
+    }
 }
 

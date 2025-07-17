@@ -31,11 +31,18 @@
         <a class="nav-link text-white fw-semibold mt-4" href="#">🏃 모임게시판</a>
         <a class="nav-link text-white fw-semibold mt-4" href="#">💬 자유게시판</a>
         <a class="nav-link text-white fw-semibold mt-4" href="#">🖼️ 갤러리</a>
-        <a class="nav-link text-white fw-semibold mt-4" href="#">📊 운동 리포트</a>
+    <a class="nav-link text-white fw-semibold mt-4" href="#" onclick="reloadFinalReports(); return false;">📊 운동 리포트</a>
       </nav>
     </div>
     <div  class= "h-25" id="ranking-section">
       <div>daily</div>
+      <div>
+        <h3>🚴‍♀️ 오늘의 자전거 1등: <span th:text="${dailyRanking.rankingNameOfCycle}"></span></h3>
+        <p>거리: <span th:text="${dailyRanking.bestScoreOfCycle}"></span>km</p>
+
+        <h3>🏃‍♂️ 오늘의 러닝 1등: <span th:text="${dailyRanking.rankingNameOfRunning}"></span></h3>
+        <p>거리: <span th:text="${dailyRanking.bestScoreOfRunning}"></span>km</p>
+      </div>
       <div>weekly</div>
       <div>monthly</div>
     </div>
@@ -204,6 +211,7 @@
   let finished = false;
   let observedTarget = $("#observed-target")[0];
   let isFirstLoading = true;
+  
 
   const observer = new IntersectionObserver((entries) => {
     
@@ -216,6 +224,107 @@
       rootMargin: "0px",
       threshold: 0.5
     });
+
+
+
+
+ 
+  
+  let isLoadingFinalReport = false;
+  let finishedFinalReport = false;
+  let finalReportTarget = $("#observed-target-final-report")[0];
+
+  const observerFinalReport = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !isLoadingFinalReport && !finishedFinalReport) {
+      loadMorePostsFinalReport();
+    }
+  }, {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.5
+  });
+
+
+   function appendFinalReports(reportList) {
+    const container = document.getElementById("final-report-section");
+
+    for (const post of reportList) {
+      const a = document.createElement("a");
+      a.href = `/meeting-post/final-report?postId=${post.id}`;
+      a.className = "text-dark text-decoration-none";
+
+      const div = document.createElement("div");
+      div.className = "m-3 report-post d-flex justify-content-between bg-light";
+      div.style.cursor = "pointer";
+
+      div.innerHTML = `
+        <div>
+          <div><span>${post.title}</span></div>
+          <div>작성자: <span>${post.writer}</span></div>
+          <div>운동유형: <span>${post.exerciseType}</span></div>
+        </div>
+        <div>
+          <div>작성일: <span>${post.createdAt}</span></div>
+        </div>
+      `;
+      a.appendChild(div);
+      container.appendChild(a);
+    }
+
+
+    const oldTarget = document.getElementById("observed-target-final-report");
+    if (oldTarget) oldTarget.remove();
+
+    const observedDiv = document.createElement("div");
+    observedDiv.id = "observed-target-final-report";
+    observedDiv.style.height = "10px";
+    container.appendChild(observedDiv);
+    observerFinalReport.observe(observedDiv);
+  }
+
+
+  function reloadFinalReports() {
+      // 기존 데이터 삭제
+      const container = document.getElementById("meeting-post-section");
+      container.innerHTML = "";
+
+      // 상태 초기화
+      isLoadingFinalReport = false;
+      finishedFinalReport = false;
+      currentPageFinalReport = 0;
+
+      // 처음 로딩된 observed-target도 제거
+      const oldTarget = document.getElementById("observed-target-final-report");
+      if (oldTarget) oldTarget.remove();
+
+      // 첫 페이지 로드 시작
+      loadMoreFinalReports(true);
+}
+
+  function loadMoreFinalReports(isFirst) {
+    isLoadingFinalReport = true;
+
+    $.ajax({
+      url: '/meeting-post/final-report/select',
+      method: 'POST',
+      data: {"isFirst" : isFirst},
+      success: function(response) {
+        const list = response.result;
+        if (!list || list.length === 0) {
+          finishedFinalReport = true;
+          isLoadingFinalReport = false;
+          return;
+        }
+
+        appendFinalReports(list);
+        isLoadingFinalReport = false;
+      },
+      error: function(xhr, status, error) {
+        console.error("Final report 로딩 실패:", error);
+        isLoadingFinalReport = false;
+      }
+    });
+  }
 
 
      function loadMorePosts() {

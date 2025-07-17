@@ -35,6 +35,8 @@ public interface MeetingPostMapper {
     @MapKey("id")
    Map<Integer,MeetingPostForOrderDto>   selectMeetingPostForOrderDtoMapByBoundBoxAndIdForDate(Map<String,Object> minMaxLatLngAndId);
     Double selectDistanceById(int id);
+    List<ThumbnailDto> selectFinalReportForScroll(@Param("startId") int startId,@Param("batchSize") int batchSize );
+    Integer selectLatestPostId();
 
 
 

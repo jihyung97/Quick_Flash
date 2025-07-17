@@ -4,10 +4,12 @@ import com.quickflash.meetingPost.dto.MeetingPostForOrderDto;
 import com.quickflash.meetingPost.service.MeetingPostBO;
 import com.quickflash.meetingPost.service.MeetingPostDtoMaker;
 import com.quickflash.meetingPost.service.MeetingPostService;
+import com.quickflash.user.service.UserBO;
 import com.quickflash.utility.calculation.CalculationService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,8 @@ public class MainPageController {
     private final MeetingPostService meetingPostService;
     private final MeetingPostDtoMaker meetingPostDtoMaker;
     private final CalculationService calculationService;
+    private final RedisTemplate redisTemplate;
+    private final UserBO userBO;
 
     //localhost:8080/main-page/before-meeting
     @RequestMapping("/before-meeting")
@@ -65,16 +69,32 @@ public class MainPageController {
 
         }
 
+        Map<String, Object> dailyRanking = redisTemplate.opsForHash().entries("daily:mileage:ranking");
+        if(dailyRanking != null && !dailyRanking.isEmpty()){
+
+            Integer rankingIdOfCycle = (Integer)dailyRanking.get("bestIdOfCycle");
+            Integer rankingIdOfRunning = (Integer)dailyRanking.get("bestIdOfRunning");
+            String rankingNameOfCycle  = "";
+            String rankingNameOfRunning = "";
+            if(rankingIdOfCycle != null){
+                rankingNameOfCycle = userBO.getUserNameById(rankingIdOfCycle);
+            }
+
+
+            if(rankingIdOfRunning != null){
+                rankingNameOfRunning = userBO.getUserNameById(rankingIdOfRunning);
+            }
+
+            dailyRanking.put("rankingNameOfRunning", rankingNameOfRunning);
+            dailyRanking.put("rankingNameOfCycle", rankingNameOfCycle);
 
 
 
+            model.addAttribute("dailyRanking", dailyRanking);
 
 
 
-
-
-
-
+        }
 
 
 

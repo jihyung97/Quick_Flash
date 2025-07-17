@@ -29,10 +29,12 @@ public class MileageService {
     public void updateMileage(int postId, String userIdToJoinStatusJson, Double distance, int sessionId, String exerciseType) {
 
 
+        log.info("distance 확인 {}", distance);
         if (!Qualification.UPDATE_OK_AFTER_MEETING.equals(meetingJoinService.isMeetingJoinUpdateOk(sessionId, postId))) {
+
             return;
         }
-        log.info("updateMeetingJoin {}", meetingJoinService.isMeetingJoinUpdateOk(sessionId, postId));
+        log.info("update qualification 도 통과됨" );
 
         Map<Integer, String> userIdToJoinStatus = new HashMap<>();
         try {
@@ -52,9 +54,11 @@ public class MileageService {
         Set<Integer> idSet = userIdToJoinStatus.keySet();
         for (int id : idSet) {
 
-            try {
+
                 if (MeetingJoinStatus.COMPLETED_MEETING.name().equals(userIdToJoinStatus.get(id))) {
+                    log.info("completed_meeting이 userIdToJoinStatus와 같은거까진 확인 ");
                     if (ExerciseType.RUNNING.name().equals(exerciseType)) {
+
                         mileageBO.addOrUpdateMileage(id, 0.0, distance);
                         log.info("user : {} 마일리지 성공적으로 넣었습니다", id);
                     } else {
@@ -63,9 +67,7 @@ public class MileageService {
                     }
                 }
 
-            } catch (Exception e) {
-                log.info("user : {} 마일리지 insert 실패", id);
-            }
+
 
             // meetingjoin에서 completed 되었을 경우에만 마일리지에 추가한다.
 

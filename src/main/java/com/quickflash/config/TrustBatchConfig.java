@@ -49,7 +49,7 @@ public class TrustBatchConfig {
                 .build();
     }
 
-    @Bean
+    @Bean("trustJob")
     public Job trustJob() {
         return new JobBuilder("trustJob", jobRepository)
                 .start(trustStep())
