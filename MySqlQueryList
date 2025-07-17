@@ -26,9 +26,9 @@ create table `meetingPost`(
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-  ALTER TABLE `meetingpost`
+  ALTER TABLE `meetinPost`
     ADD COLUMN `duration` INT; 
-    ALTER TABLE `meetingpost`
+    ALTER TABLE `meetingPost`
     ADD COLUMN `height` INT;
 
 
