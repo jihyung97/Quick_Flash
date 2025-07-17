@@ -28,9 +28,10 @@
     </div>
     <div class="h-50">
       <nav class="nav flex-column bg-dark p-3 rounded shadow h-100" style="width: 220px;">
-        <a class="nav-link text-white fw-semibold mt-4" href="#">🏃 모임게시판</a>
-        <a class="nav-link text-white fw-semibold mt-4" href="#">💬 자유게시판</a>
-        <a class="nav-link text-white fw-semibold mt-4" href="#">🖼️ 갤러리</a>
+        
+         <a class="nav-link text-white fw-semibold mt-4" href="#" onclick="updateThumbnails(); return false;">📊 모임 게시판</a>
+        <!-- <a class="nav-link text-white fw-semibold mt-4" href="#">💬 자유게시판</a>
+        <a class="nav-link text-white fw-semibold mt-4" href="#">🖼️ 갤러리</a> -->
     <a class="nav-link text-white fw-semibold mt-4" href="#" onclick="reloadFinalReports(); return false;">📊 운동 리포트</a>
       </nav>
     </div>
@@ -206,6 +207,7 @@
 <script>
 
    let currentPage = 0;
+   let startIdOfFinalReport = 0;
   const itemsPerPage = 5;
   let isLoading = false;
   let finished = false;
@@ -217,7 +219,7 @@
     
       if (entries[0].isIntersecting && !isLoading && !finished  ) {
          // alert("handle-intersect-activated");
-        loadMorePosts();
+        loadMorePosts(false);
       }
     }, {
       root: null,
@@ -236,7 +238,7 @@
 
   const observerFinalReport = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting && !isLoadingFinalReport && !finishedFinalReport) {
-      loadMorePostsFinalReport();
+      loadMoreFinalReports(false);
     }
   }, {
     root: null,
@@ -246,7 +248,7 @@
 
 
    function appendFinalReports(reportList) {
-    const container = document.getElementById("final-report-section");
+    const container = document.getElementById("meeting-post-section");
 
     for (const post of reportList) {
       const a = document.createElement("a");
@@ -301,13 +303,14 @@
       loadMoreFinalReports(true);
 }
 
-  function loadMoreFinalReports(isFirst) {
+  function loadMoreFinalReports(shouldClear) { // shouldClear 트루이면 startId를 초기화하고 가장 최근 게시글부터 가져온다
     isLoadingFinalReport = true;
+    currentPage = 0 ; // 당연히 report가 불려올때 모임전글의 페이지는 초기화
 
     $.ajax({
       url: '/meeting-post/final-report/select',
       method: 'POST',
-      data: {"isFirst" : isFirst},
+      data: {"shouldClear" : shouldClear},
       success: function(response) {
         const list = response.result;
         if (!list || list.length === 0) {
@@ -327,7 +330,12 @@
   }
 
 
-     function loadMorePosts() {
+     function loadMorePosts(  shouldClear) {
+      if(shouldClear == true){
+          const container = document.getElementById("meeting-post-section");
+          container.innerHTML = "";
+      }
+      
           isLoading = true;
 
           const oldThumbnailListJson = localStorage.getItem("oldThumbnailList") || "[]";
@@ -357,13 +365,13 @@
                   return;
             }
 
-          appendMeetingPosts(pageItems);
+          appendMeetingPosts(pageItems,shouldClear);
              isLoading = false;
              currentPage++;
           
     }
 
-    function appendMeetingPosts(thumbnailList) {
+    function appendMeetingPosts(thumbnailList, shouldClear) {
               const container = document.getElementById("meeting-post-section");
               
           
@@ -454,7 +462,7 @@
               localStorage.setItem('latAtStorage', response.latAtStorage);
               localStorage.setItem('lngAtStorage', response.lngAtStorage);
               localStorage.setItem('idAtStorage', response.idAtStorage);
-            loadMorePosts();
+            loadMorePosts(true); // loadMorePosts에서 page=0 부터 가져온다
 
               // const container = $('#meeting-post-section');
               // container.empty();

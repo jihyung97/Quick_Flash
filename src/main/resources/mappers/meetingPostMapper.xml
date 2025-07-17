@@ -414,7 +414,7 @@
 
 
 
-    <select id="selectFinalReportForScroll" parameterType="map" resultType="thumbnailDtoMap">
+    <select id="selectFinalReportForScroll" parameterType="map" resultMap="thumbnailDtoMap">
         SELECT
         `id`,
         `title`,

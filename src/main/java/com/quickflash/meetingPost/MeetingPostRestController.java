@@ -394,11 +394,14 @@ public class MeetingPostRestController {
     @PostMapping("/final-report/select")
     public Map<String, Object> selectThumbnailByPage(
             HttpSession session,
-
+            Boolean shouldClear,
             String startId
     ) {
 
         Map<String, Object> result = new HashMap<>();
+        if(shouldClear == true){
+            session.removeAttribute("startIdOfFinalReport");
+        }
         Integer startIdOfFinalReport = (Integer) session.getAttribute("startIdOfFinalReport");
 
         final int batch_size = 5;
@@ -407,7 +410,7 @@ public class MeetingPostRestController {
         session.setAttribute("startIdOfFinalReport", finalReportData.get("start_id"));
         result.put("result", finalReportData.get("thumbnailDtoList"));
 
-        return finalReportData;
+        return result;
 
 
     }
