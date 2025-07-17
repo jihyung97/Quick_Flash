@@ -121,7 +121,22 @@ ADD INDEX idx_userId (`userId`);
 
 
  
+CREATE TABLE meeting_join ( 
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    userId INT NOT NULL,
+    postId INT NOT NULL,
+    userName VARCHAR(255) NOT NULL,
+    joinStatus VARCHAR(255) NOT NULL,
+    isSafetyAgree BOOLEAN NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
+    -- 복합 유니크 키 (postId, userId)
+    UNIQUE KEY uq_post_user (postId, userId),
+
+    -- userId 단일 인덱스 (조회 성능 개선용)
+    INDEX idx_userId (userId)
+);
 
 
 create table `trust`(
