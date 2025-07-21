@@ -51,7 +51,7 @@ public class StravaOAuthController {
 
 
         }catch(Exception e){
-            return (String)session.getAttribute("defaultPage"); // 스트라바 연동버튼을 눌러 결국 토큰을 받는데 실패했을 때는 그냥 원래 페이지로 돌아간다.
+            return "redirect:" + (String)session.getAttribute("defaultPage"); // 스트라바 연동버튼을 눌러 결국 토큰을 받는데 실패했을 때는 그냥 원래 페이지로 돌아간다.
         }
 
 

@@ -44,7 +44,7 @@ public List<MeetingPostElasticIndexDto> searchMeetingPost(String keyword) {
                                 .fields("location", "contentText")
                         )
                 ), MeetingPostElasticIndexDto.class);
-
+        log.info("키워드는 {} 입니다" , keyword);
         log.info("검색 완료: total hits={}", response.hits().total().value());
 
         List<MeetingPostElasticIndexDto> results = response.hits().hits().stream()

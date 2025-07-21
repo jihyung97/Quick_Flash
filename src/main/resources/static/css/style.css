@@ -1,5 +1,5 @@
 .bg-color{
-    background-color:aqua
+    background-color:rgb(232, 217, 163)
 }
 
 .large-page{
@@ -24,13 +24,12 @@
   .join-list{
           height:400px;
         }
-        #meeting-post-section{
-            height:700px;
-
-        }
+      
         #my-schedule-section{
-            width:400px;
+            width:800px;
             height:150px;
+             overflow-y: auto;    /* 높이 넘으면 스크롤 */
+            border: 1px solid #ccc; /* 영역 구분용 */
         }
 
         #image-thumbnail-section{
@@ -48,7 +47,15 @@
   border: 1px solid #ccc; /* 영역 구분용 */
 }
 
+#after-comment-section{
+     overflow-y: auto;    /* 높이 넘으면 스크롤 */
+     border: 1px solid #ccc;
+}
+#before-comment-section{
+     overflow-y: auto;    /* 높이 넘으면 스크롤 */
+     border: 1px solid #ccc;
+}
 #observed-target {
   height: 10px;
-  background: lightgray;
+  background-color:rgb(232, 225, 191)
 }

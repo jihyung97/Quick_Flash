@@ -26,12 +26,14 @@ public class FinalReportDto {
 
     private LocalDateTime expiredAt;
     private String contentText;
+    private String afterMeetingContent;
 
     private String remainedTime;
     private String exerciseType;
     private Double distance;
     private Double speed;
     private Double power;
+
 
     private Integer minHeadCount;
     private Integer maxHeadCount;

@@ -55,6 +55,9 @@ public class BeforeMeetingDto {
     List<MeetingJoinDto> meetingJoinList;
     List<CommentDto> commentList;
     private String userName;
+    private Integer duration;
+    private Integer height;
+    private Double myPower;
 
 
 }

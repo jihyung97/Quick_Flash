@@ -55,12 +55,12 @@ public class MeetingPostRestController {
             @RequestParam Integer minHeadCount,
             @RequestParam Integer maxHeadCount,
             @RequestParam(required = false) Boolean isRestExist,
-            @RequestParam Boolean isAbandonOkay,
+            @RequestParam(required = false) Boolean isAbandonOkay,
             @RequestParam(required = false) Boolean isAfterPartyExist,
             @RequestParam(required = false) Boolean isLocationConnectedToKakao,
             @RequestParam(required = false) Boolean isUserAbilityConnectedToStrava,
-            @RequestParam Boolean isMyPaceShown,
-            @RequestParam Boolean isMyFtpShown
+            @RequestParam(required = false) Boolean isMyPaceShown,
+            @RequestParam(required = false) Boolean isMyFtpShown
 
     ) {
 
@@ -109,7 +109,7 @@ public class MeetingPostRestController {
                     .isAfterPartyExist(isAfterPartyExist != null ? isAfterPartyExist : false)
                     .isLocationConnectedToKakao(isLocationConnectedToKakao != null ? isLocationConnectedToKakao : false)
                     .isUserAbilityConnectedToStrava(isUserAbilityConnectedToStrava != null ? isUserAbilityConnectedToStrava : false)
-                    .duration(duration)
+                    .duration(duration * 60) // 분으로 들어온 운동시간 초로
                     .height(height)
                     .isMyPaceShown(isMyPaceShown != null ? isMyPaceShown : false)
                     .isMyFtpShown(isMyFtpShown != null ? isMyFtpShown : false)
@@ -176,11 +176,13 @@ public class MeetingPostRestController {
             @RequestParam(required = false) Boolean isLocationConnectedToKakao,
             @RequestParam(required = false) Boolean isUserAbilityConnectedToStrava,
             @RequestParam(required = false) Boolean isMyPaceShown,
-            @RequestParam(required = false) Boolean isMyFtpShown
+            @RequestParam(required = false) Boolean isMyFtpShown,
+            @RequestParam(required = false) Integer duration,
+            @RequestParam(required = false) Integer height
     ) {
         Map<String, Object> result = new HashMap<>();
         Integer sessionId = (Integer) session.getAttribute("userId");
-
+        log.info("duration, height {}{}", duration, height);
         if (sessionId == null) {
             result.put("result", "로그인 안됨");
             return result;
@@ -219,7 +221,9 @@ public class MeetingPostRestController {
                     isLocationConnectedToKakao,
                     isUserAbilityConnectedToStrava,
                     isMyPaceShown,
-                    isMyFtpShown
+                    isMyFtpShown,
+                    duration * 60,
+                    height
 
             );
         } else {
@@ -229,8 +233,7 @@ public class MeetingPostRestController {
                     sessionId,
                     postId,
                     location,
-                    latitude,
-                    longitude,
+
                     restLocation,
                     afterMeetingContent,
                     distance,
@@ -252,10 +255,10 @@ public class MeetingPostRestController {
 
     }
 
-    @PostMapping("/search")
+    @GetMapping("/search")
     public Map<String, Object> searchMeetingPost(
             @RequestParam("keyword") String keyword) {
-
+            log.info("keyword  Controller에서는 {}", keyword);
         Map<String, Object> result = new HashMap<>();
         try {
 

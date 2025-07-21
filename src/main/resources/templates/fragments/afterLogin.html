@@ -6,23 +6,32 @@
 <th:block th:fragment="afterLoginFragment">
   <!--header 의 Fragment -->
   <div>
-    <div class=" bg-warning" id="my-image-section">
+   
 
     </div>
-    <span th:text="|${userInfo.userName}님, 운동할 준비 되셨나요?|"></span>
-    <div class="d-flex">
+    <!--
+     <div class=" bg-warning" id="my-image-section">
+    -->
       <div>
+        <span th:text="|${userInfo.userName}님, 운동할 준비 되셨나요?|"></span>
+      </div>
+    
+    <div class=" ">
+      
+        <!--
+         <div>
         <button class="button form-control">카카오로 본인인증</button>
       </div>
-      <div>
-        <div><button>my page</button></div>
+         <div><button>my page</button></div>
         <div><button>setting</button></div>
+        -->
+       
         <form action="/user/sign-out" method="post">
-          <button id="btn-logout" type="submit">logout</button>
+          <button id="btn-logout"  class="form-control"  type="submit">logout</button>
         </form>
 
 
-      </div>
+      
 
     </div>
 
@@ -56,7 +65,7 @@
   </div>
   <div class="d-flex">
     <div>
-      <button class="button form-control">카카오로 본인인증</button>
+    <!-- <button class="button form-control">카카오로 본인인증</button> --> 
     </div>
     <div>
       <div><span>my page</span></div>

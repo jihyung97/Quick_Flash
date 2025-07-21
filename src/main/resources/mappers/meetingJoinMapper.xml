@@ -59,6 +59,16 @@
     </select>
 
 
+    <select id="selectPostIdListByUserId" parameterType="int" resultType="int">
+        SELECT `postId`
+        FROM `meeting_join`
+        WHERE `userId` = #{userId}
+        ORDER BY `id` DESC
+
+        LIMIT 10
+    </select>
+
+
 
 </mapper>
 

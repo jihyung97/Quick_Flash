@@ -222,8 +222,9 @@
                         contentType: false, // FormData 사용 시 false
                         processData: false, // FormData 사용 시 false
                         success: function (data) {
-                            alert("운동 리포트가 성공적으로 제출되었습니다.");
-                            // 필요 시 페이지 이동 또는 폼 초기화
+                            alert("참여자들의 마일리지가 정상적으로 업데이트 되었습니다");
+                                window.location.href = "/meeting-post/final-report?postId=" + postId;
+
                         },
                         error: function (data) {
                             console.error(error);

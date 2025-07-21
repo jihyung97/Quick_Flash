@@ -16,19 +16,7 @@
 </head>
 <body>
 <div class="container bg-color">
-    <div class="d-flex justify-content-end" id="before-meeting" th:data-post-id="${meetingPost.postId}" th:data-userId="${meetingPost.userId}">
-        <div>
-            <div class="d-flex">
-                <div><h4>남은시간:</h4></div>
-               <!-- <div><h4 th:text="${meetingPost.remainedTime}">00시간 00분</h4></div> -->
-            </div>
-            <div class="d-flex">
-                <div><span th:text="${meetingPost.currentHeadCount}">0명</span></div>
-                <div><h1>/</h1></div>
-                <div><span th:text="${meetingPost.maxHeadCount}">5명</span></div>
-            </div>
-        </div>
-    </div>
+    
 
     <div class="d-flex justify-content-between">
         <!-- 모임참가 관련 정보들 -->
@@ -36,20 +24,21 @@
             <div class="d-flex">
                 <div><h2>모이는 위치</h2></div>
                 <div><span th:text="${meetingPost.location}"></span></div>
-                <div>
+                
+            </div>
+            <div>
                     <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=dd189a1a763710dd5dc72319d26d4284&autoload=false"></script>
-                    <div id="map" style="width:500px; height:400px;">맵</div>
+                    <div id="map" style="width:300px; height:200px;">맵</div>
 
-                </div>
             </div>
 
-            <div class="d-flex">
+            <div class=" ">
                 <th:block th:if="${meetingPost.exerciseType == 'RUNNING'}">
                     <div class="d-flex">
                         <div><span>예상 페이스: km당   </span></div>
                         <div><span th:text="${meetingPost.speed_min}">0</span>분</div>
                         <div><span th:text="${meetingPost.speed_sec}">0</span>초</div>
-                        <div class="ml-3"><span>min/km</span></div>
+                       
                     </div>
                 </th:block>
                 <th:block th:unless="${meetingPost.exerciseType == 'RUNNING'}">
@@ -60,19 +49,34 @@
                     </div>
                 </th:block>
                 <div class="d-flex ml-4">
-                    <div><span>총</span></div>
+                    <div><h4>운동 거리</h4></div>
                     <div><span th:text="${meetingPost.distance}">100</span></div>
                     <div><span>km</span></div>
+                </div>
+                <div class="d-flex"> 
+                    <h4>운동 시간</h4>
+                    
+                        <span   id="duration"  
+                                th:text="${meetingPost.duration != null ? meetingPost.duration / 60 : ''}" >
+                            </span>
+                     
+                    <span>분</span>
+
+                </div>
+                <div class="d-flex mt-2">
+                    <div style="width:150px;"> 고도(10m단위)</div>
+                    <div><span  id="height"    th:text="${meetingPost.height}"></span></div>
                 </div>
             </div>
 
             <div class="d-flex">
                 <div><span>중간 보급</span></div>
                 <div><span th:text="${meetingPost.restLocation}"></span></div>
-                <div>
+               
+            </div>
+             <div>
                     <div><span>설명</span></div>
-                    <div><input type="text" th:value="${meetingPost.contentText}"></div>
-                </div>
+                    <div><span type="text" th:text="${meetingPost.contentText}" style="width:300px;height:75px"></span></div>
             </div>
 
             <div class="d-flex justify-content-start" th:if="${meetingPost.isAbandonOkay}">
@@ -109,10 +113,24 @@
         </div>
     </div>
 
-    <div class="d-flex justify-content-between">
+    <div class=" ">
+        <div class="d-flex justify-content-end" id="before-meeting" th:data-post-id="${meetingPost.postId}" th:data-userId="${meetingPost.userId}">
+            <div>
+                <div class="d-flex">
+                    <div><h4>남은시간:</h4></div>
+                    <div><h4 th:text="${meetingPost.remainedTime}">00시간 00분</h4></div>  
+                </div>
+                <div class="d-flex">
+                    <div><span th:text="${meetingPost.currentHeadCount}">0명</span></div>
+                    <div><h1>/</h1></div>
+                    <div><span th:text="${meetingPost.maxHeadCount}">5명</span></div>
+                </div>
+            </div>
+         </div>
         <!-- 댓글 리스트 -->
-        <div>
-            <div><h2>댓글 리스트</h2></div>
+          <div><h2>댓글 리스트</h2></div>
+        <div id="comment-section" style="  overflow-y: auto;     border: 1px solid #ccc; ">
+           
             <div th:each="comment : ${meetingPost.commentList}">
                 <div class="d-flex comment-dto">
                     <div><span th:text="${comment.userName}">나는 쉬지롱</span></div>
@@ -126,10 +144,11 @@
                     </button>
                 </div>
             </div>
-            <div class="d-flex mt-2">
+           
+        </div>
+         <div class="d-flex mt-2">
                 <input type="text"  id="comment-content" placeholder="댓글 작성">
                 <button id="btn-comment">댓글 달기</button>
-            </div>
         </div>
 
         <!-- ftp, strava 연동, 참가버튼 -->
@@ -141,11 +160,13 @@
                 </div>
                 <div>
                     <div class="d-flex">
-                        <div><span>내 ftp 보이기</span></div>
-                        <div><input type="checkbox"  /></div>
+                       <span > 내 ftp</span>
+                       <span th:text="${meetingPost.myPower}"></span>
+                       
                     </div>
                     <div>
-                        <button>Strava 연동</button>
+                        <button id="btn-connect-cycle" class="form-control">자전거 strava연동</button>
+                        
                     </div>
                 </div>
             </div>
@@ -171,12 +192,15 @@
     <div class="d-flex justify-content-end mt-4">
 
         <a href="/main-page/before-meeting">
-            <button>닫기</button>
+            <button class="form-control">닫기</button>
         </a>
 
         <!-- userType이 leader일 때: 수정하기 버튼만 표시 -->
         <th:block th:if="${userType == 'leader'}">
-            <button>수정하기</button>
+          <a th:href="@{/meeting-post/make-meeting(postId=${meetingPost.postId})}">
+         <button class="form-control">수정하기</button>
+</a>
+
         </th:block>
 
         <!-- userType이 member일 때: 모임취소 버튼만 표시 -->
@@ -185,18 +209,35 @@
         </th:block>
 
         <!-- userType이 none일 때: 모임참가 버튼만 표시 -->
-        
+        <input type="hidden" id="latitude" name="latitude" th:value="${meetingPost.latitude}">
+        <input type="hidden" id="longitude" name="longitude" th:value="${meetingPost.longitude}">
     </div>
 </div>
 
 <script>
     kakao.maps.load(function () {
         var mapContainer = document.getElementById('map');
+            let latitude = $("#latitude").val();
+            let longitude = $("#longitude").val();
+
+            var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+
+            let lat = parseFloat(latitude);
+            let lng = parseFloat(longitude);
         var mapOption = {
-            center: new kakao.maps.LatLng(37.5665, 126.9780), // 서울시청 좌표
+              center: new kakao.maps.LatLng(lat , lng ),
             level: 3
         };
         var map = new kakao.maps.Map(mapContainer, mapOption);
+
+
+          
+
+            var marker = new kakao.maps.Marker({
+                position: new kakao.maps.LatLng(lat, lng)  // 꼭 LatLng 객체로 생성
+            });
+            marker.setMap(map);
     });
 </script>
 <script>
@@ -252,6 +293,42 @@
         });
 
     });
+
+    $("#btn-connect-cycle").on("click", function () {
+            let postId = $("#before-meeting").data("postId");
+            let pageUrl = "/meeting-post/before-meeting?postId=" + postId;
+
+            // AJAX 대신 location.href로 직접 이동
+            window.location.href = "/strava-api/connect-cycle?pageUrl=" + encodeURIComponent(pageUrl);
+    });
+
+    //  $("#btn-connect-cycle").on("click",function(){
+
+    //      let postId = $("#before-meeting").data("postId");
+    //     let pageUrl = "/meeting-post/before-meeting?postId=" + postId;
+       
+    //    $.ajax({
+    //         url: "/strava-api/connect-cycle",
+    //         type: "GET",
+    //         data: {
+    //            "pageUrl" : pageUrl
+    //         },
+    //         success: function (data) {
+    //             // if (data.result === "success") {
+    //             //     alert("연동 성공");
+    //             //     window.location.href = data.url;
+    //             // } else if(data.result === "fail_get_token") {
+    //             //      window.location.href = data.url;
+    //             // }else{
+    //             //   alert(result.result);
+    //             // }
+    //         },
+    //         error: function (e) {
+    //             alert("연동에 실패하였습니다");
+    //         }
+    //    });
+    // });
+
 
               
 });

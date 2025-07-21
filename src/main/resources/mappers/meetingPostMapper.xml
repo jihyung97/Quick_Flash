@@ -230,7 +230,7 @@
         `updatedAt` = #{updatedAt}
         WHERE `id` = #{id}
     </update>
-    <update id="updateMeetingPostBeforeMeeting" parameterType="com.quickflash.meetingPost.domain.MeetingPost">
+    <update id="updateMeetingPostBeforeMeetingById" parameterType="com.quickflash.meetingPost.domain.MeetingPost">
         UPDATE `meetingPost`
         SET
         `title` = #{title},
@@ -254,7 +254,9 @@
         `isMyPaceShown` = #{isMyPaceShown},
         `isMyFtpShown` = #{isMyFtpShown},
 
-        `updatedAt` = #{updatedAt}
+        `updatedAt` = #{updatedAt},
+        `duration` = #{duration},
+        `height` = #{height}
         WHERE `id` = #{id}
     </update>
 
@@ -263,7 +265,7 @@
         SET
 
         `location` = #{location},
-        `locationpoint` = ST_GeomFromText(CONCAT('POINT(', #{latitude}, ' ', #{longitude}, ')'), 4326),
+
         `restLocation` = #{restLocation},
 
         `afterMeetingContent` = #{afterMeetingContent},
@@ -443,6 +445,15 @@
         LIMIT 1
 
 
+    </select>
+
+    <select id="selectPostIdListByUserId" parameterType="int" resultType="int">
+        SELECT `id`
+        FROM `meetingpost`
+        WHERE `userId` = #{userId}
+        ORDER BY `id` DESC
+
+        LIMIT 10
     </select>
 
 

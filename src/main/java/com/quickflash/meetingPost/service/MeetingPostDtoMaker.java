@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.quickflash.ability.entity.AbilityEntity;
+import com.quickflash.ability.service.AbilityBO;
 import com.quickflash.comment.dto.CommentDto;
 import com.quickflash.comment.service.CommentBO;
 import com.quickflash.comment.service.CommentService;
@@ -43,6 +45,7 @@ public class MeetingPostDtoMaker {
     private final TimeService timeService;
     private final CalculationService calculationService;
     private final MeetingPostService meetingPostService;
+    private final AbilityBO abilityBO;
 
 
 
@@ -88,7 +91,7 @@ public class MeetingPostDtoMaker {
     }
 
 
-    public BeforeMeetingDto generateBeforeMeetingDto(int postId ){
+    public BeforeMeetingDto generateBeforeMeetingDto(int postId , int userId){
         MeetingPost meetingPost = meetingPostBO.getMeetingPostById(postId) ;
         if(meetingPost == null){
             return null;
@@ -96,6 +99,8 @@ public class MeetingPostDtoMaker {
 
         Map<String,Integer> pace = calculationService.convertspeedTopace(meetingPost.getSpeed());
         List<MeetingJoinDto> joinDtoList = meetingJoinDtoMaker.generateMeetingJoinBeforeMeetingDtoListByPostId(postId);
+        AbilityEntity myAbility  = abilityBO.getAbilityByUserId(userId);
+        double myPower = myAbility.getMaxCyclingAvgPower() == null ? 0.0 : myAbility.getMaxCyclingAvgPower();
 
         BeforeMeetingDto beforeMeetingDto = BeforeMeetingDto.builder()
                 .postId(meetingPost.getId())
@@ -130,6 +135,9 @@ public class MeetingPostDtoMaker {
                 .commentList(commentService.generateCommentDtoListByPostId(postId))
                 .userName(userBO.getUserNameById(meetingPost.getUserId()))  // 필요 시
                 .remainedTime(timeService.show_remainedTime(LocalDateTime.now(),meetingPost.getExpiredAt()))
+                .duration(meetingPost.getDuration())
+                .height(meetingPost.getHeight())
+                .myPower(myPower)
                 .build();
 
         log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!generateBeforeMeetingDTo");
@@ -189,6 +197,7 @@ public class MeetingPostDtoMaker {
                 .restLocation(meetingPost.getRestLocation())
                 .expiredAt(meetingPost.getExpiredAt())
                 .contentText(meetingPost.getContentText())
+                .afterMeetingContent(meetingPost.getAfterMeetingContent())
                 .exerciseType(meetingPost.getExerciseType())
                 .distance(meetingPost.getDistance())
                 .speed(meetingPost.getSpeed())
@@ -431,6 +440,24 @@ public class MeetingPostDtoMaker {
         }// 세션에 저장된 좌표가 없으면 기존의 dtoList도 없앤다
 
         return mergedThumbnailDtos;
+
+    }
+    public List<ThumbnailDto> getMyScheduleThumbnailByUserId(int sessionId){
+        List<Integer> postIdList = new ArrayList<>();
+       postIdList.addAll( meetingJoinBO.getPostIdListByUserId(sessionId));
+        postIdList.addAll( meetingPostBO.getPostIdListByUserId(sessionId));
+
+       List<ThumbnailDto> thumbnailDtoList = meetingPostBO.getThumbnailDtoListByPostIds(postIdList);
+       if(thumbnailDtoList == null){
+           thumbnailDtoList = Collections.emptyList();
+       }
+       List<ThumbnailDto> resultList = new ArrayList<>();
+         for(ThumbnailDto thumbnailDto:thumbnailDtoList){
+             if(thumbnailDto.getExpiredAt().isAfter(LocalDateTime.now())){
+                 resultList.add(thumbnailDto);
+             }
+         }
+         return resultList;
 
     }
 

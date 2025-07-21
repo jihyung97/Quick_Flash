@@ -6,6 +6,8 @@ import com.quickflash.meetingPost.dto.MeetingPostForOrderDto;
 import com.quickflash.meetingPost.dto.ThumbnailDto;
 import com.quickflash.meetingPost.mapper.MeetingPostMapper;
 import com.quickflash.meetingPost.repository.MeetingPostRepository;
+import com.quickflash.meeting_join.service.MeetingJoinBO;
+import com.quickflash.utility.calculation.CalculationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +22,8 @@ import java.util.*;
 public class MeetingPostBO {
     private final MeetingPostMapper meetingPostMapper;
     private final MeetingPostRepository meetingPostRepository;
+    private final CalculationService calculationService;
+    private final MeetingJoinBO meetingJoinBO;
 
 
     public boolean isPostExist(int postId){
@@ -43,7 +47,7 @@ public class MeetingPostBO {
     public Map<String, Object> getExpiredAtAndStatusOfMeetingById(int id){
         return meetingPostMapper.selectExpiredAtAndStatusById(id);
     }
-    @Cacheable(value = "instantCache", key = "#id")
+  //  @Cacheable(value = "instantCache", key = "#id")
     public MeetingPost getMeetingPostById(int id){
         return meetingPostMapper.selectMeetingPostById(id);
     }
@@ -86,7 +90,9 @@ public class MeetingPostBO {
             Boolean isLocationConnectedToKakao,
             Boolean isUserAbilityConnectedToStrava,
             Boolean isMyPaceShown,
-            Boolean isMyFtpShown
+            Boolean isMyFtpShown,
+            Integer duration,
+            Integer height
     ) {
 
 
@@ -98,7 +104,6 @@ public class MeetingPostBO {
 
         //before_meeting 에서 업데이트 일때
 
-        try {
 
             MeetingPost updatedMeetingPost = MeetingPost.builder()
 
@@ -125,14 +130,14 @@ public class MeetingPostBO {
                     .isMyFtpShown(isMyFtpShown != null ? isMyFtpShown : false) //전만
 
                     .updatedAt(LocalDateTime.now()) // 수정일 업데이트
+                    .duration(duration)
+                    .height(height)
                     .build();
 
                 meetingPostMapper.updateMeetingPostBeforeMeetingById(updatedMeetingPost );
                 return true;
 
-        }catch(Exception e){
-            return false;
-        }
+
     }
 
     public boolean updateMeetingPostWhenAfterMeeting(
@@ -140,8 +145,7 @@ public class MeetingPostBO {
             int userId,
             Integer postId,
             String location,
-            Double latitude,
-            Double longitude,
+
             String restLocation,
            String afterMeetingContent,
             Double distance,
@@ -168,8 +172,8 @@ public class MeetingPostBO {
 
                     .id(postId)
                     .location(location) //둘다 가능함
-                    .latitude(latitude != null ? latitude : 0.0) //둘다
-                    .longitude(longitude != null ? longitude : 0.0) //둘다
+//                    .latitude(latitude != null ? latitude : 0.0) //둘다
+//                    .longitude(longitude != null ? longitude : 0.0) //둘다
                     .restLocation(restLocation) //둘다
 
                     .afterMeetingContent(afterMeetingContent)
@@ -247,8 +251,16 @@ public class MeetingPostBO {
         List<ThumbnailDto> finalReportListTotal = new ArrayList<>();
         while(true){
             finalReportListByQuery = meetingPostMapper.selectFinalReportForScroll(start_id,batch_size - count_size);
+
             if(finalReportListByQuery == null || finalReportListByQuery.isEmpty()){
                 break;
+            }
+            for(ThumbnailDto thumbnailDto : finalReportListByQuery){
+                Map<String,Integer> pace = calculationService.convertspeedTopace( thumbnailDto.getSpeed() );
+
+                thumbnailDto.setSpeed_min(pace.get("min"));
+                thumbnailDto.setSpeed_sec(pace.get("sec"));
+                thumbnailDto.setCurrentHeadCount(meetingJoinBO.countMember(thumbnailDto.getId()) + 1);
             }
             finalReportListTotal.addAll(finalReportListByQuery);
             count_size += finalReportListByQuery.size();
@@ -266,6 +278,9 @@ public class MeetingPostBO {
     }
     public Integer getLatestPostId(){
         return  meetingPostMapper. selectLatestPostId();
+    }
+    public List<Integer> getPostIdListByUserId(int userId){
+        return meetingPostMapper.selectPostIdListByUserId(userId);
     }
 
 }

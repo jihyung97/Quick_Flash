@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,12 +44,19 @@ public class MeetingPostController {
        ViewOption option = meetingPostViewDecider.decideViewWhenGoToMakeMeeting(sessionId,postId, LocalDateTime.now());
         log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + option.name());
 
-
+        MeetingPost meetingPost = new MeetingPost();
         if (option == ViewOption.UPDATE_MakeMeeting_VIEW && postId != null) {
-            model.addAttribute("meetingPost", meetingPostBO.getMeetingPostById(postId));
+            meetingPost = meetingPostBO.getMeetingPostById(postId);
+            log.info("duration!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!{}", meetingPost.getDuration());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+            String formattedExpiredAt = meetingPost.getExpiredAt().format(formatter);
+
+            model.addAttribute("meetingPost", meetingPost);
+            model.addAttribute("formattedExpiredAt", formattedExpiredAt);
             model.addAttribute("isPostExist", true);
             return "meeting_post/makeMeeting";
         }else if(option == ViewOption.CREATE_MakeMeeting_VIEW){
+            model.addAttribute("meetingPost", meetingPost);
             model.addAttribute("isPostExist",  false);
             return "meeting_post/makeMeeting";
         }else if(option == ViewOption.MAIN_PAGE_VIEW){
@@ -74,6 +82,8 @@ public class MeetingPostController {
         }
         // before_makingview에서 리더로 보일지 멤버로 보일지 결정
         ViewOption option =  meetingPostViewDecider.decideViewWhenMeetingPostClicked(sessionId,postId, LocalDateTime.now());
+
+        log.info("CheckOption DecidingView{}", option);
         log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + option.name());
         // 클릭시 viewdecider에서 update되어 report_making으로 상태가 변했을 때 reportmaking페이지로 이동
         if( ViewOption.REPORT_MAKING_VIEW.equals(option)){
@@ -87,10 +97,12 @@ public class MeetingPostController {
             return "redirect:/main-page/before-meeting";
         }
 
-            model.addAttribute("meetingPost", meetingPostDtoMaker.generateBeforeMeetingDto(postId));
+            model.addAttribute("meetingPost", meetingPostDtoMaker.generateBeforeMeetingDto(postId,sessionId));
         //리더인지, 멤버인지 구분하여 userType을 넣음. (브라우저에서는 수정버튼, 참가버튼의 유무의 차이정도)
         if(option == ViewOption.BEFORE_MAKING_LEADER_VIEW) {
+
             model.addAttribute("userType", "leader");
+
         }else if(option == ViewOption.BEFORE_MAKING_MEMBER_VIEW) {
             model.addAttribute("userType", "member");
          } else {

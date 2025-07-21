@@ -27,12 +27,16 @@ public class MeetingPostViewDecider {
     private final MeetingJoinDtoMaker meetingJoinDtoMaker;
     private final MeetingJoinBO meetingJoinBO;
     private final ValidationService validationService;
+    private final MeetingPostService meetingPostService;
 
     public ViewOption decideViewWhenGoToMakeMeeting(int sessionId, Integer postId, LocalDateTime currentTime){
         Map<String,Object> result = new HashMap<>();
         //미팅의 상태를 체크해서 상태가 모임전이고 지금 시간이 모임시작 시간보다 후이면 상태를 모임 페이지로 바꿈. 그 후 상태를 반환
         if(postId != null){
             result =  validationService .checkAndUpdateMeeting(currentTime,postId);
+        }
+        if( Qualification.UPDATE_OK_AFTER_MEETING .equals(meetingPostService. isMeetingPostUpdateOk(  postId,  sessionId))){
+            return ViewOption.UPDATE_MakeMeeting_VIEW;
         }
 
         if(!result.isEmpty() && !(result.get("currentStatus").toString().equals(Status.BEFORE_MEETING.name())  ) ){

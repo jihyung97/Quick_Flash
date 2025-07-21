@@ -13,44 +13,56 @@
     <title>Title</title>
 </head>
 <body>
-    <div class=" d-flex justify-content-between container large-page" id="final-report" th:data-postid="${meetingPost.postId}">
+    <div class=" d-flex justify-content-between container large-page bg-color" id="final-report" th:data-postid="${meetingPost.postId}">
       <div class="w-50">
-          <!--이미지 -->
-          <div class="h-50">
-              <div class="bg-warning"></div>
-          </div>
+         
           <!--briefing-->
-          <div>
+           
+          <div class="ml-5" style="width:400px ; height:150px">
               <div><h3>briefing</h3></div>
-              <div><input type="text"></div>
+              <div><span th:text="${meetingPost.contentText}"></span></div>
           </div>
-          <div class="d-flex justify-content-start">
-              <div>
-                  <div><span>페이스:</span> <input th:text="${meetingPost.speed}"> <Span>  min/km</span></div>
-                  <div><span>총거리:</span> <input th:text="${meetingPost.distance}"> <Span>  km</span></div>
-                  <div><button>strava연동 완료</button></div>
+            <div class="ml-5" style="width:400px ; height:150px">
+              <div><h3>after meeting briefing</h3></div>
+              <div><span th:text="${meetingPost.afterMeetingContent}"></span></div>
+          </div>
+           
+              <div class="ml-5">
+                  <div><span>페이스:</span> <span th:text="${meetingPost.speed}"></span> <Span>  min/km</span></div>
+                  <div><span>총거리:</span> <span th:text="${meetingPost.distance}"></span> <Span>  km</span></div>
+                 
 
               </div>
               <div class="ml-5">
-                  <div>
-                      <div class="d-flex justify-content-between">
-                          <div>jihyung97</div>
-                          <div class="ml-2"> <input th:text="${meetingPost.power}"> <span>w/kg</span></div>
-                      </div>
-                      <div><button>참가자 추가하기</button></div>
-                  </div>
-              </div>
+                  <div id="meeting-join-section">
+                    <div><h3>참여자 목록</h3></div>
+                      <div th:each="meetingJoin : ${meetingPost.meetingJoinList}">
+                             <span th:text="${meetingJoin.userName}"></span>  
+                        <!-- RUNNING이면 speed 출력 -->
+                        <div class="ml-2" th:if="${meetingPost.exerciseType == 'RUNNING'}">
+                            <span th:text="${meetingJoin.speed}"></span> <span>km/h</span>
+                        </div>
+
+                        <!-- RUNNING이 아니면 power 출력 -->
+                        <div class="ml-2" th:unless="${meetingPost.exerciseType == 'RUNNING'}">
+                            <span th:text="${meetingJoin.power}"></span> <span>w/kg</span>
+                        </div>
+
+                    </div>
+                </div>
 
           </div>
+           
       </div>
       <div class="w-50">
-          <div class="h-75">
-              <div class="h-50">
-                  <div><h2>운동 전 댓글 list</h2></div>
+          <div class=" ">
+            <div><h2>운동 전 댓글 list</h2></div>
+              <div id="before-comment-section" class=" " style="height:250px" >
+                  
                   <div>
                       <div class="d-flex justify-content-start" th:each="comment:${meetingPost.commentDtoListBeforeMeeting}">
                           <div th:text="${comment.userName}">나는 쉬지롱</div>
-                          <div class="ml-2" th:text="${comment.content}"><input type="text" th:text="${comment.content}">어우 고생들 많으십니다^^</div>
+                          <span class="ml-2" th:text="${comment.content}"> </span>
                       </div>
 <!--                      <div class="d-flex">-->
 <!--                          <div><input type="text" id="comment-before-meeting"></div>-->
@@ -58,36 +70,33 @@
 <!--                      </div>-->
                   </div>
               </div>
-              <div class="h-50">
-
-                  <div>
-                      <div><h2>운동 후 댓글 list</h2></div>
+               <div><h2>운동 후 댓글 list</h2></div>
+              <div class=" " style="height:250px" id="after-comment-section">
                       <div>
                           <div class="d-flex justify-content-start" th:each="comment:${meetingPost.commentDtoListAfterMeeting}">
-                              <div th:text="${comment.userName}">나는 쉬지롱</div>
-                              <div class="ml-2" th:text="${comment.content}"><input type="text" th:text="${comment.content}">어우 고생들 많으십니다^^</div>
+                              <span th:text="${comment.userName}">나는 쉬지롱</span>
+                              <span class="ml-2" th:text="${comment.content}"> </span>
                           </div>
-                          <div class="d-flex">
-                              <div><input type="text" id="comment-after-meeting"></div>
-                              <button id="btn-comment-after">댓글작성</button>
-                          </div>
+                         
 
-                      </div>
-
-                  </div>
-
-
+            </div>
 
               </div>
+               <div class="d-flex">
+                    <div><input type="text" id="comment-after-meeting" style="width:300px"></div>
+                    <button id="btn-comment-after" class="form-control" style="width:100px">댓글작성</button>
+                </div>
 
           </div>
           <span id="position-lat" th:text="${meetingPost.latitude}"></span>
           <span id="position-lng" th:text="${meetingPost.longitude}"></span>
           <div class="d-flex justify-content-end">
-              <button>닫기</button>
-
-              <button>수정하기</button>
-              <button>완료하기</button>
+             <button class="form-control" onclick="location.href='/main-page/before-meeting'">닫기</button>
+              <a class="btn btn-primary form-control"
+                 th:href="@{/meeting-post/make-meeting(postId=${meetingPost.postId})}">
+                  수정하기
+              </a>
+             
 
           </div>
 

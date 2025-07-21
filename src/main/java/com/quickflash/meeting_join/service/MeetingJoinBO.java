@@ -66,8 +66,9 @@ public class MeetingJoinBO {
 
     }
 
-    List<Integer> getUserIdListByPostId(int postId){
+  public   List<Integer> getUserIdListByPostId(int postId){
         return meetingJoinMapper.selectUserIdByPostId(postId);
     }
+  public  List<Integer> getPostIdListByUserId(int userId){return meetingJoinMapper.selectPostIdListByUserId(userId);};
 }
 

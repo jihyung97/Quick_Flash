@@ -1,5 +1,7 @@
 package com.quickflash.meeting_join.service;
 
+import com.quickflash.ability.entity.AbilityEntity;
+import com.quickflash.ability.service.AbilityBO;
 import com.quickflash.meeting_join.dto.MeetingJoinDto;
 import com.quickflash.utility.validation.ValidationService;
 import lombok.RequiredArgsConstructor;
@@ -16,25 +18,40 @@ import java.util.*;
 public class MeetingJoinDtoMaker {
     private final MeetingJoinBO meetingJoinBO;
     private final ValidationService validationService;
+    private final AbilityBO abilityBO;
 
    public List<MeetingJoinDto> generateMeetingJoinBeforeMeetingDtoListByPostId(int postId){
 
        List<Map<String,Object>> joinMapList =  meetingJoinBO.getMeetingJoinListForDtoByPostId(postId);
+       log.info("joinMapList at generatemeetingjoinDto {}", joinMapList);
        Set<Integer> userIdSet = new HashSet<>();
        List<MeetingJoinDto>  meetingJoinDtoList = new ArrayList<>();
 
 
        for(Map<String,Object> joinMap : joinMapList){
+           AbilityEntity abilityEntity = new AbilityEntity();
+           Integer userId =  (Integer)joinMap.get("userId");
+           if(userId != null){
+               abilityEntity = abilityBO.getAbilityByUserId(userId);
+           }
+         Double power = 0.0;
+           Double speed =0.0;
+           if(abilityEntity != null){
+               power = abilityEntity.getMaxCyclingAvgPower() == null? 0.0 :  abilityEntity.getMaxCyclingAvgPower();
+               speed = abilityEntity.getMaxRunningAvgSpeed() == null? 0.0 :  abilityEntity.getMaxRunningAvgSpeed();
+           }
+
            MeetingJoinDto meetingJoinDto = MeetingJoinDto.builder()
 
-                   .userId((int)joinMap.get("userId"))
-                   .postId((int)joinMap.get("postId"))
+                   .userId(userId)
+                   .postId((Integer)joinMap.get("postId") == null ? -1 : (Integer)joinMap.get("postId"))
                    .userName((String)joinMap.get("userName"))
-                   .speed(5555)
-                   .power(5555)
+                   .speed(speed)
+                   .power(power)
                    .     build();
            meetingJoinDtoList.add(meetingJoinDto);
        }
+       log.info("meetingJoinDtoList {}", meetingJoinDtoList);
        return meetingJoinDtoList;
    }
 

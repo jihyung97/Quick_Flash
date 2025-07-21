@@ -37,7 +37,7 @@ public interface MeetingPostMapper {
     Double selectDistanceById(int id);
     List<ThumbnailDto> selectFinalReportForScroll(@Param("startId") int startId,@Param("batchSize") int batchSize );
     Integer selectLatestPostId();
-
+    List<Integer> selectPostIdListByUserId(int userId);
 
 
 }

@@ -38,8 +38,8 @@ public class JobScheduler {
     }
 
 
-   @Scheduled(cron = "*/10 * * * * *")  // 매 30초마다 실행
-  //  @Scheduled(cron = "0 1 * * * *")// 정각마다
+  // @Scheduled(cron = "*/10 * * * * *")  // 매 30초마다 실행
+    @Scheduled(cron = "0 1 * * * *")// 정각마다
     public void runMileageJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()

@@ -13,70 +13,90 @@
   <meta charset="UTF-8">
   <title>Title</title>
 </head>
-<body>
-<div id="map" style="width:500px;height:400px;"></div>
- <input type="text" id="keyword" placeholder="장소나 주소 입력">
-<button onclick="searchLocation()">검색</button>
-<button id="btn-location">위치 등록</button>
-<span id="position-lat"></span>
-<span id="position-lng"></span>
-<div class="d-flex large-page">
-  <div id="main-left">
-    <div class="h-25">
+<body style="height: 1200px;" >
+<div class="d-flex justify-content-center   h-100"> 
+  <div class="ml-3">
+   
+<div class="d-flex  " style="width: 1800px; height:1000px;">
+  <div id="main-left"  style="width: 400px;">
+    <div >
+      
       <h1>Quick</h1>
       <h1>Flash</h1>
     </div>
-    <div class="h-50">
-      <nav class="nav flex-column bg-dark p-3 rounded shadow h-100" style="width: 220px;">
+    <div>
+      <div id="map" style="width:300px;height:200px;"></div>
+    </div>
+    <div class="d-flex mt-2">
+       <input type="text" id="keyword" placeholder="장소나 주소 입력">
+      <button class="form-control" onclick="searchLocation()">검색</button>
+      <button class="form-control" id="btn-location">위치 등록</button>
+
+    </div>
+
+     <div class="  mt-2">
+       <input type="text" id="keyword-elastic" placeholder="keyword 검색">
+      <button class="form-control" id="keyword-search">검색</button>
+      <div id="search-result" style=" overflow-y: auto;    /* 높이 넘으면 스크롤 */
+     border: 1px solid #ccc;height: 300px"></div>
+
+    </div>
+
+    <div class="  mt-3" style="width: 220px; height:200px">
+      <nav class="nav flex-column bg-color p-3 rounded shadow h-100" >
         
-         <a class="nav-link text-white fw-semibold mt-4" href="#" onclick="updateThumbnails(); return false;">📊 모임 게시판</a>
-        <!-- <a class="nav-link text-white fw-semibold mt-4" href="#">💬 자유게시판</a>
-        <a class="nav-link text-white fw-semibold mt-4" href="#">🖼️ 갤러리</a> -->
-    <a class="nav-link text-white fw-semibold mt-4" href="#" onclick="reloadFinalReports(); return false;">📊 운동 리포트</a>
+         <a class="nav-link text-white fw-semibold mt-4 " href="#" onclick="updateThumbnails(); return false;">  모임 게시판</a>
+        <!-- <a class="nav-link text-white fw-semibold mt-4" href="#">  자유게시판</a>
+        <a class="nav-link text-white fw-semibold mt-4" href="#">  갤러리</a> -->
+    <a class="nav-link text-white fw-semibold mt-4" href="#" onclick="reloadFinalReports(); return false;">  운동 리포트</a>
       </nav>
     </div>
     <div  class= "h-25" id="ranking-section">
-      <div>daily</div>
+      <div>daily Ranking</div>
       <div>
-        <h3>🚴‍♀️ 오늘의 자전거 1등: <span th:text="${dailyRanking.rankingNameOfCycle}"></span></h3>
+        <h3> 자전거: <span th:text="${dailyRanking.rankingNameOfCycle}"></span> 님</h3>
         <p>거리: <span th:text="${dailyRanking.bestScoreOfCycle}"></span>km</p>
 
-        <h3>🏃‍♂️ 오늘의 러닝 1등: <span th:text="${dailyRanking.rankingNameOfRunning}"></span></h3>
+        <h3> 러닝: <span th:text="${dailyRanking.rankingNameOfRunning}"></span>님</h3>
         <p>거리: <span th:text="${dailyRanking.bestScoreOfRunning}"></span>km</p>
       </div>
-      <div>weekly</div>
-      <div>monthly</div>
+    
     </div>
     <div id="analysis">
 
     </div>
 
   </div>
-  <div id="main-middle">
-    <div id="my-schedule-section">
+  <div id="main-middle" class="d-flex align-items-center m-2" style="width: 850px;">
+     <div class="w-100"> 
+    <div >
       <h3>my schedule</h3>
-      <div>
-        <div class="meeting-post d-flex">
-          <div><small>리더</small></div>
-          <div><small>24h 35m 남음</small></div>
-
-          <div><small>반포gs</small></div>
-          <div><small>페이스 4:00min/km</small></div>
-          <div><small>2명/5명</small></div>
-
+            <div  id="my-schedule-section" >
+            <div th:each="schedule : ${myScheduleList}">
+    <a th:href="@{/meeting-post/before-meeting(postId=${schedule.id})}" class="text-decoration-none text-dark">
+        <div class="thumbnail-card mb-3 p-3 border rounded d-flex justify-content-between align-items-center"
+             style="width: 700px; height: 70px; cursor: pointer;">
+            
+            <p class="m-0"><strong>장소:</strong> <span th:text="${schedule.location}">장소</span></p>
+            <p class="m-0"><span th:text="${schedule.exerciseType}">종류</span></p>
+            <p class="m-0"><strong>거리:</strong> <span th:text="${schedule.distance}">0</span> km</p>
+            <p class="m-0" th:if="${schedule.power != null}">
+                <strong>파워:</strong> <span th:text="${schedule.power}">0</span> W
+            </p>
+            <p class="m-0">
+                <strong>마감 시간:</strong>
+                <span th:text="${#temporals.format(schedule.expiredAt, 'yyyy-MM-dd HH:mm')}">시간</span>
+            </p>
         </div>
-      </div>
+    </a>
+</div>
+        </div>
     </div>
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-end">
       <div class="d-flex ml-2 w-50">
-        <div><h3>내 위치</h3></div>
-        <span>반포gs</span>
-        <button class="button form-control w-25">Kakao맵 연동</button>
+        
       </div>
-      <div class="d-flex ml-2">
-        <div><span>지역category</span></div>
-        <div class="ml-2"><span>서울 동작구</span></div>
-      </div>
+      
       <div>
            <a href='/meeting-post/make-meeting?postId=' class="button form-control btn-make-meeting">모임글 작성</a>
 
@@ -87,67 +107,24 @@
          th:each="meetingPost : ${meetingPostList}"
          class="text-dark text-decoration-none">
 
-        <!-- <div class="m-3 meeting-post d-flex justify-content-between bg-color" style="cursor: pointer;">
-
-          
-          <div id="image-thumbnail-section" class="bg-warning">
-            <img alt="썸네일" />
-          </div>
-
-          
-          <div>
-            <div>
-              <span th:text="${meetingPost.title}">제목</span>
-            </div>
-
-            <th:block th:if="${meetingPost.exerciseType == 'RUNNING'}">
-              <div>
-               <span>예상 페이스: km 당</span>
-                <span th:text="${meetingPost.speed_min}">0</span> 분
-                 <span th:text="${meetingPost.speed_sec}">0</span> 초
-
-              </div>
-            </th:block>
-
-            <th:block th:unless="${meetingPost.exerciseType == 'RUNNING'}">
-              <div>
-                예상 파워: <span th:text="${meetingPost.power}">300</span> W
-              </div>
-              <div>
-                예상 속도: <span th:text="${meetingPost.speed}">00</span> km/h
-              </div>
-            </th:block>
-
-            <div>
-              모임 장소: <span th:text="${meetingPost.location}">반포gs</span>
-            </div>
-          </div>
-
-          
-          <div>
-            <div>
-              <span>남은 시간: </span>
-              <span th:text="${meetingPost.remainedTime}">00시간 00분 남음</span>
-            </div>
-            <div>
-              <span  th:text="${meetingPost.currentHeadCount}">0</span> /
-              <span th:text="${meetingPost.maxHeadCount}">5</span>
-            </div>
-          </div>
-
-        </div> -->
+      
       </a>
     </div>
       
+    <div class="d-flex justify-content-start">
 
-      <a href="/connect/strava">스트라바 연동하기</a>
-      <button id="btn-connect-cycle"> 자전거 연동하기</button>
+         <a href="/connect/strava" class="btn bg-color form-control" style="width: 150px;">스트라바 연동하기</a>
+      <button id="btn-connect-cycle" class="form-control bg-color" style="width: 150px;"> 자전거 연동하기</button>
 
 
-
-
+    
   </div>
-  <div id="main-right">
+  </div>
+
+ </div>
+   <div id="main-right" style="width: 400px;" class="d-flex  align-items-center ml-5">
+    <div>
+    <div>
     <th:block th:if="${userInfo == null}">
       <th:block th:replace="fragments/login :: loginFragment"></th:block>
     </th:block>
@@ -156,25 +133,26 @@
       <th:block th:replace="fragments/afterLogin :: afterLoginFragment"></th:block>
     </th:block>
 
-    <div id="one-click-planner-section">
+    <div id="one-click-planner-section" class="mt-5" >
       <div>
-        <div class="d-flex">
-          <span>파워입력</span>
+        <div class="d-flex" style="width: 300px;">
+          <span style="width: 150px;">파워입력</span>
           <input id="power-for-one-click" type="text">
         </div>
-        <div class="d-flex">
-          <span> 최대 탐색 거리 입력</span>
+        <div class="d-flex"  style="width: 300px;">
+          <span style="width: 150px;"> 탐색 거리</span>
           <input id="distance-for-one-click" type="text">
          
        </div>
 
-       <div class="d-flex">
-        <span> 고도</span>
+       <div class="d-flex"  style="width: 300px;">
+        <span style="width: 150px;"> 고도(단위:10m)</span>
         <input id="height-for-one-click" type="text">
+        
        
       </div>
 
-       <button id="btn-one-click">oneclick planner 실행</button>
+       <button id="btn-one-click" class="form-control">oneclick planner 실행</button>
       </div>
 
       <div id="thumbnail-list-for-one-click-section">
@@ -190,18 +168,19 @@
 
 
   </div>
-
+  </div>
+  </div>
 </div>
+</div>
+</div>
+ <span id="position-lat" class="d-none"></span>
+      <span id="position-lng" class="d-none"></span>
+         <input type="hidden" id="latitude" name="latitude" th:value="${lat}">
+        <input type="hidden" id="longitude" name="longitude" th:value="${lng}">
+ </body>
 
 
-
-
-<script>
-   
-
-</script>
-
-
+ 
 
  
 <script>
@@ -256,19 +235,30 @@
       a.className = "text-dark text-decoration-none";
 
       const div = document.createElement("div");
-      div.className = "m-3 report-post d-flex justify-content-between bg-light";
+      div.className = "m-2 report-post d-flex justify-content-between bg-color ";
       div.style.cursor = "pointer";
-
-      div.innerHTML = `
-        <div>
-          <div><span>${post.title}</span></div>
-          <div>작성자: <span>${post.writer}</span></div>
-          <div>운동유형: <span>${post.exerciseType}</span></div>
-        </div>
-        <div>
-          <div>작성일: <span>${post.createdAt}</span></div>
-        </div>
-      `;
+        div.style.height = "100px"; // 높이 고정 추가
+      div.innerHTML =  `
+            <!--
+              <div   class="bg-warning m-5" >
+                <img src="${post.thumbnailUrl || ''}" alt="썸네일" />
+              </div>
+              -->
+              <div class=" " >
+                <div><span>${post.title}</span></div>
+                ${
+                  post.exerciseType === 'RUNNING'
+                    ? `<div><span> 페이스: km 당</span> <span>${post.speed_min}</span>분 <span>${post.speed_sec}</span>초</div>`
+                    : `<div>  파워: <span>${post.power}</span> W</div>
+                      <div>  속도: <span>${post.speed}</span> km/h</div>`
+                }
+                <div>모임 장소: <span>${post.location}</span></div>
+              </div>
+              <div class=" ">
+                <div><span>모임시간: </span><span>${post.expiredAt}</span></div>
+                <div><span>모임인원 : </span><span>${post.currentHeadCount}</span> <span>명</span>  </div> 
+              </div>
+            `;
       a.appendChild(div);
       container.appendChild(a);
     }
@@ -375,21 +365,23 @@
               const container = document.getElementById("meeting-post-section");
               
           
-        
+      
           for (const post of thumbnailList) {
             const a = document.createElement("a");
             a.href = `/meeting-post/before-meeting?postId=${post.id}`;
             a.className = "text-dark text-decoration-none";
 
             const div = document.createElement("div");
-            div.className = "m-3 meeting-post d-flex justify-content-between bg-color";
+            div.className = "m-2 meeting-post d-flex justify-content-between bg-color";
             div.style.cursor = "pointer";
-
+            div.style.height = "100px"; // 높이 고정 추가
             div.innerHTML = `
-              <div id="image-thumbnail-section" class="bg-warning">
+            <!--
+              <div id="image-thumbnail-section" class="bg-warning m-5">
                 <img src="${post.thumbnailUrl || ''}" alt="썸네일" />
               </div>
-              <div>
+              -->
+              <div class=" " style="height: 120px;">
                 <div><span>${post.title}</span></div>
                 ${
                   post.exerciseType === 'RUNNING'
@@ -399,7 +391,7 @@
                 }
                 <div>모임 장소: <span>${post.location}</span></div>
               </div>
-              <div>
+              <div class=" ">
                 <div><span>남은 시간: </span><span>${post.remainedTime}</span></div>
                 <div><span>${post.currentHeadCount}</span> / <span>${post.maxHeadCount}</span></div>
               </div>
@@ -514,7 +506,50 @@
        
 $(function(){
      
- 
+  $("#keyword-search").click(function () {
+           let keyword = $("#keyword-elastic").val();
+
+            $.ajax({
+              url: "/meeting-post/search",
+              type: "GET",
+              data: {"keyword": keyword },
+              success: function (response) {
+                const $container = $("#search-result");
+                $container.empty();
+
+                if (response.result === "success") {
+                  const list = response.searchList;
+
+                  if (list.length === 0) {
+                    $container.html("<p>검색 결과가 없습니다.</p>");
+                    return;
+                  }
+
+                  list.forEach(function (post) {
+                    const html = `
+                      <div class="search-item">
+                        <h4>${post.title}</h4>
+                        <p>${post.exerciseType}</p>
+                        <p>${post.location}</p>
+                        <p>${post.speed || ""}</p>
+                        <p>${post.power || ""}</p>
+                        <p>${post.height || ""}</p>
+                        <p><small>${post.createdAt || ""}</small></p>
+                        <hr/>
+                      </div>
+                    `;
+                    $container.append(html);
+                  });
+                } else {
+                  $container.html("<p>검색 실패</p>");
+                }
+              },
+              error: function () {
+                $("#search-result").html("<p>서버 오류</p>");
+              }
+            });
+        });
+
   
 
    
@@ -581,6 +616,7 @@ $(function(){
                 if (data.result === "success") {
                     alert("연동 성공");
                 } else if(data.result === "fail_get_token") {
+                      alert("토큰 만료. strava 연동 필요합니다");
                      window.location.href = data.url;
                 }else{
                   alert(result.result);
@@ -613,7 +649,8 @@ $(function(){
             },
             success: function (data) {
                 if (data.result === "success") {
-                   alert("위치 설정 성공하였습니다")
+                   alert("위치 설정 성공하였습니다");
+                   location.reload(); 
                 } else {
                     alert(data.error_message);
                 }
@@ -665,20 +702,18 @@ $(function(){
                     container.empty(); // 기존 내용 비우기
 
                     data.thumbnailDtoList.forEach(function (thumb) {
-                        let html = `
-                            <div class="thumbnail-card">
-                                <h3>${thumb.title}</h3>
-                                <p><strong>장소:</strong> ${thumb.location}</p>
-                                <p><strong>종류:</strong> ${thumb.exerciseType}</p>
-                                <p><strong>운동 거리:</strong> ${thumb.distance} km</p>
-                                <p><strong>파워:</strong> ${thumb.power} km/h</p>
-                              
-                               
-                            
-                                <p><strong>마감 시간:</strong> ${thumb.expiredAt}</p>
-                               
-                            </div>
-                        `;
+                         let html = `
+                          <a href="/meeting-post/before-meeting?postId=${thumb.id}" class="text-decoration-none text-dark">
+                              <div class="thumbnail-card">
+                                  <h3>${thumb.title}</h3>
+                                  <p><strong>장소:</strong> ${thumb.location}</p>
+                                  <p><strong>종류:</strong> ${thumb.exerciseType}</p>
+                                  <p><strong>운동 거리:</strong> ${thumb.distance} km</p>
+                                  <p><strong>파워:</strong> ${thumb.power} km/h</p>
+                                  <p><strong>마감 시간:</strong> ${thumb.expiredAt}</p>
+                              </div>
+                          </a>
+                      `;
                          $("#thumbnail-list-for-one-click-section .thumbnail-for-one-click").append(html);
                       });
 
@@ -712,9 +747,12 @@ $(function(){
  </script>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dd189a1a763710dd5dc72319d26d4284&libraries=services"></script>
  <script>
+
+          let lat = $("#latitude").val();
+          let lng = $("#longitude").val();
             var container = document.getElementById('map');
             var options = {
-                center: new kakao.maps.LatLng(33.450701, 126.570667),
+                center: new kakao.maps.LatLng(lat, lng),
                 level: 3
             };
 

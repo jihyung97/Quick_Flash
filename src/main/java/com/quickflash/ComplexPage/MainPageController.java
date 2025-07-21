@@ -1,6 +1,7 @@
 package com.quickflash.ComplexPage;
 
 import com.quickflash.meetingPost.dto.MeetingPostForOrderDto;
+import com.quickflash.meetingPost.dto.ThumbnailDto;
 import com.quickflash.meetingPost.service.MeetingPostBO;
 import com.quickflash.meetingPost.service.MeetingPostDtoMaker;
 import com.quickflash.meetingPost.service.MeetingPostService;
@@ -38,8 +39,21 @@ public class MainPageController {
         Integer userId = (Integer) session.getAttribute("userId");
         String userName = (String) session.getAttribute("userName");
         String userLoginId = (String) session.getAttribute("userLoginId");
-//        Double lat = (Double) session.getAttribute("lat");
-//        Double lng = (Double) session.getAttribute("lng");
+
+
+
+        String latStr = (String) session.getAttribute("lat");
+        String lngStr = (String) session.getAttribute("lng");
+
+        double lat = 37.5665;
+        double lng = 126.9780;
+
+            if (latStr != null && !latStr.isEmpty())     lat = Double.parseDouble(latStr);
+            if (lngStr != null && !lngStr.isEmpty())   lng = Double.parseDouble(lngStr);
+
+            model.addAttribute("lat", lat);
+            model.addAttribute("lng", lng);
+
 
 
 
@@ -65,6 +79,9 @@ public class MainPageController {
             userInfo.put("userName", userName);
             userInfo.put("userLoginId", userLoginId);
             model.addAttribute("userInfo", userInfo);
+            List<ThumbnailDto> myScheduleList = meetingPostDtoMaker.getMyScheduleThumbnailByUserId(userId);
+            model.addAttribute("myScheduleList",myScheduleList );
+
 
 
         }
