@@ -125,6 +125,26 @@
    <div id="main-right" style="width: 400px;" class="d-flex  align-items-center ml-5">
     <div>
     <div>
+      <div>작성해야 할 리포트</div>
+        <div id="report-making-section" style="width:350px; height:200px  ;  overflow-y: auto;     
+      border: 1px solid #ccc;">
+                <div th:each="report : ${myReportMakingList}" class="report-card mb-3   border rounded " style="width:330px; height:75px">
+                    <a th:href="@{'/meeting-post/report-making'(postId=${report.id})}" style="text-decoration: none; color: inherit; ">
+                      <div class="d-flex justify-content-between">
+                           <div><small>장소:</small> <small th:text="${report.location}">장소</small></div>
+                        <div><small>만료 시간:</small> <small th:text="${#temporals.format(report.expiredAt, 'yyyy-MM-dd HH:mm')}">만료시간</small></div>
+                      </div>
+                       <div class="d-flex justify-content-between">
+                         <div><small>운동 종류:</small> <small th:text="${report.exerciseType}">운동종류</small></div>
+                        <div><small>거리:</small> <small th:text="${report.distance}">0.0</small> km</div>
+                       </div>
+                       
+                    </a>
+                </div>
+      </div>
+
+
+    </div>
     <th:block th:if="${userInfo == null}">
       <th:block th:replace="fragments/login :: loginFragment"></th:block>
     </th:block>
@@ -165,7 +185,7 @@
 
 
     </div>
-
+</div>
 
   </div>
   </div>
@@ -526,17 +546,30 @@ $(function(){
                   }
 
                   list.forEach(function (post) {
-                    const html = `
-                      <div class="search-item">
-                        <h4>${post.title}</h4>
-                        <p>${post.exerciseType}</p>
-                        <p>${post.location}</p>
-                        <p>${post.speed || ""}</p>
-                        <p>${post.power || ""}</p>
-                        <p>${post.height || ""}</p>
-                        <p><small>${post.createdAt || ""}</small></p>
-                        <hr/>
-                      </div>
+                    let html = `
+                    <a href="/meeting-post/before-meeting?postId=${post.id}" class=" border rounded text-decoration-none text-dark bg-color">
+                        <div class="search-item">
+                          <h4>${post.title}</h4>
+                          <div class="d-flex justify-content-between">
+                             
+                              <p>${post.exerciseType}</p>
+                              <p>${post.location}</p>
+                          </div>
+                           <div class="d-flex justify-content-between">
+                             
+                             <p>${post.speed || ""}</p>
+                          <p>${post.power || ""}</p>
+                          </div>
+                           <div class="d-flex justify-content-between">
+                              
+                              <p>${post.height || ""}</p>
+                              <p><small>${post.createdAt || ""}</small></p>
+                          </div>
+                         
+                       
+                          
+                        </div>
+                      </a>
                     `;
                     $container.append(html);
                   });
@@ -703,14 +736,18 @@ $(function(){
 
                     data.thumbnailDtoList.forEach(function (thumb) {
                          let html = `
-                          <a href="/meeting-post/before-meeting?postId=${thumb.id}" class="text-decoration-none text-dark">
+                          <a href="/meeting-post/before-meeting?postId=${thumb.id}" class="text-decoration-none text-dark bg-color border rounded">
                               <div class="thumbnail-card">
-                                  <h3>${thumb.title}</h3>
-                                  <p><strong>장소:</strong> ${thumb.location}</p>
-                                  <p><strong>종류:</strong> ${thumb.exerciseType}</p>
-                                  <p><strong>운동 거리:</strong> ${thumb.distance} km</p>
-                                  <p><strong>파워:</strong> ${thumb.power} km/h</p>
-                                  <p><strong>마감 시간:</strong> ${thumb.expiredAt}</p>
+                                  <h4>${thumb.title}</h4>
+                                  <div class="d-flex justify-content-between">
+                                    <p><strong>장소:</strong> ${thumb.location}</p>
+                                    
+                                    <p><strong>운동 거리:</strong> ${thumb.distance} km</p>
+                                  </div>
+                                  <div class="d-flex justify-content-between">
+                                    <p><strong>파워:</strong> ${thumb.power} km/h</p>
+                                    <p><strong>마감 시간:</strong> ${thumb.expiredAt}</p>
+                                  </div>
                               </div>
                           </a>
                       `;

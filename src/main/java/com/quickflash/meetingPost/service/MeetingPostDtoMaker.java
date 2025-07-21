@@ -100,7 +100,11 @@ public class MeetingPostDtoMaker {
         Map<String,Integer> pace = calculationService.convertspeedTopace(meetingPost.getSpeed());
         List<MeetingJoinDto> joinDtoList = meetingJoinDtoMaker.generateMeetingJoinBeforeMeetingDtoListByPostId(postId);
         AbilityEntity myAbility  = abilityBO.getAbilityByUserId(userId);
-        double myPower = myAbility.getMaxCyclingAvgPower() == null ? 0.0 : myAbility.getMaxCyclingAvgPower();
+        double myPower = 0.0;
+        if(myAbility !=  null){
+            myPower = myAbility.getMaxCyclingAvgPower() == null ? 0.0 : myAbility.getMaxCyclingAvgPower();
+        }
+
 
         BeforeMeetingDto beforeMeetingDto = BeforeMeetingDto.builder()
                 .postId(meetingPost.getId())
@@ -413,10 +417,10 @@ public class MeetingPostDtoMaker {
 
                 //thumbnailList를 돌며 이미 모임시간이 지난 리스트들을 제거
                 oldThumbnailList.removeIf(thumbnailDto ->
-                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now().minusHours(2))
+                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now().minusMinutes(0))
                 );
                 newThumbnailList.removeIf(thumbnailDto ->
-                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now().minusHours(2))
+                        thumbnailDto.getExpiredAt().isBefore(LocalDateTime.now().minusHours(0))
                 );
 
                 // 이후 로직...
@@ -460,6 +464,7 @@ public class MeetingPostDtoMaker {
          return resultList;
 
     }
+
 
 
 

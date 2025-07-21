@@ -416,6 +416,34 @@
 
 
 
+    <select id="selectReportMakingList" parameterType="int" resultMap="thumbnailDtoMap">
+        SELECT
+        `id`,
+        `title`,
+        `location`,
+        `expiredAt`,
+        `exerciseType`,
+        `distance`,
+        `speed`,
+        `power`,
+        `minHeadCount`,
+        `maxHeadCount`,
+        `isRestExist`,
+        `isAbandonOkay`,
+        `createdAt`
+        FROM `meetingpost`
+        WHERE `userId` = #{userId}
+        AND (
+        (`currentStatus` = 'BEFORE_MEETING' AND `expiredAt` &lt; NOW())
+        OR (`currentStatus` = 'REPORT_MAKING')
+        )
+        ORDER BY `id` DESC
+        LIMIT 30
+
+    </select>
+
+
+
     <select id="selectFinalReportForScroll" parameterType="map" resultMap="thumbnailDtoMap">
         SELECT
         `id`,

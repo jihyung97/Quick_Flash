@@ -15,12 +15,12 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 <body>
-<div class="container bg-color">
+ <div class="container bg-color" id="before-meeting" th:data-post-id="${meetingPost.postId}" th:data-userId="${meetingPost.userId}"> 
     
 
     <div class="d-flex justify-content-between">
         <!-- 모임참가 관련 정보들 -->
-        <div>
+        <div id="left">
             <div class="d-flex">
                 <div><h2>모이는 위치</h2></div>
                 <div><span th:text="${meetingPost.location}"></span></div>
@@ -31,69 +31,9 @@
                     <div id="map" style="width:300px; height:200px;">맵</div>
 
             </div>
-
-            <div class=" ">
-                <th:block th:if="${meetingPost.exerciseType == 'RUNNING'}">
-                    <div class="d-flex">
-                        <div><span>예상 페이스: km당   </span></div>
-                        <div><span th:text="${meetingPost.speed_min}">0</span>분</div>
-                        <div><span th:text="${meetingPost.speed_sec}">0</span>초</div>
-                       
-                    </div>
-                </th:block>
-                <th:block th:unless="${meetingPost.exerciseType == 'RUNNING'}">
-                    <div class="d-flex ml-3">
-                        <div><span>예상 파워:</span></div>
-                        <div><span th:text="${meetingPost.power}">300</span></div>
-                        <div><span>W</span></div>
-                    </div>
-                </th:block>
-                <div class="d-flex ml-4">
-                    <div><h4>운동 거리</h4></div>
-                    <div><span th:text="${meetingPost.distance}">100</span></div>
-                    <div><span>km</span></div>
-                </div>
-                <div class="d-flex"> 
-                    <h4>운동 시간</h4>
-                    
-                        <span   id="duration"  
-                                th:text="${meetingPost.duration != null ? meetingPost.duration / 60 : ''}" >
-                            </span>
-                     
-                    <span>분</span>
-
-                </div>
-                <div class="d-flex mt-2">
-                    <div style="width:150px;"> 고도(10m단위)</div>
-                    <div><span  id="height"    th:text="${meetingPost.height}"></span></div>
-                </div>
-            </div>
-
-            <div class="d-flex">
-                <div><span>중간 보급</span></div>
-                <div><span th:text="${meetingPost.restLocation}"></span></div>
-               
-            </div>
-             <div>
-                    <div><span>설명</span></div>
-                    <div><span type="text" th:text="${meetingPost.contentText}" style="width:300px;height:75px"></span></div>
-            </div>
-
-            <div class="d-flex justify-content-start" th:if="${meetingPost.isAbandonOkay}">
-                <span class="text-danger">주의: 흐르면 버리는 번개입니다</span>
-            </div>
-        </div>
-
-        <!-- 잡다한 정보들 -->
-        <div>
-            <div class="d-flex">
-                <div><span>leader: </span></div>
-                <div><span th:text="${meetingPost.userName}">나 사나이다</span></div>
-            </div>
-
-            <div>
+             <div id="join-list-section" >
                 <div><h2>참가자 list</h2></div>
-                <div>
+                <div style=" overflow-y: auto;  border: 1px solid #ccc;height: 300px">
                     <!-- join dto 리스트 출력 예시 -->
                     <div class="d-flex join-dto" th:each="joinDto : ${meetingPost.meetingJoinList}">
                         <div><span th:text="${joinDto.userName}">jihyung97</span></div>
@@ -110,57 +50,113 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class=" ">
-        <div class="d-flex justify-content-end" id="before-meeting" th:data-post-id="${meetingPost.postId}" th:data-userId="${meetingPost.userId}">
-            <div>
-                <div class="d-flex">
-                    <div><h4>남은시간:</h4></div>
-                    <div><h4 th:text="${meetingPost.remainedTime}">00시간 00분</h4></div>  
-                </div>
-                <div class="d-flex">
-                    <div><span th:text="${meetingPost.currentHeadCount}">0명</span></div>
-                    <div><h1>/</h1></div>
-                    <div><span th:text="${meetingPost.maxHeadCount}">5명</span></div>
-                </div>
-            </div>
-         </div>
-        <!-- 댓글 리스트 -->
-          <div><h2>댓글 리스트</h2></div>
-        <div id="comment-section" style="  overflow-y: auto;     border: 1px solid #ccc; ">
-           
-            <div th:each="comment : ${meetingPost.commentList}">
-                <div class="d-flex comment-dto">
-                    <div><span th:text="${comment.userName}">나는 쉬지롱</span></div>
-                    <div class="ml-2"><span th:text="${comment.content}">어우 고생들 많으십니다^^</span></div>
-                    
-                    <button id="btn-delete-comment"
-                        th:if="${meetingPost.userId == comment.userId}"
-                        th:data-userId="${comment.userId}"
-                        th:data-commentId="${comment.id}">
-                        삭제
-                    </button>
-                </div>
-            </div>
            
         </div>
-         <div class="d-flex mt-2">
-                <input type="text"  id="comment-content" placeholder="댓글 작성">
-                <button id="btn-comment">댓글 달기</button>
-        </div>
+        <div id="center">
+                 
+                <th:block th:if="${meetingPost.exerciseType == 'RUNNING'}">
+                    <div class="d-flex  ">
+                        <div style="width:150px;height:100px"><span>예상 페이스: km당   </span></div>
+                        <div><span th:text="${meetingPost.speed_min}">0</span>분</div>
+                        <div><span th:text="${meetingPost.speed_sec}">0</span>초</div>
+                       
+                    </div>
+                </th:block>
+                <th:block th:unless="${meetingPost.exerciseType == 'RUNNING'}">
+                    <div class="d-flex ml-3" >
+                        <div><span style="width:150px;height:100px">예상 파워:</span></div>
+                        <div><span class="ml-3" th:text="${meetingPost.power}">300</span></div>
+                        <div><span>W</span></div>
+                    </div>
+                </th:block>
+                <div class="d-flex ml-4">
+                    <div><span style="width:150px;height:100px">운동 거리</h4></div>
+                    <div><span class="ml-3" th:text="${meetingPost.distance}">100</span></div>
+                    <div><span>km</span></div>
+                </div>
+                <div class="d-flex"> 
+                    <span style="width:150px;height:100px">운동 시간</span>
+                    <span   id="duration"   class="ml-3" th:text="${meetingPost.duration != null ? meetingPost.duration / 60 : ''}" ></span>
+                     <span>분</span>
 
-        <!-- ftp, strava 연동, 참가버튼 -->
-        <div>
-            <div class="d-flex justify-content-between">
+                </div>
+                <div class="d-flex  ">
+                    <span style="width:150px;"> 고도(10m단위)</span>
+                    <span  id="height"  class="ml-3"  th:text="${meetingPost.height}"></span> 
+                </div>
+                 <div>
+                    <span>ftp: </span> <span th:text="${meetingPost.power}">300</span> <span>W</span> 
+                </div>
                 <div>
-                    <div><span>ftp: <span th:text="${meetingPost.power}">300</span>W</span></div>
-                    <div><span>pace: <span th:text="${meetingPost.speed}">3:30</span>min/km</span></div>
+                    <span>pace: </span><span th:text="${meetingPost.speed}">3:30</span> <span>min/km</span>
                 </div>
+                <div class="d-flex">
+                   <span style="width:150px;height:100px">중간 보급</span> 
+                    <span  class="ml-3"th:text="${meetingPost.restLocation}"></span> 
+               
+                </div>
+                <div>
+                        <div>
+                            <h4 style="width:150px;height:100px">설명</h4>
+                            <span type="text" th:text="${meetingPost.contentText}" style="width:300px;height:75px"></span>
+                        </div>
+                        
+                </div>
+             
+
+            <div class="d-flex justify-content-start" th:if="${meetingPost.isAbandonOkay}">
+                <span class="text-danger">주의: 흐르면 버리는 번개입니다</span>
+            </div>
+            
+        </div>
+
+        <!-- 잡다한 정보들 -->
+        <div id="right">
+            
+            <div class="d-flex">
+                 <span th:text="${meetingPost.currentHeadCount}">0명</span> 
+                <span>/</span> 
+                <span th:text="${meetingPost.maxHeadCount}">5명</span> 
+            </div>
+            <div class="d-flex">
+                 <span>남은시간:</span> 
+                 <span th:text="${meetingPost.remainedTime}">00시간 00분</span>  
+            </div>
+            <div class="d-flex">
+                <div><span>leader: </span></div>
+                <div><span th:text="${meetingPost.userName}">나 사나이다</span></div>
+            </div>
+
+           
+            <div><h2>댓글 리스트</h2></div>
+             <div id="comment-section" style="  overflow-y: auto; height:300px;    border: 1px solid #ccc; ">
+           
+                <div th:each="comment : ${meetingPost.commentList}" class="comment-dto">
+                    <div class="d-flex ">
+                        <div><span th:text="${comment.userName}">나는 쉬지롱</span></div>
+                        <div class="ml-2"><span th:text="${comment.content}">어우 고생들 많으십니다^^</span></div>
+                        
+                        <button class="btn-delete-comment"
+                            th:if="${meetingPost.userId == comment.userId}"
+                            th:data-userId="${comment.userId}"
+                            th:data-commentId="${comment.id}">
+                            삭제
+                        </button>
+                    </div>
+                </div>
+           
+             </div>
+            <div class="d-flex mt-2">
+                    <input type="text"  id="comment-content" placeholder="댓글 작성">
+                    <button id="btn-comment">댓글 달기</button>
+            </div>
+
+              <div class="d-flex justify-content-between">
+               
                 <div>
                     <div class="d-flex">
-                       <span > 내 ftp</span>
+                       <h4 > [strava연동] 내 ftp</h4>
                        <span th:text="${meetingPost.myPower}"></span>
                        
                     </div>
@@ -170,8 +166,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="d-flex mt-3">
+             <div class="d-flex mt-3">
 
                 <th:block th:if="${userType == 'none'}">
           
@@ -186,32 +181,44 @@
                 </th:block>
             </div>
             
+            <div class="d-flex justify-content-end mt-4">
+
+                <a href="/main-page/before-meeting">
+                    <button class="form-control">닫기</button>
+                </a>
+
+                <!-- userType이 leader일 때: 수정하기 버튼만 표시 -->
+                <th:block th:if="${userType == 'leader'}">
+                    <a th:href="@{/meeting-post/make-meeting(postId=${meetingPost.postId})}">
+                        <button class="form-control">수정하기</button>
+                    </a>
+
+                </th:block>
+
+                <!-- userType이 member일 때: 모임취소 버튼만 표시 -->
+                <th:block th:if="${userType == 'member'}">
+                    <button>모임취소</button>
+                </th:block>
+
+                <!-- userType이 none일 때: 모임참가 버튼만 표시 -->
+                <input type="hidden" id="latitude" name="latitude" th:value="${meetingPost.latitude}">
+                <input type="hidden" id="longitude" name="longitude" th:value="${meetingPost.longitude}">
+            </div>
+            </div>
+            
+           
+
         </div>
     </div>
 
-    <div class="d-flex justify-content-end mt-4">
-
-        <a href="/main-page/before-meeting">
-            <button class="form-control">닫기</button>
-        </a>
-
-        <!-- userType이 leader일 때: 수정하기 버튼만 표시 -->
-        <th:block th:if="${userType == 'leader'}">
-          <a th:href="@{/meeting-post/make-meeting(postId=${meetingPost.postId})}">
-         <button class="form-control">수정하기</button>
-</a>
-
-        </th:block>
-
-        <!-- userType이 member일 때: 모임취소 버튼만 표시 -->
-        <th:block th:if="${userType == 'member'}">
-            <button>모임취소</button>
-        </th:block>
-
-        <!-- userType이 none일 때: 모임참가 버튼만 표시 -->
-        <input type="hidden" id="latitude" name="latitude" th:value="${meetingPost.latitude}">
-        <input type="hidden" id="longitude" name="longitude" th:value="${meetingPost.longitude}">
+     
+        <!-- 댓글 리스트 -->
+          
+       
+        <!-- ftp, strava 연동, 참가버튼 -->
+       
     </div>
+
 </div>
 
 <script>
@@ -283,8 +290,9 @@
             data: {"content":content, "postId":postId, "isBeforeMeeting":isBeforeMeeting},
             
             success: function (data) {
-                alert(" 성공적으로 댓글 작성 되었습니다");
-                // 필요 시 페이지 이동 또는 폼 초기화
+               alert("성공적으로 댓글 작성 되었습니다");
+               location.reload();
+
             },
             error: function (data) {
                 console.error(data);
@@ -294,6 +302,35 @@
 
     });
 
+     $(".btn-delete-comment").on("click", function () {
+                let button = $(this);
+            let commentId = button.data('commentid');
+            let userId = button.data('userid');
+
+          
+            $.ajax({
+                url: "/comment/delete",
+                type: "POST",
+                data: {
+                    commentId: commentId,
+                    userId: userId
+                },
+                success: function (response) {
+                    if (response.result === "success") {
+                        alert("댓글이 삭제되었습니다.");
+                        // 버튼이 포함된 댓글 요소 제거
+                        button.closest(".comment-dto").remove();
+                    } else {
+                        alert("삭제 권한이 없습니다.");
+                    }
+                },
+                error: function () {
+                    alert("서버 오류가 발생했습니다.");
+                }
+            });
+
+
+     })
     $("#btn-connect-cycle").on("click", function () {
             let postId = $("#before-meeting").data("postId");
             let pageUrl = "/meeting-post/before-meeting?postId=" + postId;

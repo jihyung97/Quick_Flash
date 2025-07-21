@@ -65,4 +65,39 @@ public class CommentRestController {
 
 
     }
+
+
+    @PostMapping("/delete")
+    public Map<String,Object> deleteComment(HttpSession session,
+
+                                            @RequestParam int commentId,
+                                            @RequestParam int userId
+
+
+
+    ){
+
+        Map<String,Object> result = new HashMap<>();
+        Integer sessionId = (Integer) session.getAttribute("userId");
+
+        // 게시글 작성하기 전에 로그인 됬는지, 이미 작성된 글인지 확인.
+        if(sessionId == null) {
+            result.put("result", "fail");
+            return result;
+        }
+        if(sessionId == userId){
+            commentBO.deleteComment(commentId);
+            result.put("result", "success");
+            return result;
+        }else{
+            result.put("result","fail");
+            return result;
+        }
+
+
+
+
+
+
+    }
 }

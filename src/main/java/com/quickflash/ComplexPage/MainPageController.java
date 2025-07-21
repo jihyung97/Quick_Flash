@@ -82,7 +82,8 @@ public class MainPageController {
             List<ThumbnailDto> myScheduleList = meetingPostDtoMaker.getMyScheduleThumbnailByUserId(userId);
             model.addAttribute("myScheduleList",myScheduleList );
 
-
+            List<ThumbnailDto> myReportMakingList = meetingPostBO.getReportMakingList(userId);
+            model.addAttribute("myReportMakingList", myReportMakingList);
 
         }
 

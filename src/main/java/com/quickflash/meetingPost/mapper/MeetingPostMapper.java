@@ -38,6 +38,7 @@ public interface MeetingPostMapper {
     List<ThumbnailDto> selectFinalReportForScroll(@Param("startId") int startId,@Param("batchSize") int batchSize );
     Integer selectLatestPostId();
     List<Integer> selectPostIdListByUserId(int userId);
+    List<ThumbnailDto> selectReportMakingList(int userId);
 
 
 }

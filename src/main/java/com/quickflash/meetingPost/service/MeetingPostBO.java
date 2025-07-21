@@ -283,4 +283,10 @@ public class MeetingPostBO {
         return meetingPostMapper.selectPostIdListByUserId(userId);
     }
 
+    public List<ThumbnailDto> getReportMakingList(int userId){
+        return meetingPostMapper.selectReportMakingList(userId);
+
+    }
+
+
 }
